@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'CasinoArea' | 'BlackjackArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -32,10 +32,12 @@ export type TownSettingsUpdate = {
 export type Direction = 'front' | 'back' | 'left' | 'right';
 
 export type PlayerID = string;
+export type CoveyBucks = number;
 export interface Player {
   id: PlayerID;
   userName: string;
   location: PlayerLocation;
+  units: CoveyBucks;
 };
 
 export type XY = { x: number, y: number };
@@ -161,6 +163,36 @@ export type ConnectFourColIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export type ConnectFourColor = 'Red' | 'Yellow';
 
+export interface CasinoState extends GameState {
+  players: PlayerHand[]; // todo: I think this needs to be a type of player and their hand (list of cards)
+  results: ReadonlyArray<CasinoScore>;
+}
+
+export interface PlayerHand {
+  player: PlayerID[];
+  hand: Array<Card>;
+}
+
+export interface CasinoScore {
+  player: PlayerID;
+  netCurrency: CoveyBucks;
+}
+
+export type Suit = 'Hearts' | 'Diamonds' | 'Clubs' | 'Spades';
+export type NumberValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type FaceValue = 'J' | 'Q' | 'K' | 'A';
+export interface Card {
+  type: Suit;
+  value: NumberValue | FaceValue;
+  faceUp: boolean;
+}
+
+export type BlackjackAction = 'Hit' | 'Stand' | 'Split' | 'Double Down';
+export interface BlackjackMove {
+  player: PlayerID;
+  action: BlackjackAction;
+}
+
 export type InteractableID = string;
 export type GameInstanceID = string;
 
@@ -216,7 +248,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | CurrencyUpdateCommand<CasinoScore>;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -237,11 +269,16 @@ export interface GameMoveCommand<MoveType> {
   gameID: GameInstanceID;
   move: MoveType;
 }
+export interface CurrencyUpdateCommand<CasinoScore> {
+  type: 'CurrencyUpdate';
+  score: CasinoScore;
+}
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
+  CommandType extends CurrencyUpdateCommand ? undefined :
   never;
 
 export type InteractableCommandResponse<MessageType> = {
