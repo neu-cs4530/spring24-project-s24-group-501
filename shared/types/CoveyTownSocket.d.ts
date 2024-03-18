@@ -164,13 +164,17 @@ export type ConnectFourColIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export type ConnectFourColor = 'Red' | 'Yellow';
 
 export interface CasinoState extends GameState {
-  players: PlayerHand[]; // todo: I think this needs to be a type of player and their hand (list of cards)
+  hands: PlayerHand[]; 
+  dealerHand: Card[];
+  shuffler: shuffler;
   results: ReadonlyArray<CasinoScore>;
 }
 
 export interface PlayerHand {
-  player: PlayerID[];
-  hand: Array<Card>;
+  player: PlayerID;
+  hand: Card[];
+  ante: CoveyBucks;
+  active: boolean;
 }
 
 export interface CasinoScore {
@@ -179,7 +183,7 @@ export interface CasinoScore {
 }
 
 export type Suit = 'Hearts' | 'Diamonds' | 'Clubs' | 'Spades';
-export type NumberValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type NumberValue = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export type FaceValue = 'J' | 'Q' | 'K' | 'A';
 export interface Card {
   type: Suit;
