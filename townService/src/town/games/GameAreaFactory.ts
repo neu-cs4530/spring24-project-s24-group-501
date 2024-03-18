@@ -27,5 +27,8 @@ export default function GameAreaFactory(
   if (gameType === 'ConnectFour') {
     return new ConnectFourGameArea(name, rect, broadcastEmitter);
   }
+  if (gameType === 'Blackjack') {
+    return new BlackjackGameArea(name, rect, broadcastEmitter);
+  }
   throw new Error(`Unknown game area type ${mapObject.class}`);
 }
