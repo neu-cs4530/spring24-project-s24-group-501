@@ -5,7 +5,8 @@ export default class Shuffler {
 
     public constructor() {
         this._deck = this.assembleCards();
-        this.shuffle()
+        this.shuffle();
+        
     }
 
     public deal(faceUp: boolean): Card {
@@ -19,6 +20,11 @@ export default class Shuffler {
             return topCard
         }
         throw new Error('TODO CUSTOM MSG')
+    }
+
+    public refresh() {
+        this._deck = this.assembleCards();
+        this.shuffle();
     }
 
     private assembleCards(): Card[] {

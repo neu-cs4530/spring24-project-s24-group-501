@@ -168,6 +168,7 @@ export interface CasinoState extends GameState {
   dealerHand: Card[];
   shuffler: shuffler;
   results: ReadonlyArray<CasinoScore>;
+  wantsToLeave: PlayerID[]
 }
 
 export interface PlayerHand {
@@ -262,7 +263,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | CurrencyUpdateCommand<CasinoScore>;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | PlaceBetCommand<CoveyBucks> | CurrencyUpdateCommand<CasinoScore>;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -287,12 +288,18 @@ export interface CurrencyUpdateCommand<CasinoScore> {
   type: 'CurrencyUpdate';
   score: CasinoScore;
 }
+export interface PlaceBetCommand<CoveyBucks> {
+  type: 'PlaceBet';
+  gameID: GameInstanceID;
+  bet: CoveyBucks;
+}
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
-  CommandType extends CurrencyUpdateCommand ? undefined :
+  CommandType extends PlaceBetCommand ? undefined :
+  CommandType extends CurrencyUpdateCommand ? undefined : // todo: remove?
   never;
 
 export type InteractableCommandResponse<MessageType> = {
