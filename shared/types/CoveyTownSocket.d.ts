@@ -178,6 +178,16 @@ export interface CasinoScore {
   netCurrency: CoveyBucks;
 }
 
+export type CasinoStake = 'Low' | 'Medium' | 'High'
+export type CasinoGame = 'Blackjack'
+
+export interface CasinoSession {
+  id: number;
+  stakes: CasinoStake;
+  game: CasinoGame;
+  date: Date;
+}
+
 export type Suit = 'Hearts' | 'Diamonds' | 'Clubs' | 'Spades';
 export type NumberValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export type FaceValue = 'J' | 'Q' | 'K' | 'A';
