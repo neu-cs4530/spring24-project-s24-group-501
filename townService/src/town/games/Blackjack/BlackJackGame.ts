@@ -4,16 +4,19 @@ import { BlackjackMove, Card, CasinoState, CoveyBucks, GameMove, PlayerID } from
 import Game from "../Game";
 import Shuffler from "./Shuffler";
 
+const MAX_PLAYERS = 4
 
 /**
- * A BlackJackGame is a Game that implements the rules ofBlackJack.
+ * A BlackJackGame is a Game that implements the rules of BlackJack.
+ * @see https://www.blackjack.org/blackjack/how-to-play/
  */
 export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
-    private _stakeSize: CoveyBucks    
-    public constructor(stakeSize?: CoveyBucks) {
+    private _stakeSize: CoveyBucks;
+
+    public constructor(stakeSize?: CoveyBucks, defaultGame?: BlackJackGame, definedDeck?: Card[]) {
       super({
-          hands: [],
-          status: 'WAITING_TO_START',
+          hands: defaultGame?.state.hands ?? [],
+          status: defaultGame?.state.status ?? 'WAITING_TO_START',
           dealerHand: [],
           results: [],
           shuffler: new Shuffler(),
@@ -22,8 +25,10 @@ export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
       this._stakeSize = stakeSize ?? 10
     }
 
+    /**
+     * 
+     */
     public placeBet(player: Player, bet: CoveyBucks): void {
-        //this.state.hands.filter(hand => hand.player === player.id)
         for (let hand of this.state.hands) {
             if (hand.player === player.id) {
                 hand.ante = bet
@@ -43,7 +48,7 @@ export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
     }
 
     /**
-     * Apply Move: Were going to appky a blackjack move to game
+     * Apply Move: Were going to apply a blackjack move to game
      * @param move The move to apply to the game
      * @throws error when the moving player isn't active (Busted or stands)
      * @throws error is not a valid split
@@ -88,12 +93,12 @@ export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
             }
         }
 
-        //inserts twin split hand right after first one
+        // inserts twin split hand right after first one
         if (newHand !== null) {
             this.state.hands.splice(index,0,newHand)
         }
 
-        //what to do when the round is over
+        // what to do when the round is over
         if (this.state.hands.filter(p => !p.active).length === 0) {
             this.state.dealerHand[0].faceUp = true;
             while (this.handValue(this.state.dealerHand) < 17) {
@@ -155,6 +160,7 @@ export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
      */
     private handValue(cards: Card[]) : number {
         var value = 0;
+        var aceCount = 0;
         for (let card of cards) {
             if (typeof(card) == "number") {
                 value += card;
@@ -162,40 +168,47 @@ export default class BlackJackGame extends Game<CasinoState, BlackjackMove> {
             if (card.value === "J" || card.value === "Q" || card.value === "K") {
                 value += 10;
             }
-            if (card.value === "A" && value + 11 <= 21) {
+            if (card.value === "A") {
                 value += 11;
             }
-            if (card.value === "A" && value + 11 > 21) {
-                value += 1;
+            
+            while (aceCount > 0) {
+                if (value > 21) {
+                    value -= 10;
+                    aceCount -= 1;
+                }
+                else {
+                    break;
+                }
             }
+                                
         }
         return value;
     }
 
     /**
    * Adds a player to the game.
-   * Updates the game's state to reflect the new player.
+   * Updates the game's state to reflect the new player, taking the first seat at the table.
    *
    * @param player The player to join the game
    * @throws InvalidParametersError if the player is already in the game (PLAYER_ALREADY_IN_GAME_MESSAGE)
-   *  or the game is full with 5 players(GAME_FULL_MESSAGE)
+   *  or the game is full (GAME_FULL_MESSAGE)
    */
     protected _join(player: Player): void {
-
         if (this.state.hands.map(h => h.player).includes(player.id)) {
             throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
         }
-        if (this.state.hands.length == 5) {
+        if (this.state.hands.length === MAX_PLAYERS) {
             throw new InvalidParametersError(GAME_FULL_MESSAGE);
         }
 
-    
-        this.state.hands.push({
+        this.state.hands.unshift({
             player: player.id,
             hand: [],
             ante: 0,
             active: false
-        })
+        });
+
         this.state.status = "IN_PROGRESS";
     }
 

@@ -3,10 +3,13 @@ import { Card, NumberValue, FaceValue, Suit } from "../../../types/CoveyTownSock
 export default class Shuffler {
     private _deck: Card[]
 
-    public constructor() {
-        this._deck = this.assembleCards();
-        this.shuffle();
-        
+    public constructor(deck?: Card[]) {
+        if (deck) {
+            this._deck = deck
+        } else {
+            this._deck = this.assembleCards();
+            this.shuffle();
+        }
     }
 
     public deal(faceUp: boolean): Card {

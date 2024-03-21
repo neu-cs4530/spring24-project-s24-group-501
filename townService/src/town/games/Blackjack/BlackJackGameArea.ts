@@ -2,7 +2,7 @@ import InvalidParametersError, { GAME_ID_MISSMATCH_MESSAGE, GAME_NOT_IN_PROGRESS
 import Player from "../../../lib/Player";
 import { BlackjackMove, InteractableCommand, InteractableCommandReturnType, InteractableType } from "../../../types/CoveyTownSocket";
 import GameArea from "../GameArea";
-import BlackJackGame from "./BlackJackGame";
+import BlackJackGame from "./BlackjackGame";
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
