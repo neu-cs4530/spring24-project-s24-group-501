@@ -10,7 +10,7 @@ describe('CasinoTracker', () => {
         //const SUPABASE = createClient(SUPABASE_URL, SUPABASE_KEY || '')
     });
 
-    describe('getPlayerCurrency', () => {
+    describe('getPlayerCurrency', async () => {
         test('throws an error if the request is invalid', () => {
 
         });
@@ -18,7 +18,7 @@ describe('CasinoTracker', () => {
 
         });
     });
-    describe('putPlayerScores', () => {
+    describe('putPlayerScores', async () => {
         test('throws an error if the player does not exist', () => {
 
         });
@@ -26,7 +26,7 @@ describe('CasinoTracker', () => {
 
         });
     });
-    describe('getCasinoSessions', () => {
+    describe('getCasinoSessions', async () => {
         test('throws an error if the request is invalid', () => {
 
         });
@@ -34,7 +34,7 @@ describe('CasinoTracker', () => {
 
         });
     });
-    describe('postCasinoSession', () => {
+    describe('postCasinoSession', async () => {
         test('throws an error if the session already exists', () => {
 
         });

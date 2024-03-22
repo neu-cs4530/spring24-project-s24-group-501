@@ -165,6 +165,7 @@ export type ConnectFourColor = 'Red' | 'Yellow';
 
 export interface CasinoState extends GameState {
   hands: PlayerHand[]; 
+  currentPlayer: number;
   dealerHand: Card[];
   shuffler: shuffler;
   results: ReadonlyArray<CasinoScore>;

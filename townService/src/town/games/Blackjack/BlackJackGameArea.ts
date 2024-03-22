@@ -2,7 +2,8 @@ import InvalidParametersError, { GAME_ID_MISSMATCH_MESSAGE, GAME_NOT_IN_PROGRESS
 import Player from "../../../lib/Player";
 import { BlackjackMove, InteractableCommand, InteractableCommandReturnType, InteractableType } from "../../../types/CoveyTownSocket";
 import GameArea from "../GameArea";
-import BlackJackGame from "./BlackjackGame";
+import BlackjackGame from "./BlackJackGame";
+
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
@@ -11,7 +12,7 @@ import BlackJackGame from "./BlackjackGame";
  * @see ConnectFourGame
  * @see GameArea
  */
-export default class BlackJackGameArea extends GameArea<BlackJackGame> {
+export default class BlackJackGameArea extends GameArea<BlackjackGame> {
     
     protected getType(): InteractableType {
       return 'BlackjackArea';
@@ -42,7 +43,7 @@ export default class BlackJackGameArea extends GameArea<BlackJackGame> {
             let game = this._game;
             if (!game ) {
                 // No game in progress, make a new one
-                game = new BlackJackGame();
+                game = new BlackjackGame();
                 this._game = game;
             }    
             game.join(player);

@@ -1,3 +1,4 @@
+import { INVALID_SHUFFLER_STATE_MESSAGE } from "../../../lib/InvalidParametersError";
 import { Card, NumberValue, FaceValue, Suit } from "../../../types/CoveyTownSocket";
 
 export default class Shuffler {
@@ -12,17 +13,20 @@ export default class Shuffler {
         }
     }
 
+    public get deck(): Card[] {
+        return this._deck;
+    }
+
     public deal(faceUp: boolean): Card {
-        if (this._deck.length === 0) {
-            this._deck = this.assembleCards();
-            this.shuffle()
+        if (this.deck.length === 0) {
+            this.refresh();
         }
         let topCard = this._deck.pop()
         if (topCard) {
             topCard.faceUp = faceUp
             return topCard
         }
-        throw new Error('TODO CUSTOM MSG')
+        throw new Error(INVALID_SHUFFLER_STATE_MESSAGE);
     }
 
     public refresh() {
@@ -30,7 +34,7 @@ export default class Shuffler {
         this.shuffle();
     }
 
-    private assembleCards(): Card[] {
+    public assembleCards(): Card[] {
         const newDeck: Card[] = []
 
         const suits: Suit[] = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
@@ -38,10 +42,10 @@ export default class Shuffler {
 
         suits.forEach(suit => {
             for (let numVal = 2; numVal <= 10; numVal++) {
-                newDeck.concat({type: suit, value: numVal as NumberValue, faceUp: true})
+                newDeck.push({type: suit, value: numVal as NumberValue, faceUp: true})
             }
             faceVals.forEach(faceVal => {
-                newDeck.concat({type: suit, value: faceVal, faceUp: true})
+                newDeck.push({type: suit, value: faceVal, faceUp: true})
             })
         });
 
@@ -49,7 +53,7 @@ export default class Shuffler {
     }
 
     private shuffle(): void {
-        const shuffledDeck = this._deck.slice();
+        const shuffledDeck = this.deck.slice();
         for (let i = shuffledDeck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]]; // Swap elements

@@ -14,6 +14,9 @@ export const BOARD_POSITION_NOT_VALID_MESSAGE = 'Board position is not valid';
 
 export const PLAYER_NOT_IN_GAME_MESSAGE = 'Player is not in this game';
 export const PLAYER_ALREADY_IN_GAME_MESSAGE = 'Player is already in this game';
+
+export const INVALID_BET_MESSAGE = 'Bet is invalid';
+export const INVALID_SHUFFLER_STATE_MESSAGE = 'Card cannot be dealt';
 export default class InvalidParametersError extends Error {
   public message: string;
 
