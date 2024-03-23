@@ -1,5 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
-import { CasinoGame, CasinoScore, CasinoSession } from '../../../types/CoveyTownSocket';
+import dotenv from 'dotenv';
+import {
+  CasinoGame,
+  CasinoScore,
+  CasinoSession,
+  CasinoStake,
+  CoveyBucks,
+  PlayerID,
+} from '../../../types/CoveyTownSocket';
+
+dotenv.config();
 
 const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
 const { SUPABASE_KEY } = process.env;
@@ -32,15 +42,15 @@ export default class CasinoTracker {
   async getPlayerCurrency(): Promise<CasinoScore[]> {
     const response = await supabase.from('Player').select('id, balance');
     return (response.data ?? []).map(item => ({
-      player: item.id,
-      netCurrency: item.balance,
+      player: String(item.id) as PlayerID,
+      netCurrency: item.balance as CoveyBucks,
     })) as CasinoScore[];
   }
 
   /**
    * Updates the player balances of the supplied entries.
    * @param scores a list of players and new balances.
-   * @returns a Promise of the updates.
+   * @returns a Promise of the updated scores.
    */
   async putPlayerScores(scores: CasinoScore[]): Promise<CasinoScore[]> {
     scores.map(async score => ({
@@ -52,7 +62,11 @@ export default class CasinoTracker {
         .select(),
     }));
 
-    return Promise.all(scores);
+    await Promise.all(scores);
+
+    return (await this.getPlayerCurrency()).filter(fullScore =>
+      scores.map(updatedScore => updatedScore.player).includes(fullScore.player),
+    );
   }
 
   /**
@@ -63,13 +77,14 @@ export default class CasinoTracker {
   async getCasinoSessions(game: CasinoGame): Promise<CasinoSession[]> {
     const response = await supabase
       .from('Session')
-      .select('id, stakes, start_date')
+      .select('id, player_id, stakes, start_date')
       .eq('game', game);
     return (response.data ?? []).map(item => ({
       id: item.id,
-      stakes: item.stakes,
+      playerID: item.player_id as PlayerID,
+      stakes: item.stakes as CasinoStake,
       game,
-      date: item.start_date,
+      date: item.start_date as Date,
     })) as CasinoSession[];
   }
 
@@ -81,13 +96,16 @@ export default class CasinoTracker {
   async postCasinoSession(session: CasinoSession): Promise<CasinoSession[]> {
     const response = await supabase
       .from('Session')
-      .insert([{ id: session.id, stakes: session.stakes, game: session.game }])
+      .insert([
+        { id: session.id, player_id: session.playerID, stakes: session.stakes, game: session.game },
+      ])
       .select();
     return (response.data ?? []).map(item => ({
       id: item.id,
-      stakes: item.stakes,
-      game: item.game,
-      date: item.start_date,
+      playerID: item.player_id as PlayerID,
+      stakes: item.stakes as CasinoStake,
+      game: item.game as CasinoGame,
+      date: item.start_date as Date,
     }));
   }
 }
