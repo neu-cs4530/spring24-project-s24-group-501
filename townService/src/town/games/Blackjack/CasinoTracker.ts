@@ -1,9 +1,19 @@
-import { createClient } from '@supabase/supabase-js'
-import { CasinoGame, CasinoScore, CasinoSession } from '../../../../../shared/types/CoveyTownSocket';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import {
+  CasinoGame,
+  CasinoScore,
+  CasinoSession,
+  CasinoStake,
+  CoveyBucks,
+  PlayerID,
+} from '../../../types/CoveyTownSocket';
 
-const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co'
-const SUPABASE_KEY = process.env.SUPABASE_KEY
-const SUPABASE = createClient(SUPABASE_URL, SUPABASE_KEY || '')
+dotenv.config();
+
+const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
+const { SUPABASE_KEY } = process.env;
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
 
 /**
 DESIRABLE:
@@ -25,66 +35,77 @@ I should be able to click on an entry in the leaderboard to view more statistics
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
-    /**
-     * Retrieves all players and their updated currency balance.
-     * @returns a Promise of players and their units.
-     */
-    async getPlayerCurrency(): Promise<CasinoScore[]> {
-        const response = await SUPABASE.from("Player").select("id, balance");
-        return (response.data ?? []).map(item => ({
-            player: item.id,
-            netCurrency: item.balance
-        })) as CasinoScore[];
-    }
+  /**
+   * Retrieves all players and their updated currency balance.
+   * @returns a Promise of players and their units.
+   */
+  async getPlayerCurrency(): Promise<CasinoScore[]> {
+    const response = await supabase.from('Player').select('id, balance');
+    return (response.data ?? []).map(item => ({
+      player: String(item.id) as PlayerID,
+      netCurrency: item.balance as CoveyBucks,
+    })) as CasinoScore[];
+  }
 
-    /**
-     * Updates the player balances of the supplied entries.
-     * @param scores a list of players and new balances.
-     * @returns a Promise of the updates.
-     */
-    async putPlayerScores(scores: CasinoScore[]): Promise<CasinoScore[]> {
-        scores.map(async score => ({
-            id: score.player,
-            netCurrency: await SUPABASE
-            .from('Player')
-            .update({ balance: score.netCurrency })
-            .eq('id', score.player)
-            .select()
-        }))
+  /**
+   * Updates the player balances of the supplied entries.
+   * @param scores a list of players and new balances.
+   * @returns a Promise of the updated scores.
+   */
+  async putPlayerScores(scores: CasinoScore[]): Promise<CasinoScore[]> {
+    scores.map(async score => ({
+      id: score.player,
+      netCurrency: await supabase
+        .from('Player')
+        .update({ balance: score.netCurrency })
+        .eq('id', score.player)
+        .select(),
+    }));
 
-        return await Promise.all(scores);
-    }
+    await Promise.all(scores);
 
-    /**
-     * Fetches all casino sessions that have been played for the specified game.
-     * @param game the type of casino game.
-     * @returns a Promise with the stake and creation date for a table.
-     */
-    async getCasinoSessions(game: CasinoGame): Promise<CasinoSession[]> {
-        const response = await SUPABASE.from('Session').select('id, stakes, start_date').eq('game', game)
-        return (response.data ?? []).map(item => ({
-            id: item.id,
-            stakes: item.stakes,
-            game: game,
-            date: item.start_date
-        })) as CasinoSession[];
-    }
+    return (await this.getPlayerCurrency()).filter(fullScore =>
+      scores.map(updatedScore => updatedScore.player).includes(fullScore.player),
+    );
+  }
 
-    /**
-     * Inserts the casino session as a new record.
-     * @param session the table to be stored.
-     * @returns a Promise containing the constructed session entry. 
-     */
-    async postCasinoSession(session: CasinoSession): Promise<CasinoSession[]> {
-        const response = await SUPABASE.from('Session').insert([
-        { id: session.id, stakes: session.stakes, game: session.game },
-        ])
-        .select()
-        return (response.data ?? []).map(item => ({
-            id: item.id,
-            stakes: item.stakes,
-            game: item.game,
-            date: item.start_date
-        }));
-    }
+  /**
+   * Fetches all casino sessions that have been played for the specified game.
+   * @param game the type of casino game.
+   * @returns a Promise with the stake and creation date for a table.
+   */
+  async getCasinoSessions(game: CasinoGame): Promise<CasinoSession[]> {
+    const response = await supabase
+      .from('Session')
+      .select('id, player_id, stakes, start_date')
+      .eq('game', game);
+    return (response.data ?? []).map(item => ({
+      id: item.id,
+      playerID: item.player_id as PlayerID,
+      stakes: item.stakes as CasinoStake,
+      game,
+      date: item.start_date as Date,
+    })) as CasinoSession[];
+  }
+
+  /**
+   * Inserts the casino session as a new record.
+   * @param session the table to be stored.
+   * @returns a Promise containing the constructed session entry.
+   */
+  async postCasinoSession(session: CasinoSession): Promise<CasinoSession[]> {
+    const response = await supabase
+      .from('Session')
+      .insert([
+        { id: session.id, player_id: session.playerID, stakes: session.stakes, game: session.game },
+      ])
+      .select();
+    return (response.data ?? []).map(item => ({
+      id: item.id,
+      playerID: item.player_id as PlayerID,
+      stakes: item.stakes as CasinoStake,
+      game: item.game as CasinoGame,
+      date: item.start_date as Date,
+    }));
+  }
 }

@@ -189,6 +189,7 @@ export type CasinoGame = 'Blackjack'
 
 export interface CasinoSession {
   id: number;
+  playerID: PlayerID;
   stakes: CasinoStake;
   game: CasinoGame;
   date: Date;
