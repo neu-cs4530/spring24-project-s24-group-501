@@ -12,7 +12,6 @@ import {
   CasinoState,
   CoveyBucks,
   GameMove,
-  PlayerID,
 } from '../../../types/CoveyTownSocket';
 import Game from '../Game';
 import Shuffler from './Shuffler';

@@ -1,5 +1,5 @@
 import CasinoTracker from './CasinoTracker';
-import { CasinoGame, CasinoScore, CasinoSession } from '../../../types/CoveyTownSocket';
+import { CasinoScore, CasinoSession } from '../../../types/CoveyTownSocket';
 
 describe('CasinoTracker', () => {
   let dbConnection: CasinoTracker;
