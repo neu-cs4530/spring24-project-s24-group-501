@@ -87,7 +87,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
           object.active = false;
         } else if (move.move.action === 'Hit') {
           object.hand.push(this.state.shuffler.deal(true));
-          if (this.handValue(object.hand) > 21) {
+          if (this._handValue(object.hand) > 21) {
             object.active = false;
           }
         } else if (move.move.action === 'Double Down') {
@@ -123,7 +123,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
    * @param cards
    * @returns number value of someones hand
    */
-  public handValue(cards: Card[]): number {
+  private _handValue(cards: Card[]): number {
     let value = 0;
     let aceCount = 0;
     for (const card of cards) {
@@ -192,22 +192,22 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
    * Handles dishing out antes and resseting the game after a round is over
    */
   private _overHandler(): void {
-    const finalDealerValue = this.dealerHandler();
+    const finalDealerValue = this._dealerHandler();
 
     for (const player of this.state.hands) {
-      if (this.handValue(player.hand) > 21) {
+      if (this._handValue(player.hand) > 21) {
         for (const result of this.state.results) {
           if (result.player === player.player) {
             result.netCurrency -= player.ante;
           }
         }
-      } else if (finalDealerValue > this.handValue(player.hand)) {
+      } else if (finalDealerValue > this._handValue(player.hand)) {
         for (const result of this.state.results) {
           if (result.player === player.player) {
             result.netCurrency -= player.ante;
           }
         }
-      } else if (finalDealerValue < this.handValue(player.hand)) {
+      } else if (finalDealerValue < this._handValue(player.hand)) {
         for (const result of this.state.results) {
           if (result.player === player.player) {
             result.netCurrency += player.ante;
@@ -221,27 +221,31 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
       hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
     };
 
-    for (const object of this.state.hands) {
-      object.hand = [this.state.shuffler.deal(true), this.state.shuffler.deal(true)];
-      object.active = true;
+    if (this.state.hands.length === 0) {
+      this.state.status = 'WAITING_FOR_PLAYERS';
+    } else {
+      for (const object of this.state.hands) {
+        object.hand = [this.state.shuffler.deal(true), this.state.shuffler.deal(true)];
+        object.active = true;
+      }
+      this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
     }
-    this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
   }
 
   /**
    * Deals out the cards for the dealer (hit until over 17, always stands if value is 17 or higher)
    * @returns the value of the dealers hand
    */
-  public dealerHandler(): number {
+  private _dealerHandler(): number {
     this.state.dealerHand[0].faceUp = true;
-    while (this.handValue(this.state.dealerHand) < 17) {
+    while (this._handValue(this.state.dealerHand) < 17) {
       this.state.dealerHand.push(this.state.shuffler.deal(true));
     }
     let finalDealerValue = 0;
-    if (this.handValue(this.state.dealerHand) > 21) {
+    if (this._handValue(this.state.dealerHand) > 21) {
       finalDealerValue = 0;
     } else {
-      finalDealerValue = this.handValue(this.state.dealerHand);
+      finalDealerValue = this._handValue(this.state.dealerHand);
     }
     return finalDealerValue;
   }

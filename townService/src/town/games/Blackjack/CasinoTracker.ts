@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import Player from '../../../lib/Player';
 import {
   CasinoGame,
   CasinoScore,
@@ -16,20 +17,6 @@ const { SUPABASE_KEY } = process.env;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
 
 /**
-DESIRABLE:
-I should be able to see my numeric rank out of all players who have played the game that day
-I should be able to see the currency total of the top ten players ever
-I should be able to see the currency total of the top ten players that day
-I should be able to click on an entry in the leaderboard to view more statistics, like number of games played
-
-TODO: -- change in design to:
-I should be able to see how many casino tables have been played that day
-I should be able to see how many sessions of each casino stake type have been played
-I should be able to see the currency total of the top ten players ever
-I should be able to click on an entry in the leaderboard to view more statistics, like number of games played
- */
-
-/**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
  * Errors are propogated to its user.
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
@@ -39,12 +26,17 @@ export default class CasinoTracker {
    * Retrieves all players and their updated currency balance.
    * @returns a Promise of players and their units.
    */
-  async getPlayerCurrency(): Promise<CasinoScore[]> {
+  async getPlayersCurrency(): Promise<CasinoScore[]> {
     const response = await supabase.from('Player').select('id, balance');
     return (response.data ?? []).map(item => ({
       player: String(item.id) as PlayerID,
       netCurrency: item.balance as CoveyBucks,
     })) as CasinoScore[];
+  }
+
+  async getPlayerCurrency(player: Player): Promise<CasinoScore> {
+    const response = await this.getPlayersCurrency();
+    return response.filter(score => score.player === player.id)[0];
   }
 
   /**
@@ -64,7 +56,7 @@ export default class CasinoTracker {
 
     await Promise.all(scores);
 
-    return (await this.getPlayerCurrency()).filter(fullScore =>
+    return (await this.getPlayersCurrency()).filter(fullScore =>
       scores.map(updatedScore => updatedScore.player).includes(fullScore.player),
     );
   }

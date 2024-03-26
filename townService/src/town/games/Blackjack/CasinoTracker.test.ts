@@ -37,7 +37,7 @@ describe('CasinoTracker', () => {
   describe('getPlayerCurrency', () => {
     test('throws an error if the request is invalid', async () => {
       getCurrencySpy.mockRejectedValue(new Error('Invalid request'));
-      await expect(dbConnection.getPlayerCurrency()).rejects.toThrowError();
+      await expect(dbConnection.getPlayersCurrency()).rejects.toThrowError();
       expect(getCurrencySpy).toHaveBeenCalled();
       expect(putPlayerScoresSpy).not.toHaveBeenCalled();
       expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
@@ -45,7 +45,7 @@ describe('CasinoTracker', () => {
     });
     test('retrieves all players and their updated currency balance', async () => {
       getCurrencySpy.mockResolvedValue(sampleCurrency);
-      await expect(dbConnection.getPlayerCurrency()).resolves.toEqual(sampleCurrency);
+      await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(sampleCurrency);
       expect(getCurrencySpy).toHaveBeenCalled();
       expect(putPlayerScoresSpy).not.toHaveBeenCalled();
       expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
