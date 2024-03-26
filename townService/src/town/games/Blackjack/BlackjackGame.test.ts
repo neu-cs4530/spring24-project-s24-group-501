@@ -7,7 +7,7 @@ import {
 } from '../../../lib/InvalidParametersError';
 import { createPlayerForTesting } from '../../../TestUtils';
 import { BlackjackMove, Player } from '../../../types/CoveyTownSocket';
-import BlackjackGame from './BlackjackGame';
+import BlackjackGame from './BlackJackGame';
 import Shuffler from './Shuffler';
 
 function createGameFromPattern(game: BlackjackGame, moves: BlackjackMove[]) {
@@ -236,6 +236,7 @@ describe('BlackjackGame', () => {
       });
       expect(game.handValue(game.state.hands[0].hand)).toBe(27);
       expect(game.state.hands[0].active).toBe(false);
+      expect(game.state.currentPlayer).toEqual(1);
     });
 
     test('Should add a card to the players hand if they double down', () => {
@@ -435,6 +436,7 @@ describe('BlackjackGame', () => {
         },
       });
       expect(game.state.results[2].netCurrency).toEqual(4000);
+      expect(game.state.currentPlayer).toEqual(0);
     });
 
     test('Everyone at the table who hasn’t busted should be rewarded the value of their ante if the dealer busts', () => {

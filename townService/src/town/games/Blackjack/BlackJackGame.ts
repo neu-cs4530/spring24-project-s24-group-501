@@ -85,15 +85,18 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
           throw new Error('Player is not active');
         } else if (move.move.action === 'Stand') {
           object.active = false;
+          this.state.currentPlayer += 1;
         } else if (move.move.action === 'Hit') {
           object.hand.push(this.state.shuffler.deal(true));
           if (this.handValue(object.hand) > 21) {
             object.active = false;
+            this.state.currentPlayer += 1;
           }
         } else if (move.move.action === 'Double Down') {
           object.hand.push(this.state.shuffler.deal(true));
           object.ante *= 2;
           object.active = false;
+          this.state.currentPlayer += 1;
         } else if (move.move.action === 'Split') {
           if (object.hand.length !== 2 || object.hand[0].value !== object.hand[1].value) {
             throw new Error('Split is not available here');
@@ -114,8 +117,11 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
 
     // what to do when the round is over
     if (this.state.hands.filter(p => p.active).length === 0) {
+      this.state.currentPlayer = 0;
       this._overHandler();
+      
     }
+    
   }
 
   /**
@@ -173,6 +179,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
       active: false,
     });
     this.state.status = 'IN_PROGRESS';
+
   }
 
   /**
