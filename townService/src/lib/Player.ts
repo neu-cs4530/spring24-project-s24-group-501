@@ -1,5 +1,10 @@
 import { nanoid } from 'nanoid';
-import { Player as PlayerModel, PlayerLocation, TownEmitter, CoveyBucks } from '../types/CoveyTownSocket';
+import {
+  Player as PlayerModel,
+  PlayerLocation,
+  TownEmitter,
+  CoveyBucks,
+} from '../types/CoveyTownSocket';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -22,6 +27,7 @@ export default class Player {
 
   /** A special town emitter that will emit events to the entire town BUT NOT to this player */
   public readonly townEmitter: TownEmitter;
+
   private _units: CoveyBucks;
 
   constructor(userName: string, townEmitter: TownEmitter) {

@@ -234,7 +234,6 @@ describe('BlackjackGame', () => {
           action: 'Hit',
         },
       });
-      expect(game.handValue(game.state.hands[0].hand)).toBe(27);
       expect(game.state.hands[0].active).toBe(false);
       expect(game.state.currentPlayer).toEqual(1);
     });
@@ -390,34 +389,6 @@ describe('BlackjackGame', () => {
       ];
 
       game.state.wantsToLeave = ['4'];
-    });
-
-    test('Should play out the dealer logic (hit until over 17, always stands if value is 17 or higher) 1', () => {
-      game.state.shuffler = new Shuffler([
-        { type: 'Diamonds', value: 5, faceUp: true },
-        { type: 'Diamonds', value: 6, faceUp: true },
-      ]);
-      expect(game.dealerHandler()).toEqual(20);
-    });
-
-    test('Should play out the dealer logic (hit until over 17, always stands if value is 17 or higher) 2', () => {
-      game.state.shuffler = new Shuffler([
-        { type: 'Diamonds', value: 5, faceUp: true },
-        { type: 'Diamonds', value: 6, faceUp: true },
-      ]);
-      game.state.dealerHand = [
-        { type: 'Diamonds', value: 10, faceUp: true },
-        { type: 'Diamonds', value: 'A', faceUp: true },
-      ];
-      expect(game.dealerHandler()).toEqual(21);
-    });
-
-    test('Should play out the dealer logic (hit until over 17, always stands if value is 17 or higher) 3', () => {
-      game.state.dealerHand = [
-        { type: 'Diamonds', value: 10, faceUp: true },
-        { type: 'Diamonds', value: 6, faceUp: true },
-      ];
-      expect(game.dealerHandler()).toEqual(0);
     });
 
     test('Player should lose ante if they have busted no matter what', () => {

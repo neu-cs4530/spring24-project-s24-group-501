@@ -6,12 +6,18 @@ import InvalidParametersError, {
 import Player from '../../../lib/Player';
 import {
   BlackjackMove,
+  BoundingBox,
+  CasinoScore,
+  CasinoState,
+  GameInstance,
   InteractableCommand,
   InteractableCommandReturnType,
   InteractableType,
+  TownEmitter,
 } from '../../../types/CoveyTownSocket';
 import GameArea from '../GameArea';
 import BlackjackGame from './BlackjackGame';
+import CasinoTracker from './CasinoTracker';
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
@@ -21,8 +27,51 @@ import BlackjackGame from './BlackjackGame';
  * @see GameArea
  */
 export default class BlackJackGameArea extends GameArea<BlackjackGame> {
+  private _casinoTracker: CasinoTracker;
+
+  public constructor(id: string, rect: BoundingBox, townEmitter: TownEmitter) {
+    super(id, rect, townEmitter);
+    this._casinoTracker = new CasinoTracker();
+  }
+
   protected getType(): InteractableType {
     return 'BlackjackArea';
+  }
+
+  private _updatePlayerScores(results: CasinoScore[]) {
+    const updatedScores: CasinoScore[] = [];
+    this._casinoTracker.getPlayersCurrency().then(scores => {
+      results.forEach(result => {
+        const units =
+          scores.find(eachPlayer => eachPlayer.player === result.player)?.netCurrency || 0;
+        updatedScores.push({
+          player: result.player,
+          netCurrency: units + result.netCurrency,
+        });
+      });
+    });
+  }
+
+  private _stateUpdated(updatedState: GameInstance<CasinoState>) {
+    if (updatedState.state.status === 'WAITING_TO_START') {
+      // If we haven't yet recorded the outcome, do so now.
+      const gameID = this._game?.id;
+      if (gameID) {
+        const { results } = updatedState.state;
+        if (results.length > 0) {
+          this._updatePlayerScores([...results]);
+          const mutableResults: { [playerName: string]: number } = {};
+          results.forEach(result => {
+            const player = this._occupants.find(eachPlayer => eachPlayer.id === result.player);
+            if (player) {
+              mutableResults[player.userName] = result.netCurrency;
+            }
+          });
+          this._history.push({ gameID, scores: mutableResults });
+        }
+      }
+    }
+    this._emitAreaChanged();
   }
 
   public handleCommand<CommandType extends InteractableCommand>(
@@ -43,7 +92,7 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
         playerID: player.id,
         move: command.move as BlackjackMove,
       });
-      this._emitAreaChanged();
+      this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'JoinGame') {
@@ -54,7 +103,7 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
         this._game = game;
       }
       game.join(player);
-      this._emitAreaChanged();
+      this._stateUpdated(game.toModel());
       return { gameID: game.id } as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'LeaveGame') {
@@ -66,7 +115,7 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
         throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
       }
       game.leave(player);
-      this._emitAreaChanged();
+      this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'PlaceBet') {
@@ -78,7 +127,7 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
         throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
       }
       game.placeBet(player, command.bet);
-      this._emitAreaChanged();
+      this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
