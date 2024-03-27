@@ -16,25 +16,20 @@ const { SUPABASE_KEY } = process.env;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
 
 /**
-DESIRABLE:
-I should be able to see my numeric rank out of all players who have played the game that day
-I should be able to see the currency total of the top ten players ever
-I should be able to see the currency total of the top ten players that day
-I should be able to click on an entry in the leaderboard to view more statistics, like number of games played
-
-TODO: -- change in design to:
-I should be able to see how many casino tables have been played that day
-I should be able to see how many sessions of each casino stake type have been played
-I should be able to see the currency total of the top ten players ever
-I should be able to click on an entry in the leaderboard to view more statistics, like number of games played
- */
-
-/**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
  * Errors are propogated to its user.
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
+  private static _instance: CasinoTracker;
+
+  public static getInstance(): CasinoTracker {
+    if (!CasinoTracker._instance) {
+      CasinoTracker._instance = new CasinoTracker();
+    }
+    return CasinoTracker._instance;
+  }
+
   /**
    * Retrieves all players and their updated currency balance.
    * @returns a Promise of players and their units.
