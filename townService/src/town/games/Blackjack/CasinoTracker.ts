@@ -109,6 +109,7 @@ export default class CasinoTracker {
    * @param email the email address of the user to be added.
    */
   async postUser(email: string): Promise<void> {
+    // this could also maintain a map of emails to ids
     await supabase.from('Player').insert([{ email }]);
   }
 }

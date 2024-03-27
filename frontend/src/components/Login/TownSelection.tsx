@@ -53,6 +53,7 @@ export default function TownSelection(): JSX.Element {
       if (session?.user.email) {
         casinoTracker.postUser(session.user.email);
       }
+      // session?.user.id
     });
 
     const {
