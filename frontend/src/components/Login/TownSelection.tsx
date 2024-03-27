@@ -24,6 +24,12 @@ import { Town } from '../../generated/client';
 import useLoginController from '../../hooks/useLoginController';
 import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import CasinoTracker, {
+  supabase,
+} from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -35,8 +41,35 @@ export default function TownSelection(): JSX.Element {
   const loginController = useLoginController();
   const { setTownController, townsService } = loginController;
   const { connect: videoConnect } = useVideoContext();
+  const [session, setSession] = useState<Session | null>(null);
 
   const toast = useToast();
+
+  const casinoTracker = CasinoTracker.getInstance();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      if (session?.user.email) {
+        casinoTracker.postUser(session.user.email);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
+      setSession(newSession);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const logOut = () => {
+    supabase.auth.signOut();
+    setSession(null);
+  };
 
   const updateTownListings = useCallback(() => {
     townsService.listTowns().then(towns => {
@@ -56,6 +89,14 @@ export default function TownSelection(): JSX.Element {
       let connectWatchdog: NodeJS.Timeout | undefined = undefined;
       let loadingToast: ToastId | undefined = undefined;
       try {
+        if (!session) {
+          toast({
+            title: 'Unable to join town',
+            description: 'Please log in',
+            status: 'error',
+          });
+          return;
+        }
         if (!userName || userName.length === 0) {
           toast({
             title: 'Unable to join town',
@@ -133,7 +174,7 @@ export default function TownSelection(): JSX.Element {
         }
       }
     },
-    [setTownController, userName, toast, videoConnect, loginController],
+    [setTownController, userName, toast, videoConnect, loginController, session],
   );
 
   const handleCreate = async () => {
@@ -238,6 +279,29 @@ export default function TownSelection(): JSX.Element {
     <>
       <form>
         <Stack>
+          <Box p='4' borderWidth='1px' borderRadius='lg'>
+            <Heading as='h2' size='lg'>
+              Login
+            </Heading>
+            <div>
+              {!session ? (
+                <Auth
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore (explicit any required for supabaseClient prop type)
+                  supabaseClient={supabase as any}
+                  appearance={{ theme: ThemeSupa }}
+                  providers={[]}
+                />
+              ) : (
+                <div>
+                  <h1>Logged in!</h1>
+                  <Button data-testid='logOutButton' onClick={logOut}>
+                    Log Out
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Box>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
             <Heading as='h2' size='lg'>
               Select a username
