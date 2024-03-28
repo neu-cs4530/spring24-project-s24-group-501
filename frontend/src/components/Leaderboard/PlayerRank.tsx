@@ -1,16 +1,16 @@
 import React from 'react';
-import PlayerController from '../../classes/PlayerController';
 import { playerRank } from './Scores';
 import { HStack, Text } from '@chakra-ui/react';
+import { CasinoScore } from '../../../../shared/types/CoveyTownSocket';
 
 type PlayerRankProps = {
-  player: PlayerController;
+  player: CasinoScore;
 };
 export default function PlayerRank({ player }: PlayerRankProps): JSX.Element {
   return (
     <HStack>
-      <Text>Rank: {playerRank(player.id)}</Text>
-      <Text>User: {player.userName}</Text>
+      <Text>Rank: {playerRank(player.player)}</Text>
+      <Text>Units: {player.netCurrency}</Text>
     </HStack>
   );
 }
