@@ -8,9 +8,9 @@ describe('CasinoTracker', () => {
   let getCasinoSessionsSpy: jest.SpyInstance;
   let postCasinoSessionSpy: jest.SpyInstance;
   const sampleCurrency: CasinoScore[] = [
-    { player: '1', netCurrency: 100 },
+    { player: '1', netCurrency: 300 },
     { player: '2', netCurrency: 200 },
-    { player: '3', netCurrency: 300 },
+    { player: '3', netCurrency: 100 },
   ];
   const newScoreP1: CasinoScore = { player: '1', netCurrency: 1000 };
   const sampleSessions: CasinoSession[] = [

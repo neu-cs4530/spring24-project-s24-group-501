@@ -27,7 +27,10 @@ export default class CasinoTracker {
    * @returns a Promise of players and their units.
    */
   async getPlayersCurrency(): Promise<CasinoScore[]> {
-    const response = await supabase.from('Player').select('id, balance');
+    const response = await supabase
+      .from('Player')
+      .select('id, balance')
+      .order('balance', { ascending: false });
     return (response.data ?? []).map(item => ({
       player: String(item.id) as PlayerID,
       netCurrency: item.balance as CoveyBucks,
