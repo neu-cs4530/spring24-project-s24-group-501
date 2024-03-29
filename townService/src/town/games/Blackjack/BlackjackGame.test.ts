@@ -7,7 +7,7 @@ import {
 } from '../../../lib/InvalidParametersError';
 import { createPlayerForTesting } from '../../../TestUtils';
 import { BlackjackMove, Player } from '../../../types/CoveyTownSocket';
-import BlackjackGame from './BlackJackGame';
+import BlackjackGame from './BlackjackGame';
 import Shuffler from './Shuffler';
 
 function createGameFromPattern(game: BlackjackGame, moves: BlackjackMove[]) {
