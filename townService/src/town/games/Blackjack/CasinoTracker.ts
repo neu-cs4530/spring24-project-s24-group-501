@@ -16,16 +16,19 @@ const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
 const { SUPABASE_KEY } = process.env;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
 
-
 /**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
  * Errors are propogated to its user.
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
-  private static _instance: CasinoTracker;
+  private static _instance: CasinoTracker | undefined;
 
-  public static getInstance(): CasinoTracker {
+  private constructor() {
+    CasinoTracker._instance = undefined;
+  }
+
+  public static instance(): CasinoTracker {
     if (!CasinoTracker._instance) {
       CasinoTracker._instance = new CasinoTracker();
     }

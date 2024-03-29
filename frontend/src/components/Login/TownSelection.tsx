@@ -45,7 +45,7 @@ export default function TownSelection(): JSX.Element {
 
   const toast = useToast();
 
-  const casinoTracker = CasinoTracker.getInstance();
+  const casinoTracker = CasinoTracker.instance();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
