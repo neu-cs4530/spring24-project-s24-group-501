@@ -1,5 +1,6 @@
 export const INVALID_MOVE_MESSAGE = 'Invalid move';
 export const INVALID_COMMAND_MESSAGE = 'Invalid command';
+export const INVALID_GAME_PIECE_MESSAGE = 'Invalid game piece';
 
 export const GAME_FULL_MESSAGE = 'Game is full';
 export const GAME_NOT_IN_PROGRESS_MESSAGE = 'Game is not in progress';
