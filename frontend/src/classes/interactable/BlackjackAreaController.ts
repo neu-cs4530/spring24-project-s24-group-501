@@ -1,13 +1,22 @@
-import _ from "lodash";
-import { BlackjackAction, BlackjackMove, Card, CasinoScore, CasinoState, GameArea, GameStatus, PlayerHand } from "../../../../shared/types/CoveyTownSocket";
-import GameAreaController, { GameEventTypes, NO_GAME_IN_PROGRESS_ERROR } from "./GameAreaController";
+import _ from 'lodash';
+import {
+  BlackjackAction,
+  BlackjackMove,
+  Card,
+  CasinoScore,
+  CasinoState,
+  GameArea,
+  GameStatus,
+  PlayerHand,
+} from '../../../../shared/types/CoveyTownSocket';
+import GameAreaController, { GameEventTypes, NO_GAME_IN_PROGRESS_ERROR } from './GameAreaController';
 
 export type BlackjackEvents = GameEventTypes & {
-    playerHandChanged: (hands: PlayerHand[]) => void;
-    dealerHandChanged: (cards: Card[]) => void;
-    playerChanged: (player: number) => void;
-    currencyChanged: (newUnits: CasinoScore) => void;
-  };
+  playerHandChanged: (hands: PlayerHand[]) => void;
+  dealerHandChanged: (cards: Card[]) => void;
+  playerChanged: (player: number) => void;
+  currencyChanged: (newUnits: CasinoScore) => void;
+};
 
 export default class BlackjackAreaController extends GameAreaController<
   CasinoState,
@@ -73,6 +82,7 @@ export default class BlackjackAreaController extends GameAreaController<
   }
 
   public isActive(): boolean {
+    throw new Error('Method not implemented.');
     return this._model.game?.state.hands.length !== 0;
   }
 
@@ -132,5 +142,4 @@ export default class BlackjackAreaController extends GameAreaController<
     throw new Error("Current Player Undefined");
     
   }
-
 }

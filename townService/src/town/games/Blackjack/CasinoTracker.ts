@@ -14,7 +14,8 @@ dotenv.config();
 
 const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
 const { SUPABASE_KEY } = process.env;
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
+
 
 /**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
@@ -22,6 +23,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
+  private static _instance: CasinoTracker;
+
+  public static getInstance(): CasinoTracker {
+    if (!CasinoTracker._instance) {
+      CasinoTracker._instance = new CasinoTracker();
+    }
+    return CasinoTracker._instance;
+  }
+
   /**
    * Retrieves all players and their updated currency balance.
    * @returns a Promise of players and their units.
@@ -99,5 +109,14 @@ export default class CasinoTracker {
       game: item.game as CasinoGame,
       date: item.start_date as Date,
     }));
+  }
+
+  /**
+   * Inserts the player into the database if they do not already exist.
+   * @param email the email address of the user to be added.
+   */
+  async postUser(email: string): Promise<void> {
+    // this could also maintain a map of emails to ids
+    await supabase.from('Player').insert([{ email }]);
   }
 }
