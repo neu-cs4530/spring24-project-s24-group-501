@@ -265,7 +265,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | PlaceBetCommand<CoveyBucks> | CurrencyUpdateCommand<CasinoScore>;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | PlaceBetCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -286,11 +286,7 @@ export interface GameMoveCommand<MoveType> {
   gameID: GameInstanceID;
   move: MoveType;
 }
-export interface CurrencyUpdateCommand<CasinoScore> {
-  type: 'CurrencyUpdate';
-  score: CasinoScore;
-}
-export interface PlaceBetCommand<CoveyBucks> {
+export interface PlaceBetCommand {
   type: 'PlaceBet';
   gameID: GameInstanceID;
   bet: CoveyBucks;
@@ -301,7 +297,6 @@ export type InteractableCommandReturnType<CommandType extends InteractableComman
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   CommandType extends PlaceBetCommand ? undefined :
-  CommandType extends CurrencyUpdateCommand ? undefined : // todo: remove?
   never;
 
 export type InteractableCommandResponse<MessageType> = {

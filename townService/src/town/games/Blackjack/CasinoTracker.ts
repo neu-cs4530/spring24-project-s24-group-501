@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import Player from '../../../lib/Player';
 import {
   CasinoGame,
   CasinoScore,
@@ -14,6 +15,7 @@ dotenv.config();
 const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
 const { SUPABASE_KEY } = process.env;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
+
 
 /**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
@@ -34,12 +36,17 @@ export default class CasinoTracker {
    * Retrieves all players and their updated currency balance.
    * @returns a Promise of players and their units.
    */
-  async getPlayerCurrency(): Promise<CasinoScore[]> {
+  async getPlayersCurrency(): Promise<CasinoScore[]> {
     const response = await supabase.from('Player').select('id, balance');
     return (response.data ?? []).map(item => ({
       player: String(item.id) as PlayerID,
       netCurrency: item.balance as CoveyBucks,
     })) as CasinoScore[];
+  }
+
+  async getPlayerCurrency(player: Player): Promise<CasinoScore> {
+    const response = await this.getPlayersCurrency();
+    return response.filter(score => score.player === player.id)[0];
   }
 
   /**
@@ -59,7 +66,7 @@ export default class CasinoTracker {
 
     await Promise.all(scores);
 
-    return (await this.getPlayerCurrency()).filter(fullScore =>
+    return (await this.getPlayersCurrency()).filter(fullScore =>
       scores.map(updatedScore => updatedScore.player).includes(fullScore.player),
     );
   }
