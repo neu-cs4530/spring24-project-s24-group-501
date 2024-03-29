@@ -1,7 +1,7 @@
 import React from 'react';
-import { playerRank } from './Scores';
 import { HStack, Text } from '@chakra-ui/react';
 import { CasinoScore } from '../../../../shared/types/CoveyTownSocket';
+import { playerRank } from './Scores';
 
 type PlayerRankProps = {
   player: CasinoScore;
