@@ -26,10 +26,9 @@ import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
-import CasinoTracker, {
-  supabase,
-} from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
+import { supabase } from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import CasinoTrackerFactory from '../../../../townService/src/town/games/Blackjack/CasinoTrackerFactory';
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -45,7 +44,7 @@ export default function TownSelection(): JSX.Element {
 
   const toast = useToast();
 
-  const casinoTracker = CasinoTracker.instance();
+  const casinoTracker = CasinoTrackerFactory.instance();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {

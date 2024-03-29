@@ -1,5 +1,6 @@
 import CasinoTracker from './CasinoTracker';
 import { CasinoScore, CasinoSession } from '../../../types/CoveyTownSocket';
+import CasinoTrackerFactory from './CasinoTrackerFactory';
 
 describe('CasinoTracker', () => {
   let dbConnection: CasinoTracker;
@@ -27,7 +28,7 @@ describe('CasinoTracker', () => {
   };
 
   beforeEach(() => {
-    dbConnection = new CasinoTracker();
+    dbConnection = CasinoTrackerFactory.instance();
     getCurrencySpy = jest.spyOn(dbConnection, 'getPlayerCurrency');
     putPlayerScoresSpy = jest.spyOn(dbConnection, 'putPlayerScores');
     getCasinoSessionsSpy = jest.spyOn(dbConnection, 'getCasinoSessions');

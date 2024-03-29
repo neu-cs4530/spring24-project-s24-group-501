@@ -22,19 +22,6 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
-  private static _instance: CasinoTracker | undefined;
-
-  private constructor() {
-    CasinoTracker._instance = undefined;
-  }
-
-  public static instance(): CasinoTracker {
-    if (!CasinoTracker._instance) {
-      CasinoTracker._instance = new CasinoTracker();
-    }
-    return CasinoTracker._instance;
-  }
-
   /**
    * Retrieves all players and their updated currency balance.
    * @returns a Promise of players and their units.

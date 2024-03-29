@@ -18,6 +18,7 @@ import {
 import GameArea from '../GameArea';
 import BlackjackGame from './BlackjackGame';
 import CasinoTracker from './CasinoTracker';
+import CasinoTrackerFactory from './CasinoTrackerFactory';
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
@@ -31,7 +32,7 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
 
   public constructor(id: string, rect: BoundingBox, townEmitter: TownEmitter) {
     super(id, rect, townEmitter);
-    this._casinoTracker = new CasinoTracker();
+    this._casinoTracker = CasinoTrackerFactory.instance();
   }
 
   protected getType(): InteractableType {
