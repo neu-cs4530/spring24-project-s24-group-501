@@ -26,9 +26,9 @@ import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabase } from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
+import { supabase } from '../../authentication/PlayerTracker';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import CasinoTrackerFactory from '../../../../townService/src/town/games/Blackjack/CasinoTrackerFactory';
+import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -41,24 +41,31 @@ export default function TownSelection(): JSX.Element {
   const { setTownController, townsService } = loginController;
   const { connect: videoConnect } = useVideoContext();
   const [session, setSession] = useState<Session | null>(null);
+  const [playerID, setPlayerID] = useState<string>('');
 
   const toast = useToast();
 
-  const casinoTracker = CasinoTrackerFactory.instance();
+  const playerTracker = PlayerTrackerFactory.instance();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (session?.user.email) {
-        casinoTracker.postUser(session.user.email);
+        playerTracker.handleUser(session.user.email).then(playerID => {
+          setPlayerID(playerID);
+        });
       }
-      // session?.user.id
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
       setSession(newSession);
+      if (session?.user.email) {
+        playerTracker.handleUser(session.user.email).then(playerID => {
+          setPlayerID(playerID);
+        });
+      }
     });
 
     return () => {
