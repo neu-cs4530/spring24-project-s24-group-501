@@ -5,8 +5,8 @@ import { CoveyBucks, PlayerID } from '../../../shared/types/CoveyTownSocket';
 dotenv.config();
 
 const SUPABASE_URL = 'https://domiwhhznvhnvxdfptjp.supabase.co';
-const { SUPABASE_KEY } = process.env;
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
+const { NEXT_PUBLIC_SUPABASE_KEY } = process.env;
+export const supabase = createClient(SUPABASE_URL, NEXT_PUBLIC_SUPABASE_KEY || '');
 
 /**
  * A PlayerTracker is used to perist player accounts in CoveyTown using a database service.
