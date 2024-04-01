@@ -48,30 +48,38 @@ export default function TownSelection(): JSX.Element {
   const playerTracker = PlayerTrackerFactory.instance();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      if (session?.user.email) {
-        playerTracker.handleUser(session.user.email).then(playerID => {
-          setPlayerID(playerID);
-        });
-      }
-    });
+    const fetchSession = async () => {
+        const { data: session, error } = await supabase.auth.getSession();
+        if (session) {
+            setSession(session.session);
+            if (session.session?.user?.email) {
+                const playerID = await playerTracker.handleUser(session.session.user.email);
+                setPlayerID(playerID);
+            }
+        }
+    };
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
-      setSession(newSession);
-      if (session?.user.email) {
-        playerTracker.handleUser(session.user.email).then(playerID => {
-          setPlayerID(playerID);
-        });
-      }
+    fetchSession();
+
+    const authListener = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
+        if (newSession) {
+            setSession(newSession);
+            if (newSession.user?.email) {
+                playerTracker.handleUser(newSession.user.email).then(playerID => {
+                    setPlayerID(playerID);
+                });
+            }
+        } else {
+            setSession(null);
+            setPlayerID('');
+        }
     });
 
     return () => {
-      subscription.unsubscribe();
+        authListener.data.subscription.unsubscribe();
     };
-  }, []);
+}, []);
+
 
   const logOut = () => {
     supabase.auth.signOut();
@@ -96,14 +104,14 @@ export default function TownSelection(): JSX.Element {
       let connectWatchdog: NodeJS.Timeout | undefined = undefined;
       let loadingToast: ToastId | undefined = undefined;
       try {
-        if (!session) {
-          toast({
-            title: 'Unable to join town',
-            description: 'Please log in',
-            status: 'error',
-          });
-          return;
-        }
+        // if (!session) {
+        //   toast({
+        //     title: 'Unable to join town',
+        //     description: 'Please log in',
+        //     status: 'error',
+        //   });
+        //   return;
+        // }
         if (!userName || userName.length === 0) {
           toast({
             title: 'Unable to join town',
@@ -297,7 +305,8 @@ export default function TownSelection(): JSX.Element {
                   // @ts-ignore (explicit any required for supabaseClient prop type)
                   supabaseClient={supabase as any}
                   appearance={{ theme: ThemeSupa }}
-                  providers={[]}
+                  providers={['google', 'github']}
+                  redirectTo="current"
                 />
               ) : (
                 <div>

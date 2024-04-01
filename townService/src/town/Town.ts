@@ -6,7 +6,7 @@ import IVideoClient from '../lib/IVideoClient';
 import Player from '../lib/Player';
 import TwilioVideo from '../lib/TwilioVideo';
 import { isViewingArea } from '../TestUtils';
-import CasinoArea from '../interactables/CasinoArea';
+// import CasinoArea from '../interactables/CasinoArea';
 import {
   ChatMessage,
   ConversationArea as ConversationAreaModel,
@@ -312,7 +312,7 @@ export default class Town {
     return true;
   }
 
-   /**
+  /**
    * Creates a new conversation area in this town if there is not currently an active
    * conversation with the same ID. The conversation area ID must match the name of a
    * conversation area that exists in this town's map, and the conversation area must not
@@ -329,18 +329,16 @@ export default class Town {
    * conversation area with the specified ID or if there is already an active conversation area
    * with the specified ID
    */
-   public addCasinoArea(casinoArea: CasinoArea): boolean {
-    const area = this._interactables.find(
-      eachArea => eachArea.id === casinoArea.id,
-    ) as CasinoArea;
-    if (!area || !casinoArea.topic || area.topic) {
-      return false;
-    }
-    area.topic = casinoArea.topic;
-    area.addPlayersWithinBounds(this._players);
-    this._broadcastEmitter.emit('interactableUpdate', area.toModel());
-    return true;
-  }
+  // public addCasinoArea(casinoArea: CasinoArea): boolean {
+  //   const area = this._interactables.find(eachArea => eachArea.id === casinoArea.id) as CasinoArea;
+  //   if (!area || !casinoArea.topic || area.topic) {
+  //     return false;
+  //   }
+  //   area.topic = casinoArea.topic;
+  //   area.addPlayersWithinBounds(this._players);
+  //   this._broadcastEmitter.emit('interactableUpdate', area.toModel());
+  //   return true;
+  // }
 
   /**
    * Creates a new viewing area in this town if there is not currently an active
