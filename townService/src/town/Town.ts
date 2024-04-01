@@ -6,6 +6,7 @@ import IVideoClient from '../lib/IVideoClient';
 import Player from '../lib/Player';
 import TwilioVideo from '../lib/TwilioVideo';
 import { isViewingArea } from '../TestUtils';
+import CasinoArea from '../interactables/CasinoArea';
 import {
   ChatMessage,
   ConversationArea as ConversationAreaModel,
@@ -306,6 +307,36 @@ export default class Town {
       return false;
     }
     area.topic = conversationArea.topic;
+    area.addPlayersWithinBounds(this._players);
+    this._broadcastEmitter.emit('interactableUpdate', area.toModel());
+    return true;
+  }
+
+   /**
+   * Creates a new conversation area in this town if there is not currently an active
+   * conversation with the same ID. The conversation area ID must match the name of a
+   * conversation area that exists in this town's map, and the conversation area must not
+   * already have a topic set.
+   *
+   * If successful creating the conversation area, this method:
+   *  Adds any players who are in the region defined by the conversation area to it.
+   *  Notifies all players in the town that the conversation area has been updated
+   *
+   * @param conversationArea Information describing the conversation area to create. Ignores any
+   *  occupantsById that are set on the conversation area that is passed to this method.
+   *
+   * @returns true if the conversation is successfully created, or false if there is no known
+   * conversation area with the specified ID or if there is already an active conversation area
+   * with the specified ID
+   */
+   public addCasinoArea(casinoArea: CasinoArea): boolean {
+    const area = this._interactables.find(
+      eachArea => eachArea.id === casinoArea.id,
+    ) as CasinoArea;
+    if (!area || !casinoArea.topic || area.topic) {
+      return false;
+    }
+    area.topic = casinoArea.topic;
     area.addPlayersWithinBounds(this._players);
     this._broadcastEmitter.emit('interactableUpdate', area.toModel());
     return true;
