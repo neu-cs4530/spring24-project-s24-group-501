@@ -66,6 +66,14 @@ export default class BlackjackAreaController extends GameAreaController<
     return this._model.game?.state.currentPlayer;
   }
 
+  /**
+   * Returns true if the current player is a player in this game
+   */
+  get isPlayer(): boolean {
+    return this._model.game?.players.includes(this._townController.ourPlayer.id) || false;
+  }
+
+
   /** 
    * Reurns every players results in the game
    * This is a list of every player and their total net profit/loss in Covey Bucks
