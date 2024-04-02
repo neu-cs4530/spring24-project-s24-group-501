@@ -6,7 +6,7 @@ import IVideoClient from '../lib/IVideoClient';
 import Player from '../lib/Player';
 import TwilioVideo from '../lib/TwilioVideo';
 import { isViewingArea } from '../TestUtils';
-// import CasinoArea from '../interactables/CasinoArea';
+//import CasinoArea from '../../../frontend/src/Components/Town/interactables/CasinoArea';
 import {
   ChatMessage,
   ConversationArea as ConversationAreaModel,
@@ -24,6 +24,7 @@ import ConversationArea from './ConversationArea';
 import GameAreaFactory from './games/GameAreaFactory';
 import InteractableArea from './InteractableArea';
 import ViewingArea from './ViewingArea';
+import CasinoArea from './CasinoArea';
 
 /**
  * The Town class implements the logic for each town: managing the various events that
@@ -312,33 +313,35 @@ export default class Town {
     return true;
   }
 
-  /**
-   * Creates a new conversation area in this town if there is not currently an active
-   * conversation with the same ID. The conversation area ID must match the name of a
-   * conversation area that exists in this town's map, and the conversation area must not
+   /**
+   * Creates a new casino area in this town if there is not currently an active
+   * casino with the same ID. The casino area ID must match the name of a
+   * casino area that exists in this town's map, and the casino area must not
    * already have a topic set.
    *
-   * If successful creating the conversation area, this method:
-   *  Adds any players who are in the region defined by the conversation area to it.
-   *  Notifies all players in the town that the conversation area has been updated
+   * If successful creating the casino area, this method:
+   *  Adds any players who are in the region defined by the casino area to it.
+   *  Notifies all players in the town that the casino area has been updated
    *
-   * @param conversationArea Information describing the conversation area to create. Ignores any
-   *  occupantsById that are set on the conversation area that is passed to this method.
+   * @param CasinoArea Information describing the casino area to create. Ignores any
+   *  occupantsById that are set on the casino area that is passed to this method.
    *
-   * @returns true if the conversation is successfully created, or false if there is no known
-   * conversation area with the specified ID or if there is already an active conversation area
+   * @returns true if the casino is successfully created, or false if there is no known
+   * casino area with the specified ID or if there is already an active casino area
    * with the specified ID
    */
-  // public addCasinoArea(casinoArea: CasinoArea): boolean {
-  //   const area = this._interactables.find(eachArea => eachArea.id === casinoArea.id) as CasinoArea;
-  //   if (!area || !casinoArea.topic || area.topic) {
-  //     return false;
-  //   }
-  //   area.topic = casinoArea.topic;
-  //   area.addPlayersWithinBounds(this._players);
-  //   this._broadcastEmitter.emit('interactableUpdate', area.toModel());
-  //   return true;
-  // }
+   public addCasinoArea(casinoArea: CasinoArea): boolean {
+    const area = this._interactables.find(
+      eachArea => eachArea.id === casinoArea.id
+    ) as unknown as CasinoArea;
+    if (!area || !casinoArea.topic || area.topic) {
+      return false;
+    }
+    area.topic = casinoArea.topic;
+    area.addPlayersWithinBounds(this._players);
+    this._broadcastEmitter.emit('interactableUpdate', area.toModel());
+    return true;
+  }
 
   /**
    * Creates a new viewing area in this town if there is not currently an active
