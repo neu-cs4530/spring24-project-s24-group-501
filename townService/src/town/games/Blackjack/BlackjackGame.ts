@@ -178,6 +178,8 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
       active: false,
     });
     this.state.status = 'IN_PROGRESS';
+    //Add player to results
+    this.state.results = [...this.state.results, {player:player.id,netCurrency: player.getUnits}]
 
   }
 
@@ -225,6 +227,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
     this.state = {
       ...this.state,
       hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
+      results: this.state.results.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
     };
 
     if (this.state.hands.length === 0) {
