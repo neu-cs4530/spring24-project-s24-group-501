@@ -90,7 +90,7 @@ export default class BlackjackAreaController extends GameAreaController<
   }
 
   public isActive(): boolean {
-    throw new Error('Method not implemented.');
+    
     return this._model.game?.state.hands.length !== 0;
   }
 

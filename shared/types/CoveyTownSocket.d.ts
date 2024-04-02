@@ -63,6 +63,9 @@ export type ChatMessage = {
 export interface ConversationArea extends Interactable {
   topic?: string;
 };
+
+
+
 export interface BoundingBox {
   x: number;
   y: number;
@@ -242,6 +245,8 @@ export interface GameArea<T extends GameState> extends Interactable {
   game: GameInstance<T> | undefined;
   history: GameResult[];
 }
+
+
 
 export type CommandID = string;
 

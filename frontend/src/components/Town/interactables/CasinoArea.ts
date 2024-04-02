@@ -2,6 +2,8 @@ import Interactable, { KnownInteractableTypes } from '../Interactable';
 
 export default class CasinoArea extends Interactable {
   private _isInteracting = false;
+  /* The topic of the conversation area, or undefined if it is not set */
+  public topic?: string;
 
   addedToScene() {
     super.addedToScene();
