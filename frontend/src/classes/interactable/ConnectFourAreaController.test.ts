@@ -24,11 +24,10 @@ describe('ConnectFourAreaController', () => {
     y: 0,
     moving: false,
     rotation: 'front',
-
-  },0);
+  });
   const otherPlayers = [
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' },0),
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' },0),
+    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
+    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
   ];
 
   const mockTownController = mock<TownController>();
