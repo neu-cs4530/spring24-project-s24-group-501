@@ -6,6 +6,7 @@ import SocialSidebar from '../SocialSidebar/SocialSidebar';
 import NewConversationModal from './interactables/NewCoversationModal';
 import TownGameScene from './TownGameScene';
 import GameAreaWrapper from './interactables/GamesArea';
+import CasinoAreaWrapper from './interactables/CasinosArea';
 import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
 import ChatWindow from '../VideoCall/VideoFrontend/components/ChatWindow/ChatWindow';
 import clsx from 'clsx';
@@ -85,6 +86,7 @@ export default function TownMap(): JSX.Element {
     <div id='app-container'>
       <NewConversationModal />
       <GameAreaWrapper />
+      <CasinoAreaWrapper/>
       <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen })}>
         <ChatWindow />
       </aside>

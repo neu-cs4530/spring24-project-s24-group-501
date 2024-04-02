@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
 
-  CasinoState,
+  GameState,
   InteractableID,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
@@ -11,7 +11,7 @@ import InteractableAreaController, {
   GAME_AREA_TYPE,
 } from './InteractableAreaController';
 
-export type GenericCasinoAreaController = CasinoAreaController<CasinoState, CasinoEventTypes>;
+export type GenericCasinoAreaController = CasinoAreaController<GameState, CasinoEventTypes>;
 
 export type CasinoEventTypes = BaseInteractableEventMap & {
   casinoStart: () => void;

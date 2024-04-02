@@ -9,6 +9,7 @@ import TypedEmitter from 'typed-emitter';
 import Interactable from '../components/Town/Interactable';
 import ConversationArea from '../components/Town/interactables/ConversationArea';
 import GameArea from '../components/Town/interactables/GameArea';
+import CasinoArea from '../components/Town/interactables/CasinoArea';
 import ViewingArea from '../components/Town/interactables/ViewingArea';
 import { LoginController } from '../contexts/LoginControllerContext';
 import { TownsService, TownsServiceClient } from '../generated/client';
@@ -44,7 +45,7 @@ import InteractableAreaController, {
 import TicTacToeAreaController from './interactable/TicTacToeAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
-import CasinoAreaController from './interactable/CasinoAreaController';
+import CasinoAreaController, { CasinoEventTypes } from './interactable/CasinoAreaController';
 import BlackjackAreaController from './interactable/BlackjackAreaController';
 
 const CALCULATE_NEARBY_PLAYERS_DELAY_MS = 300;
@@ -701,13 +702,16 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     }
   }
 
-  /**
-   * Emit a viewing area update to the townService
-   * @param viewingArea The Viewing Area Controller that is updated and should be emitted
-   *    with the event
-   */
-  public emitViewingAreaUpdate(viewingArea: ViewingAreaController) {
-    this._socket.emit('interactableUpdate', viewingArea.toInteractableAreaModel());
+
+  public getCasinoAreaController(casinoArea: CasinoArea): CasinoAreaController<GameState, CasinoEventTypes>{
+    const existingController = this._interactableControllers.find(
+      eachExistingArea => eachExistingArea.id === casinoArea.name,
+    );
+    if (existingController instanceof CasinoAreaController) {
+      return existingController as CasinoAreaController<GameState, CasinoEventTypes>;
+    } else {
+      throw new Error('Casino area controller not created');
+    }
   }
 
   /**

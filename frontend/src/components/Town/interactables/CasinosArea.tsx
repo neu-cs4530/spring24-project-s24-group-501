@@ -22,11 +22,8 @@ import {
   import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
   import useTownController from '../../../hooks/useTownController';
   import {  InteractableID } from '../../../types/CoveyTownSocket';
-  import ChatChannel from './ChatChannel';
-  import ConnectFourArea from './ConnectFour/ConnectFourArea';
   import CasinoAreaInteractable from './CasinoArea';
   import Leaderboard from './Leaderboard';
-  import TicTacToeArea from './TicTacToe/TicTacToeArea';
   
   export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid casino area type';
   
@@ -58,6 +55,8 @@ import {
         casinoAreaController.removeListener('casinoUpdated', updateCasinoState);
       };
     }, [townController, casinoAreaController]);
+
+    
     return (
       <>
         <Accordion allowToggle>
