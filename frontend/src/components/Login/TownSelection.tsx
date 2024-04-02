@@ -146,6 +146,7 @@ export default function TownSelection(): JSX.Element {
           }
         }, 1000);
         setIsJoining(true);
+        await playerTracker.handleUser(user?.email || '');
         const newController = new TownController({
           userName,
           townID: coveyRoomID,

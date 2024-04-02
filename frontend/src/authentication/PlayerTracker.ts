@@ -20,9 +20,16 @@ export default class PlayerTracker {
    * @returns a Promise of the player's ID.
    */
   async handleUser(email: string): Promise<PlayerID> {
-    const response = await supabase.from('Player').insert([{ email: email, balance: 1000 }]).select();
-    if (response.data) {
-        return response.data[0].id as PlayerID;
+    const get_response = await supabase.from('Player').select().eq('email', email);
+    // If the player already exists, return their ID.
+    if (get_response.data) {
+        return get_response.data[0].id as PlayerID;
+    }
+    
+    // Otherwise, insert the player into the database.
+    const insert_response = await supabase.from('Player').insert([{ email: email, balance: 1000 }]).select();
+    if (insert_response.data) {
+        return insert_response.data[0].id as PlayerID;
     }
     throw new Error('Communication with database failed');
   }
@@ -34,6 +41,15 @@ export default class PlayerTracker {
    */
   async getPlayerCurrency(id: PlayerID): Promise<CoveyBucks> {
     const response = await supabase.from('Player').select('balance').eq('id', id).select();
-    return response.data ? response.data[0].balance as CoveyBucks : 0;
+    return response.data ? (response.data[0].balance as CoveyBucks) : 0;
+  }
+
+  /**
+   * Updates the player's id to be in sync with the townService.
+   * @param email the existing player's email
+   * @param id the player's new id
+   */
+  async updatePlayerID(email: string, id: PlayerID): Promise<void> {
+    await supabase.from('Player').update({ id: id }).eq('email', email);
   }
 }
