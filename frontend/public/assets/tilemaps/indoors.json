@@ -593,24 +593,7 @@
                  "width":152.223260782481,
                  "x":3043.12992388837,
                  "y":1061.55695019362
-                }, 
-                {
-                 "height":0,
-                 "id":49,
-                 "name":"Blackjack 2",
-                 "properties":[
-                     {
-                      "name":"type",
-                      "type":"string",
-                      "value":"Blackjack"
-                     }],
-                 "rotation":0,
-                 "type":"CasinoArea",
-                 "visible":false,
-                 "width":1.33529176124966,
-                 "x":3296.83535852584,
-                 "y":1068.23340899987
-                }, 
+                },  
                 {
                  "height":182.995,
                  "id":52,
@@ -644,23 +627,6 @@
                  "width":136,
                  "x":711.166853303471,
                  "y":462.624860022396
-                }, 
-                {
-                 "height":185.333,
-                 "id":64,
-                 "name":"Blackjack 2",
-                 "properties":[
-                     {
-                      "name":"type",
-                      "type":"string",
-                      "value":"Blackjack"
-                     }],
-                 "rotation":0,
-                 "type":"CasinoArea",
-                 "visible":true,
-                 "width":136,
-                 "x":860.500186636805,
-                 "y":469.958360022396
                 }],
          "offsetx":-7.16685330347144,
          "offsety":5.37513997760357,

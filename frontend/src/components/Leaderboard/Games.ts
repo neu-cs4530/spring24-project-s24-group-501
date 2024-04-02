@@ -1,5 +1,5 @@
 import { CasinoGame, CasinoSession } from "../../../../shared/types/CoveyTownSocket";
-import CasinoTracker from "../../../../townService/src/town/games/Blackjack/CasinoTracker";
+import CasinoTracker from "../../../../townService/src/town/casino/CasinoTracker";
 
 /**
  * Fetches the casino games available in CoveyTown

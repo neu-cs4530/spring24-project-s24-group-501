@@ -4,8 +4,8 @@ import {
   BlackjackMove,
   Card,
   CasinoScore,
-  CasinoState,
   GameArea,
+  BlackjackCasinoState,
   GameStatus,
   PlayerHand,
 } from '../../../../shared/types/CoveyTownSocket';
@@ -19,7 +19,7 @@ export type BlackjackEvents = GameEventTypes & {
 };
 
 export default class BlackjackAreaController extends GameAreaController<
-  CasinoState,
+  BlackjackCasinoState,
   BlackjackEvents
 > {
   protected _hands: PlayerHand[] = [];

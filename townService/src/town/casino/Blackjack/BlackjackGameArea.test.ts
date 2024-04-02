@@ -6,7 +6,7 @@ import {
   INVALID_COMMAND_MESSAGE,
 } from '../../../lib/InvalidParametersError';
 import Player from '../../../lib/Player';
-import Game from '../Game';
+import Game from '../../games/Game';
 import BlackjackGameArea from './BlackjackGameArea';
 import * as BlackjackGameModule from './BlackjackGame';
 import { createPlayerForTesting } from '../../../TestUtils';
@@ -19,7 +19,7 @@ import {
   GameMove,
   TownEmitter,
 } from '../../../types/CoveyTownSocket';
-import Shuffler from './Shuffler';
+import Shuffler from '../Shuffler';
 
 jest.setTimeout(70000); // in milliseconds
 

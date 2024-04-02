@@ -15,10 +15,10 @@ import {
   InteractableType,
   TownEmitter,
 } from '../../../types/CoveyTownSocket';
-import GameArea from '../GameArea';
+import GameArea from '../../games/GameArea';
 import BlackjackGame from './BlackjackGame';
-import CasinoTracker from './CasinoTracker';
-import CasinoTrackerFactory from './CasinoTrackerFactory';
+import CasinoTracker from '../CasinoTracker';
+import CasinoTrackerFactory from '../CasinoTrackerFactory';
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.

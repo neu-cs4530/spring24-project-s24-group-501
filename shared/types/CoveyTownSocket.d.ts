@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'CasinoArea' | 'BlackjackArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea' | 'BlackjackArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -166,14 +166,19 @@ export type ConnectFourColIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export type ConnectFourColor = 'Red' | 'Yellow';
 
-export interface CasinoState extends GameState {
+
+/**
+ * Type for the state of a Blackjack game
+ * 
+ */
+export interface BlackjackCasinoState extends GameState {
   hands: PlayerHand[]; 
   currentPlayer: number;
   dealerHand: Card[];
-  shuffler: shuffler;
-  results: ReadonlyArray<CasinoScore>;
-  wantsToLeave: PlayerID[]
+  // shuffler: shuffler;
+  wantsToLeave: PlayerID[];
 }
+
 
 export interface PlayerHand {
   player: PlayerID;
@@ -246,7 +251,26 @@ export interface GameArea<T extends GameState> extends Interactable {
   history: GameResult[];
 }
 
+/**
+ * Base type for an *instance* of a casino. An instance of a casino
+ * consists of the present state of the casino (which can change over time),
+ * the players in the casino,
+ * @see Casino
+ */
+export interface CasinoInstance<T extends GameState> {
+  state: T;
+  id: GameInstanceID;
+  players: PlayerID[];
+}
 
+
+/**
+ * Base type for an area that can host a casino
+ * @see CasinoInstance
+ */
+export interface CasinoArea<T extends GameState> extends Interactable {
+  casino: CasinoInstance<T> | undefined;
+}
 
 export type CommandID = string;
 

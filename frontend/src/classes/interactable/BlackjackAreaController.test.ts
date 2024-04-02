@@ -5,7 +5,7 @@ import BlackjackAreaController from "./BlackjackAreaController";
 import { nanoid } from 'nanoid';
 import { mock } from 'jest-mock-extended';
 import assert from 'assert';
-import Shuffler from "../../../../townService/src/town/games/Blackjack/Shuffler";
+import Shuffler from "../../../../townService/src/town/casino/Shuffler";
 
 describe('BlackjackAreaController'  , () => {
     const ourPlayer = new PlayerController(nanoid(), nanoid(), {

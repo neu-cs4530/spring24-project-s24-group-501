@@ -1,5 +1,5 @@
-import { INVALID_SHUFFLER_STATE_MESSAGE } from '../../../lib/InvalidParametersError';
-import { Card, NumberValue, FaceValue, Suit } from '../../../types/CoveyTownSocket';
+import { INVALID_SHUFFLER_STATE_MESSAGE } from '../../lib/InvalidParametersError';
+import { Card, NumberValue, FaceValue, Suit } from '../../types/CoveyTownSocket';
 
 export default class Shuffler {
   private _deck: Card[];

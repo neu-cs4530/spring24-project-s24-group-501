@@ -13,8 +13,8 @@ import {
   CoveyBucks,
   GameMove,
 } from '../../../types/CoveyTownSocket';
-import Game from '../Game';
-import Shuffler from './Shuffler';
+import Game from '../../games/Game';
+import Shuffler from '../Shuffler';
 
 const MAX_PLAYERS = 4;
 
@@ -118,9 +118,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
     if (this.state.hands.filter(p => p.active).length === 0) {
       this.state.currentPlayer = 0;
       this._overHandler();
-      
     }
-    
   }
 
   /**
@@ -178,9 +176,11 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
       active: false,
     });
     this.state.status = 'IN_PROGRESS';
-    //Add player to results
-    this.state.results = [...this.state.results, {player:player.id,netCurrency: player.getUnits}]
-
+    // Add player to results
+    this.state.results = [
+      ...this.state.results,
+      { player: player.id, netCurrency: player.getUnits },
+    ];
   }
 
   /**
