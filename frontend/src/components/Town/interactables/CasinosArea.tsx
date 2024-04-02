@@ -47,6 +47,8 @@ import {
     const townController = useTownController();
     const [observers, setObservers] = useState<PlayerController[]>(casinoAreaController.observers);
     useEffect(() => {
+
+      console.log('casinoAreaController', casinoAreaController.toInteractableAreaModel().type)
       const updateCasinoState = () => {
         setObservers(casinoAreaController.observers);
       };
@@ -93,7 +95,7 @@ import {
         </Accordion>
         <Flex>
           <Box>
-            {casinoAreaController.toInteractableAreaModel().type === 'Blackjack' ? (
+            {casinoAreaController.toInteractableAreaModel().type === 'BlackjackArea' ? (
               <div>Black Jack Wack</div>
             )  : (
               <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>
