@@ -172,7 +172,7 @@ export type ConnectFourColor = 'Red' | 'Yellow';
  * 
  */
 export interface BlackjackCasinoState extends GameState {
-  hands: PlayerHand[]; 
+  hands: BlackjackPlayer[]; 
   currentPlayer: number;
   dealerHand: Card[];
   results: CasinoScore[];
@@ -181,10 +181,10 @@ export interface BlackjackCasinoState extends GameState {
 }
 
 
-export interface PlayerHand {
+export interface BlackjackPlayer {
   player: PlayerID;
-  hand: Card[];
-  ante: CoveyBucks;
+  hands: Hand[];
+  currentHand: number;
   active: boolean;
 }
 
@@ -214,6 +214,12 @@ export interface Card {
   type: Suit;
   value: NumberValue | FaceValue;
   faceUp: boolean;
+}
+
+export interface Hand {
+  cards: Card[];
+  wager: CoveyBucks;
+  // active: 
 }
 
 export type BlackjackAction = 'Hit' | 'Stand' | 'Split' | 'Double Down';

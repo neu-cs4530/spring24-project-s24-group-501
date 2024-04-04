@@ -29,11 +29,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._id = id;
     this._userName = userName;
     this._location = location;
-    this._units = 0;
+    this._units = units;
     PlayerTrackerFactory.instance()
       .getPlayerCurrency(id)
-      .then(units => {
-        this._units = units;
+      .then(updatedUnits => {
+        this._units = updatedUnits;
       });
   }
 

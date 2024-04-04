@@ -28,8 +28,7 @@ export default class CasinoTracker {
 
   /**
    * Updates the player's balance to reflect the net change.
-   * @param id the player's id
-   * @param netCurrency the player's change to their currency balance, can be positive or negative
+   * @param playerScore the player and their net currency change, either positive or negative
    * @returns a Promise of the player's updated balance or 0 if the player does not exist.
    */
   async putPlayerCurrency(playerScore: CasinoScore): Promise<CoveyBucks> {

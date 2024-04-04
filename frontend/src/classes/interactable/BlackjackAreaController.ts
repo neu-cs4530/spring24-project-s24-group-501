@@ -7,12 +7,15 @@ import {
   GameArea,
   BlackjackCasinoState,
   GameStatus,
-  PlayerHand,
+  BlackjackPlayer,
 } from '../../../../shared/types/CoveyTownSocket';
-import GameAreaController, { GameEventTypes, NO_GAME_IN_PROGRESS_ERROR } from './GameAreaController';
+import GameAreaController, {
+  GameEventTypes,
+  NO_GAME_IN_PROGRESS_ERROR,
+} from './GameAreaController';
 
 export type BlackjackEvents = GameEventTypes & {
-  playerHandChanged: (hands: PlayerHand[]) => void;
+  playerHandChanged: (hands: BlackjackPlayer[]) => void;
   dealerHandChanged: (dealerHandCards: Card[]) => void;
   playerChanged: (player: number) => void;
   wantsToLeaveChanged: (wantsToLeave: string[]) => void;
@@ -22,49 +25,51 @@ export default class BlackjackAreaController extends GameAreaController<
   BlackjackCasinoState,
   BlackjackEvents
 > {
-  protected _hands: PlayerHand[] = [];
+  protected _hands: BlackjackPlayer[] = [];
+
   protected _wantsToLeave: string[] = [];
+
   protected _dealerHand: Card[] = [];
-   /**
+
+  /**
    * Returns the current state of the tables hands.
    *
    * The table has at most 4 players, each with their own hands of cards
    *
    * 1 dimensional array
    */
-  get hands(): PlayerHand[] | undefined  {
+  get hands(): BlackjackPlayer[] | undefined {
     return this._model.game?.state.hands;
   }
 
   /**
-  * Returns the current state of the Dealers hand.
-  *
-  * The table competes against the dealer
-  *
-  * 1 dimensional array
-  */
+   * Returns the current state of the Dealers hand.
+   *
+   * The table competes against the dealer
+   *
+   * 1 dimensional array
+   */
   get dealerHand(): Card[] | undefined {
     return this._model.game?.state.dealerHand;
   }
 
+  /**
+   * Returns the status of the game
+   * If there is no game, returns 'WAITING_FOR_PLAYERS'
+   */
+  get status(): GameStatus {
+    const status = this._model.game?.state.status;
+    if (!status) {
+      return 'WAITING_FOR_PLAYERS';
+    }
+    return status;
+  }
 
   /**
-  * Returns the status of the game
-  * If there is no game, returns 'WAITING_FOR_PLAYERS'
-  */
-  get status(): GameStatus {
-  const status = this._model.game?.state.status;
-  if (!status) {
-    return 'WAITING_FOR_PLAYERS';
-  }
-  return status;
-  }
-
-  /** 
    * Returns the current player who is going
    * Number representing the index in the list of hands
    */
-  get currentPlayer() : number | undefined{
+  get currentPlayer(): number | undefined {
     return this._model.game?.state.currentPlayer;
   }
 
@@ -75,24 +80,22 @@ export default class BlackjackAreaController extends GameAreaController<
     return this._model.game?.players.includes(this._townController.ourPlayer.id) || false;
   }
 
-
-  /** 
+  /**
    * Reurns every players results in the game
    * This is a list of every player and their total net profit/loss in Covey Bucks
    */
-  get results() : readonly CasinoScore[] | undefined{
+  get results(): readonly CasinoScore[] | undefined {
     return this._model.game?.state.results;
   }
 
   /**
    * List of all the ID's of players who want to leave the game
    */
-  get whoWantsToLeave() : string[] | undefined {
+  get whoWantsToLeave(): string[] | undefined {
     return this._model.game?.state.wantsToLeave;
   }
 
   public isActive(): boolean {
-    
     return this._model.game?.state.hands.length !== 0;
   }
 
@@ -105,49 +108,49 @@ export default class BlackjackAreaController extends GameAreaController<
    * If the hands has changed, emits a boardChanged event with the new board.
    * If the hands has not changed, does not emit a boardChanged event.
    *
-   * If the turn has changed, emits a turnChanged event with the new turn 
+   * If the turn has changed, emits a turnChanged event with the new turn
    * If the turn has not changed, does not emit a turnChanged event.
    */
-    protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
-      const whoTurn = this.currentPlayer;
-      super._updateFrom(newModel);
-      const newGame = newModel.game;
-      if (newGame) {
-        //Hand changed emitter
-        const newHands: PlayerHand[] = [];
-        newGame.state.hands.forEach(hand => {
-          newHands.push(hand);
-        });
-        if (!_.isEqual(newHands, this.hands)) {
-          this._hands = newHands;
-          this.emit('handsChanged', this._hands);
-        }
-
-        //Wants to Leave emitter
-        const newWTL: string[] = [];
-        newGame.state.wantsToLeave.forEach(player => {
-          newWTL.push(player);
-        });
-        if (!_.isEqual(newWTL, this.whoWantsToLeave)) {
-          this._wantsToLeave = newWTL;
-          this.emit('wantsToLeaveChanged', this._wantsToLeave);
-        }
-
-        //Dealer changed emitter
-        const newDealerHand: Card[] = [];
-        newGame.state.dealerHand.forEach(card => {
-          newDealerHand.push(card);
-        });
-        if (!_.isEqual(newDealerHand, this.dealerHand)) {
-          this._dealerHand = newDealerHand;
-          this.emit('dealerHandChanged', this._dealerHand);
-        }
+  protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
+    const whoTurn = this.currentPlayer;
+    super._updateFrom(newModel);
+    const newGame = newModel.game;
+    if (newGame) {
+      //Hand changed emitter
+      const newHands: BlackjackPlayer[] = [];
+      newGame.state.hands.forEach(hand => {
+        newHands.push(hand);
+      });
+      if (!_.isEqual(newHands, this.hands)) {
+        this._hands = newHands;
+        this.emit('handsChanged', this._hands);
       }
-      const newWhoTurn = this.currentPlayer;
-      if (whoTurn !== newWhoTurn && newWhoTurn) this.emit('playerChanged', newWhoTurn);
-    }
 
-    /**
+      //Wants to Leave emitter
+      const newWTL: string[] = [];
+      newGame.state.wantsToLeave.forEach(player => {
+        newWTL.push(player);
+      });
+      if (!_.isEqual(newWTL, this.whoWantsToLeave)) {
+        this._wantsToLeave = newWTL;
+        this.emit('wantsToLeaveChanged', this._wantsToLeave);
+      }
+
+      //Dealer changed emitter
+      const newDealerHand: Card[] = [];
+      newGame.state.dealerHand.forEach(card => {
+        newDealerHand.push(card);
+      });
+      if (!_.isEqual(newDealerHand, this.dealerHand)) {
+        this._dealerHand = newDealerHand;
+        this.emit('dealerHandChanged', this._dealerHand);
+      }
+    }
+    const newWhoTurn = this.currentPlayer;
+    if (whoTurn !== newWhoTurn && newWhoTurn) this.emit('playerChanged', newWhoTurn);
+  }
+
+  /**
    * Sends a request to the server to apply the current player's Blackjack decision
    * Does not check if the move is valid.
    *
@@ -161,8 +164,8 @@ export default class BlackjackAreaController extends GameAreaController<
     }
     if (this.hands && this.currentPlayer) {
       const move: BlackjackMove = {
-        player: (this.hands[this.currentPlayer] as PlayerHand).player,
-        action: bjMove
+        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player,
+        action: bjMove,
       };
       await this._townController.sendInteractableCommand(this.id, {
         type: 'GameMove',
@@ -170,7 +173,6 @@ export default class BlackjackAreaController extends GameAreaController<
         move,
       });
     }
-    throw new Error("Current Player Undefined");
-    
+    throw new Error('Current Player Undefined');
   }
 }

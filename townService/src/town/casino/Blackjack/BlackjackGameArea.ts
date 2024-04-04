@@ -58,7 +58,13 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
       if (gameID) {
-        const { results } = updatedState.state;
+        const { hands } = updatedState.state;
+        hands
+          .filter(hand => hand.ante !== 0)
+          .forEach(hand =>
+            this._casinoTracker.putPlayerCurrency({ player: hand.player, netCurrency: hand.ante }),
+          );
+        hands.filter(hand => hand.active);
         if (results.length > 0) {
           this._updatePlayerScores([...results]);
           const mutableResults: { [playerName: string]: number } = {};

@@ -1,8 +1,12 @@
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
+  GAME_NOT_BETTABLE_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
   INVALID_BET_MESSAGE,
+  INVALID_SPLIT_MESSAGE,
+  MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
+  PLAYER_NOT_ACTIVE_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../../lib/InvalidParametersError';
 import Player from '../../../lib/Player';
@@ -27,7 +31,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {
     super({
-      hands: [],
+      hands: new Array(4),
       status: 'WAITING_FOR_PLAYERS',
       currentPlayer: 0,
       dealerHand: [],
@@ -39,23 +43,35 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
   }
 
   /**
-   *
+   * @param player the player to place a bet
+   * @param bet the amount of currency to bet
+   * @throws InvalidParametersError if the game is not in the betting phase (GAME_NOT_BETTABLE_MESSAGE)
+   * @throws InvalidParametersError if the bet is not a multiple of the stake size or beyond 1-5x (INVALID_BET_MESSAGE)
    */
   public placeBet(player: Player, bet: CoveyBucks): void {
+    if (this.state.status !== 'WAITING_TO_START') {
+      throw new InvalidParametersError(GAME_NOT_BETTABLE_MESSAGE);
+    }
     if (bet % this._stakeSize !== 0 || bet < this._stakeSize || bet > 5 * this._stakeSize) {
       throw new InvalidParametersError(INVALID_BET_MESSAGE);
     }
-
-    for (const hand of this.state.hands) {
-      if (hand.player === player.id) {
-        hand.ante = bet;
+    for (const blackjackPlayer of this.state.hands) {
+      if (blackjackPlayer.player === player.id) {
+        blackjackPlayer.hands[0].wager = bet;
 
         // the game can commence once all players have made their bet
-        if (this.state.hands.filter(playerHand => playerHand.ante !== 0).length === 0) {
+        if (this.state.hands.filter(playerHand => playerHand.hands[0].wager !== 0).length === 0) {
           this.state = {
             ...this.state,
             status: 'IN_PROGRESS',
           };
+          this.state.hands.forEach(playerHand => {
+            playerHand.hands[0].cards = [
+              this.state.shuffler.deal(true),
+              this.state.shuffler.deal(true),
+            ];
+          });
+          this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
         }
 
         return;
@@ -65,57 +81,133 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
   }
 
   /**
-   * Apply Move: Were going to apply a blackjack move to game
-   * @param move The move to apply to the game
-   * @throws error when the moving player isn't active (Busted or stands)
-   * @throws error is not a valid split
+   * Handles dishing out antes and resseting the game after a round is over
+   */
+  private _overHandler(): void {
+    // const finalDealerValue = this._dealerHandler();
+    // for (const player of this.state.hands) {
+    //   if (this._handValue(player.hand) > 21) {
+    //     for (const result of this.state.results) {
+    //       if (result.player === player.player) {
+    //         result.netCurrency -= player.ante;
+    //       }
+    //     }
+    //   } else if (finalDealerValue > this._handValue(player.hand)) {
+    //     for (const result of this.state.results) {
+    //       if (result.player === player.player) {
+    //         result.netCurrency -= player.ante;
+    //       }
+    //     }
+    //   } else if (finalDealerValue < this._handValue(player.hand)) {
+    //     for (const result of this.state.results) {
+    //       if (result.player === player.player) {
+    //         result.netCurrency += player.ante;
+    //       }
+    //     }
+    //   }
+    // }
+    // this.state.shuffler.refresh();
+    // this.state = {
+    //   ...this.state,
+    //   hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
+    //   results: this.state.results.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
+    // };
+    // if (this.state.hands.length === 0) {
+    //   this.state.status = 'WAITING_FOR_PLAYERS';
+    // } else {
+    //   for (const object of this.state.hands) {
+    //     object.hand = [this.state.shuffler.deal(true), this.state.shuffler.deal(true)];
+    //     object.active = true;
+    //   }
+    //   this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
+    // }
+  }
+
+  /**
+   * Deals out the cards for the dealer (hit until over 17, always stands if value is 17 or higher)
+   * @returns the value of the dealers hand
+   */
+  private _dealerHandler(): number {
+    this.state.dealerHand[0].faceUp = true;
+    while (this._handValue(this.state.dealerHand) < 17) {
+      this.state.dealerHand.push(this.state.shuffler.deal(true));
+    }
+    let finalDealerValue = 0;
+    if (this._handValue(this.state.dealerHand) > 21) {
+      finalDealerValue = 0;
+    } else {
+      finalDealerValue = this._handValue(this.state.dealerHand);
+    }
+    return finalDealerValue;
+  }
+
+  /**
+   * Applies a BlackJack move to the current game.
+   *
+   * @param move the player's action
+   * @throws InvalidParametersError if the game is not in progress (GAME_NOT_IN_PROGRESS_MESSAGE)
+   * @throws InvalidParametersError if it is not the player's turn (MOVE_NOT_YOUR_TURN_MESSAGE)
+   * @throws InvalidParametersError if the player is not active (PLAYER_NOT_ACTIVE_MESSAGE)
+   * @throws InvalidParametersError is not a valid split (INVALID_SPLIT_MESSAGE)
    */
   public applyMove(move: GameMove<BlackjackMove>): void {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new Error(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-    let newHand = null;
-    let index = 0;
-    let counter = 0;
-    // Applies the move
-    for (const object of this.state.hands) {
-      if (object.player === move.playerID) {
-        if (!object.active) {
-          throw new Error('Player is not active');
-        } else if (move.move.action === 'Stand') {
-          object.active = false;
+
+    // Extract the current player
+    const currPlayerHand = this.state.hands[this.state.currentPlayer];
+    if (currPlayerHand.player !== move.playerID) {
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+    if (!currPlayerHand.active) {
+      throw new InvalidParametersError(PLAYER_NOT_ACTIVE_MESSAGE);
+    }
+
+    // Process the move
+    if (move.move.action === 'Stand') {
+      currPlayerHand.currentHand += 1;
+      if (currPlayerHand.currentHand >= currPlayerHand.hands.length) {
+        currPlayerHand.active = false;
+        this.state.currentPlayer += 1;
+      }
+    } else if (move.move.action === 'Hit') {
+      currPlayerHand.hands[currPlayerHand.currentHand].cards.push(this.state.shuffler.deal(true));
+      // Check if the player has busted or reached 21
+      if (this._handValue(currPlayerHand.hands[currPlayerHand.currentHand].cards) >= 21) {
+        currPlayerHand.currentHand += 1;
+        if (currPlayerHand.currentHand >= currPlayerHand.hands.length) {
+          currPlayerHand.active = false;
           this.state.currentPlayer += 1;
-        } else if (move.move.action === 'Hit') {
-          object.hand.push(this.state.shuffler.deal(true));
-          if (this._handValue(object.hand) > 21) {
-            object.active = false;
-            this.state.currentPlayer += 1;
-          }
-        } else if (move.move.action === 'Double Down') {
-          object.hand.push(this.state.shuffler.deal(true));
-          object.ante *= 2;
-          object.active = false;
-          this.state.currentPlayer += 1;
-        } else if (move.move.action === 'Split') {
-          if (object.hand.length !== 2 || object.hand[0].value !== object.hand[1].value) {
-            throw new Error('Split is not available here');
-          }
-          const card = object.hand[0];
-          object.hand = [card];
-          newHand = object;
-          index = counter;
         }
       }
-      counter += 1;
+    } else if (move.move.action === 'Double Down') {
+      currPlayerHand.hands[currPlayerHand.currentHand].cards.push(this.state.shuffler.deal(true));
+      currPlayerHand.hands[currPlayerHand.currentHand].wager *= 2;
+      currPlayerHand.currentHand += 1;
+      if (currPlayerHand.currentHand >= currPlayerHand.hands.length) {
+        currPlayerHand.active = false;
+        this.state.currentPlayer += 1;
+      }
+    } else if (move.move.action === 'Split') {
+      // A split is only valid if the player has a pair and hasn't split already
+      if (
+        currPlayerHand.hands.length !== 1 ||
+        currPlayerHand.hands[0].cards.length !== 2 ||
+        currPlayerHand.hands[0].cards[0] !== currPlayerHand.hands[0].cards[1]
+      ) {
+        throw new InvalidParametersError(INVALID_SPLIT_MESSAGE);
+      }
+      const card = currPlayerHand.hands[0].cards.pop();
+      currPlayerHand.hands[0].cards.push(this.state.shuffler.deal(true));
+      currPlayerHand.hands.push({
+        cards: [card, this.state.shuffler.deal(true)],
+        wager: currPlayerHand.hands[0].wager,
+      });
     }
 
-    // inserts twin split hand right after first one
-    if (newHand !== null) {
-      this.state.hands.splice(index, 0, newHand);
-    }
-
-    // what to do when the round is over
-    if (this.state.hands.filter(p => p.active).length === 0) {
+    // The round is over if all players are inactive
+    if (this.state.hands.filter(player => player.active).length === 0) {
       this.state.currentPlayer = 0;
       this._overHandler();
     }
@@ -169,20 +261,37 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
     }
 
-    this.state.hands.unshift({
-      player: player.id,
-      hand: [],
-      ante: 0,
-      active: false,
-    });
-    this.state.status = 'IN_PROGRESS';
-    // Add player to results
-    this.state.results = [...this.state.results, { player: player.id, netCurrency: player.units }];
+    if (this.state)
+      if (this.state.status === 'WAITING_FOR_PLAYERS') {
+        // Start the game once the first player joins
+        this.state.status = 'WAITING_TO_START';
+      }
+
+    let active = true;
+    if (this.state.status === 'IN_PROGRESS') {
+      // a player joining mid-game should not be able to make moves
+      active = false;
+    }
+
+    for (let i = 0; i < this.state.hands.length; i += 1) {
+      if (this.state.hands[i] === undefined) {
+        this.state.hands[i] = {
+          player: player.id,
+          hands: [],
+          currentHand: 0,
+          active,
+        };
+        this.state.results.push({ player: player.id, netCurrency: 0 });
+        return;
+      }
+    }
+    throw new InvalidParametersError(GAME_FULL_MESSAGE);
+    // this.state.results = [...this.state.results, { player: player.id, netCurrency: 0 }]; // player.units }];
   }
 
   /**
-   * Adds a player to a queue to leave the game.
-   * The player will be removed after the current hand finishes.
+   * If the game is in the betting phase, removes a player from the game.
+   * If the game is in progress, adds a player to a queue to leave the game. The player will be removed after the current hand finishes.
    * @param player The player to remove from the game
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
@@ -190,69 +299,13 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     if (!this.state.hands.map(h => h.player).includes(player.id)) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
+    if (this.state.status === 'WAITING_TO_START') {
+      this.state.hands = this.state.hands.filter(playerHand => playerHand.player !== player.id);
+      if (this.state.hands.length === 0) {
+        this.state.status = 'WAITING_FOR_PLAYERS';
+      }
+      return;
+    }
     this.state.wantsToLeave.push(player.id);
-  }
-
-  /**
-   * Handles dishing out antes and resseting the game after a round is over
-   */
-  private _overHandler(): void {
-    const finalDealerValue = this._dealerHandler();
-
-    for (const player of this.state.hands) {
-      if (this._handValue(player.hand) > 21) {
-        for (const result of this.state.results) {
-          if (result.player === player.player) {
-            result.netCurrency -= player.ante;
-          }
-        }
-      } else if (finalDealerValue > this._handValue(player.hand)) {
-        for (const result of this.state.results) {
-          if (result.player === player.player) {
-            result.netCurrency -= player.ante;
-          }
-        }
-      } else if (finalDealerValue < this._handValue(player.hand)) {
-        for (const result of this.state.results) {
-          if (result.player === player.player) {
-            result.netCurrency += player.ante;
-          }
-        }
-      }
-    }
-    this.state.shuffler.refresh();
-    this.state = {
-      ...this.state,
-      hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
-      results: this.state.results.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
-    };
-
-    if (this.state.hands.length === 0) {
-      this.state.status = 'WAITING_FOR_PLAYERS';
-    } else {
-      for (const object of this.state.hands) {
-        object.hand = [this.state.shuffler.deal(true), this.state.shuffler.deal(true)];
-        object.active = true;
-      }
-      this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
-    }
-  }
-
-  /**
-   * Deals out the cards for the dealer (hit until over 17, always stands if value is 17 or higher)
-   * @returns the value of the dealers hand
-   */
-  private _dealerHandler(): number {
-    this.state.dealerHand[0].faceUp = true;
-    while (this._handValue(this.state.dealerHand) < 17) {
-      this.state.dealerHand.push(this.state.shuffler.deal(true));
-    }
-    let finalDealerValue = 0;
-    if (this._handValue(this.state.dealerHand) > 21) {
-      finalDealerValue = 0;
-    } else {
-      finalDealerValue = this._handValue(this.state.dealerHand);
-    }
-    return finalDealerValue;
   }
 }

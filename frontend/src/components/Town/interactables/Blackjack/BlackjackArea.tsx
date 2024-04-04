@@ -4,7 +4,12 @@ import BlackjackAreaController from '../../../../classes/interactable/BlackjackA
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { Card, GameStatus, InteractableID, PlayerHand } from '../../../../types/CoveyTownSocket';
+import {
+  Card,
+  GameStatus,
+  InteractableID,
+  BlackjackPlayer,
+} from '../../../../types/CoveyTownSocket';
 
 export default function BlackjackArea({
   interactableID,
@@ -15,7 +20,7 @@ export default function BlackjackArea({
     useInteractableAreaController<BlackjackAreaController>(interactableID);
   const townController = useTownController();
 
-  const [hands, setHands] = useState<PlayerHand[] | undefined>(casinoAreaController.hands);
+  const [hands, setHands] = useState<BlackjackPlayer[] | undefined>(casinoAreaController.hands);
   const [dealerHand, setDealerHand] = useState<Card[] | undefined>(casinoAreaController.dealerHand);
   const [joiningGame, setJoiningGame] = useState(false);
 
