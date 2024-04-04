@@ -1,5 +1,4 @@
 import React from 'react';
-import { HStack, Text } from '@chakra-ui/react';
 import { CasinoGame } from '../../../../shared/types/CoveyTownSocket';
 
 type CasinoSessionProps = {
@@ -8,9 +7,15 @@ type CasinoSessionProps = {
 };
 export default function SessionStats({ game, gamesPlayed }: CasinoSessionProps): JSX.Element {
   return (
-    <HStack>
-      <Text>Game: {game}</Text>
-      <Text>Games Played: {(gamesPlayed !== 0) ? gamesPlayed : "No Games Logged"}</Text>
-    </HStack>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ marginRight: '10px' }}>
+        <span>Game: </span>
+        <span>{game}</span>
+      </div>
+      <div>
+        <span>Games Played: </span>
+        <span>{gamesPlayed}</span>
+      </div>
+    </div>
   );
 }

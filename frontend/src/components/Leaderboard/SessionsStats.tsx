@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Heading, ListItem, OrderedList } from '@chakra-ui/react';
 import { CasinoGame } from '../../../../shared/types/CoveyTownSocket';
-import offeredGames, { sessionsByGame } from './Games';
+import offeredGames from './Games';
 import SessionStats from './SessionStats';
+import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
+
+type GameSessions = {
+  game: CasinoGame;
+  gamesPlayed: number;
+}
 
 /**
  * Lists how many sessions of each casino game have been played across towns
@@ -10,6 +16,15 @@ import SessionStats from './SessionStats';
  */
 export default function CasinoGameFrequency(): JSX.Element {
   const games: CasinoGame[] = offeredGames();
+  const [sessions, setSessions] = useState<GameSessions[]>([]);
+
+  useEffect(() => {
+    games.forEach(game => {
+      PlayerTrackerFactory.instance().getCasinoSessions(game).then(casinoSessions => {
+        setSessions([...sessions, { game, gamesPlayed: casinoSessions.length }]);
+      });
+    });
+  }, [])
 
   return (
     <Box>
@@ -17,9 +32,9 @@ export default function CasinoGameFrequency(): JSX.Element {
         Frequency By Game
       </Heading>
       <OrderedList>
-        {games.map(game => (
-          <ListItem key={game}>
-            <SessionStats game={game} gamesPlayed={sessionsByGame(game).length} />
+        {sessions.map(session => (
+          <ListItem key={session.game}>
+            <SessionStats game={session.game} gamesPlayed={session.gamesPlayed} />
           </ListItem>
         ))}
       </OrderedList>

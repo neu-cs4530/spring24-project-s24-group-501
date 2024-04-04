@@ -40,17 +40,17 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
   }
 
   private _updatePlayerScores(results: CasinoScore[]) {
-    const updatedScores: CasinoScore[] = [];
-    this._casinoTracker.getPlayersCurrency().then(scores => {
-      results.forEach(result => {
-        const units =
-          scores.find(eachPlayer => eachPlayer.player === result.player)?.netCurrency || 0;
-        updatedScores.push({
-          player: result.player,
-          netCurrency: units + result.netCurrency,
-        });
-      });
-    });
+    // const updatedScores: CasinoScore[] = [];
+    // this._casinoTracker.getPlayersCurrency().then(scores => {
+    //   results.forEach(result => {
+    //     const units =
+    //       scores.find(eachPlayer => eachPlayer.player === result.player)?.netCurrency || 0;
+    //     updatedScores.push({
+    //       player: result.player,
+    //       netCurrency: units + result.netCurrency,
+    //     });
+    //   });
+    // });
   }
 
   private _stateUpdated(updatedState: GameInstance<BlackjackCasinoState>) {
