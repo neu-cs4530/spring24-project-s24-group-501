@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import Player from '../../../lib/Player';
 import {
   CasinoGame,
   CasinoScore,
@@ -37,9 +36,14 @@ export default class CasinoTracker {
     })) as CasinoScore[];
   }
 
-  async getPlayerCurrency(player: Player): Promise<CasinoScore> {
-    const response = await this.getPlayersCurrency();
-    return response.filter(score => score.player === player.id)[0];
+  /**
+   * Retrieves the player's currency balance.
+   * @param id the player's ID.
+   * @returns a Promise of the player's balance or 0 if the player does not exist.
+   */
+  async getPlayerCurrency(id: PlayerID): Promise<CoveyBucks> {
+    const response = await supabase.from('Player').select('balance').eq('id', id).select();
+    return response.data ? (response.data[0].balance as CoveyBucks) : 0;
   }
 
   /**

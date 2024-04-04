@@ -146,11 +146,12 @@ export default function TownSelection(): JSX.Element {
           }
         }, 1000);
         setIsJoining(true);
-        await playerTracker.handleUser(user?.email || '');
+        // await playerTracker.handleUser(user?.email || '');
         const newController = new TownController({
           userName,
           townID: coveyRoomID,
           loginController,
+          email: user?.email || '',
         });
         await newController.connect();
         const videoToken = newController.providerVideoToken;

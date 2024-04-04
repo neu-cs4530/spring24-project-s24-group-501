@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import { useCallback, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import TypedEmitter from 'typed-emitter';
+import PlayerTrackerFactory from '../authentication/PlayerTrackerFactory';
 import Interactable from '../components/Town/Interactable';
 import ConversationArea from '../components/Town/interactables/ConversationArea';
 import GameArea from '../components/Town/interactables/GameArea';
@@ -51,6 +52,7 @@ export type ConnectionProperties = {
   userName: string;
   townID: string;
   loginController: LoginController;
+  email: string;
 };
 
 /**
@@ -211,11 +213,14 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
    */
   private _interactableEmitter = new EventEmitter();
 
-  public constructor({ userName, townID, loginController }: ConnectionProperties) {
+  private _email: string;
+
+  public constructor({ userName, townID, loginController, email }: ConnectionProperties) {
     super();
     this._townID = townID;
     this._userName = userName;
     this._loginController = loginController;
+    this._email = email;
 
     /*
         The event emitter will show a warning if more than this number of listeners are registered, as it
@@ -591,6 +596,11 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     this._loginController.setTownController(null);
   }
 
+  private async updateID() {
+    await PlayerTrackerFactory.instance().handleUser(this._email, this.userID);
+    await PlayerTrackerFactory.instance().updatePlayerInfo(this._email, this.userID, this.userName);
+  }
+
   /**
    * Connect to the townService. Throws an error if it is unable to connect
    * @returns
@@ -634,6 +644,8 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           }
         });
         this._userID = initialData.userID;
+        this.updateID();
+        // await PlayerTrackerFactory.instance().updatePlayerID(this._email, this._userID);
         this._ourPlayer = this.players.find(eachPlayer => eachPlayer.id == this.userID);
         this.emit('connect', initialData.providerVideoToken);
         resolve();

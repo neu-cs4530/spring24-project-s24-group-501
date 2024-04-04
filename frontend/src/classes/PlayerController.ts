@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
+import PlayerTrackerFactory from '../authentication/PlayerTrackerFactory';
+import { CoveyBucks, Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
 export const MOVEMENT_SPEED = 175;
 
 export type PlayerEvents = {
@@ -19,6 +20,8 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   private readonly _userName: string;
 
+  private _units: CoveyBucks;
+
   public gameObjects?: PlayerGameObjects;
 
   constructor(id: string, userName: string, location: PlayerLocation) {
@@ -26,6 +29,10 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._id = id;
     this._userName = userName;
     this._location = location;
+    this._units = 0;
+    PlayerTrackerFactory.instance().getPlayerCurrency(id).then(units => { 
+      this._units = units;
+    });
   }
 
   set location(newLocation: PlayerLocation) {
@@ -46,8 +53,15 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._id;
   }
 
+  get units(): CoveyBucks {
+    PlayerTrackerFactory.instance().getPlayerCurrency(this.id).then(units => { 
+      this._units = units;
+    });
+    return this._units;
+  }
+
   toPlayerModel(): PlayerModel {
-    return { id: this.id, userName: this.userName, location: this.location };
+    return { id: this.id, userName: this.userName, location: this.location, units: this.units };
   }
 
   private _updateGameComponentLocation() {

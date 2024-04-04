@@ -184,12 +184,15 @@ export interface CasinoScore {
   netCurrency: CoveyBucks;
 }
 
+export interface CasinoRankScore extends CasinoScore {
+  username: string;
+}
+
 export type CasinoStake = 'Low' | 'Medium' | 'High'
 export type CasinoGame = 'Blackjack'
 
 export interface CasinoSession {
   id: number;
-  playerID: PlayerID;
   stakes: CasinoStake;
   game: CasinoGame;
   date: Date;

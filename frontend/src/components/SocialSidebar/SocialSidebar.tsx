@@ -1,5 +1,8 @@
 import { Heading, StackDivider, VStack } from '@chakra-ui/react';
 import React from 'react';
+import Leaderboard from '../Leaderboard/Leaderboard';
+import Top10PlayerRanks from '../Leaderboard/PlayerRanks';
+import PlayerRanks from '../Leaderboard/PlayerRanks';
 import InteractableAreasList from './InteractableAreasList';
 import PlayersList from './PlayersList';
 
