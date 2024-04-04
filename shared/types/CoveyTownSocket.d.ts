@@ -281,6 +281,8 @@ export interface CasinoInstance<T extends GameState> {
  */
 export interface CasinoArea<T extends GameState> extends Interactable {
   casino: CasinoInstance<T> | undefined;
+  game: GameInstance<T> | undefined;
+  history: GameResult[];
 }
 
 export type CommandID = string;
