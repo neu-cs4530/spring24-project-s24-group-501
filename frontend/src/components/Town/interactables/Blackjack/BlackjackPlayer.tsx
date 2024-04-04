@@ -25,7 +25,7 @@ function numberComma(number: number) {
   return formattedNumber.replace('.00', '');
 }
 
-const Player: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, cards, left }) => {
+const BlackjackPlayer: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, cards, left }) => {
   const totalarc = 120;
   const numcards = cards.length;
 
@@ -64,4 +64,4 @@ const Player: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, cards, l
   );
 };
 
-export default Player;
+export default BlackjackPlayer;

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import BlackjackAreaController from '../../../../classes/interactable/BlackjackAreaController';
+import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import styles from './blackjack.module.css';
-import Player from './Player';
+import BlackjackPlayer from './BlackjackPlayer';
 
 export default function BlackjackArea({
   interactableID,
@@ -17,12 +18,14 @@ export default function BlackjackArea({
   console.log(townController);
 
   const [joiningGame, setJoiningGame] = useState(false);
+  const [players, setPlayers] = useState<PlayerController[]>([]);
 
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
     const updateGameState = () => {
       setGameStatus(casinoAreaController.status || 'WAITING_FOR_PLAYERS');
+      setPlayers(casinoAreaController.players);
     };
 
     console.log(casinoAreaController);
@@ -66,30 +69,15 @@ export default function BlackjackArea({
           <p>DEALER</p>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
-          <div>
-            <Player
-              username='Tomas'
-              cash='1000'
+          {players.map((player, i) => (
+            <BlackjackPlayer
+              key={i}
+              username={player.userName}
+              cash={player.units}
+              left={players.length > 1 && i === players.length - 1}
               cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
             />
-          </div>
-          <Player
-            username='Tomas'
-            cash='1000'
-            cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
-          />
-          <Player
-            username='Tomas'
-            cash='1000'
-            left={true}
-            cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
-          />
-          <Player
-            username='Tomas'
-            cash='1000'
-            left={true}
-            cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
-          />
+          ))}
         </div>
       </div>
     </>
