@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import CasinoTrackerFactory from '../town/games/Blackjack/CasinoTrackerFactory';
+import CasinoTrackerFactory from '../town/casino/CasinoTrackerFactory';
 import {
   Player as PlayerModel,
   PlayerLocation,
@@ -69,7 +69,7 @@ export default class Player {
   get units(): CoveyBucks {
     CasinoTrackerFactory.instance()
       .getPlayerCurrency(this._id)
-      .then(units => {
+      .then((units: number) => {
         this._units = units;
       });
     return this._units;

@@ -177,10 +177,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     });
     this.state.status = 'IN_PROGRESS';
     // Add player to results
-    this.state.results = [
-      ...this.state.results,
-      { player: player.id, netCurrency: player.getUnits },
-    ];
+    this.state.results = [...this.state.results, { player: player.id, netCurrency: player.units }];
   }
 
   /**

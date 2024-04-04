@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import { CasinoScore, CasinoSession, CoveyBucks, PlayerID } from '../../../types/CoveyTownSocket';
+import { CasinoScore, CasinoSession, CoveyBucks, PlayerID } from '../../types/CoveyTownSocket';
 
 dotenv.config();
 
