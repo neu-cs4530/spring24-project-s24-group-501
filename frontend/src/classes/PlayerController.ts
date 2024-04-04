@@ -24,12 +24,12 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public gameObjects?: PlayerGameObjects;
 
-  constructor(id: string, userName: string, location: PlayerLocation, units: CoveyBucks) {
+  constructor(id: string, userName: string, location: PlayerLocation, units?: CoveyBucks) {
     super();
     this._id = id;
     this._userName = userName;
     this._location = location;
-    this._units = units;
+    this._units = units || 0;
     PlayerTrackerFactory.instance()
       .getPlayerCurrency(id)
       .then(updatedUnits => {
