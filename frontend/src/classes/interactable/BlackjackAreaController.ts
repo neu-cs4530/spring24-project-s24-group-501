@@ -22,7 +22,7 @@ export default class BlackjackAreaController extends GameAreaController<
   BlackjackCasinoState,
   BlackjackEvents
 > {
-  protected _hands: PlayerHand[] = [];
+  protected _hands: PlayerHand[] | undefined = this._model.game?.state.hands;
   protected _wantsToLeave: string[] = [];
   protected _dealerHand: Card[] = [];
    /**
@@ -33,7 +33,7 @@ export default class BlackjackAreaController extends GameAreaController<
    * 1 dimensional array
    */
   get hands(): PlayerHand[] | undefined  {
-    return this._model.game?.state.hands;
+    return this._hands;
   }
 
   /**
@@ -109,16 +109,20 @@ export default class BlackjackAreaController extends GameAreaController<
    * If the turn has not changed, does not emit a turnChanged event.
    */
     protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
+      
       const whoTurn = this.currentPlayer;
       super._updateFrom(newModel);
       const newGame = newModel.game;
       if (newGame) {
+        
         //Hand changed emitter
         const newHands: PlayerHand[] = [];
         newGame.state.hands.forEach(hand => {
           newHands.push(hand);
         });
-        if (!_.isEqual(newHands, this.hands)) {
+        
+        if (!_.isEqual(newHands, this._hands)) {
+          
           this._hands = newHands;
           this.emit('handsChanged', this._hands);
         }

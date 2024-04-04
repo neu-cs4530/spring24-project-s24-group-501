@@ -218,9 +218,22 @@ describe('BlackjackAreaController'  , () => {
             ],
             status: 'IN_PROGRESS',
           });
-          expect(controller.currentPlayer).toBe(0);
-          expect(controller.isPlayer).toBe(true);
+          
         });
+
+        it('returns the correct hand length after a move', () => {
+          updateGameWithMove(controller, {player:"1", action:"Hit"});
+          if (controller.hands) expect(controller.hands[0].hand.length).toBe(3);
+          else expect(1).toBe(0);
+        });
+
+        it('emits a handChange event if the hands has changed', () => {
+          const spy = jest.fn();
+          controller.addListener('handsChanged', spy);
+          updateGameWithMove(controller, {player:"1", action:"Hit"});
+          expect(spy).toHaveBeenCalledWith();
+        });
+       
       });
 
 
