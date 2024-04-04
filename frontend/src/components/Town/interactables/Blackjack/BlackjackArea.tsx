@@ -5,6 +5,8 @@ import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { Card, GameStatus, InteractableID, PlayerHand } from '../../../../types/CoveyTownSocket';
+import styles from './blackjack.module.css';
+import Player from './Player';
 
 export default function BlackjackArea({
   interactableID,
@@ -58,7 +60,22 @@ export default function BlackjackArea({
 
   return (
     <>
-      <div>ff</div>
+      <div className={styles.board}>
+        <p>DEALER</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Player
+            username='Tomas'
+            cash='1000'
+            cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
+          />
+          <Player
+            username='Tomas'
+            cash='1000'
+            left={true}
+            cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
+          />
+        </div>
+      </div>
     </>
   );
 }

@@ -11,14 +11,18 @@
 	font-family: 'ABC Diatype Edu', Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 19px;
-	padding: 20px;
-	line-height: 115%;
+	padding: 15px;
+	line-height: 19px;
 	text-transform: uppercase;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .interactHolder {
 	display: flex;
 	gap: 10px;
+
 }
 .interactHolder > div {
 	border: 1px solid #000;
