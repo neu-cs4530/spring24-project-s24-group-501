@@ -25,11 +25,7 @@ export default class BlackjackAreaController extends GameAreaController<
   BlackjackCasinoState,
   BlackjackEvents
 > {
-  protected _hands: BlackjackPlayer[] = [];
-
   protected _wantsToLeave: string[] = [];
-
-  protected _dealerHand: Card[] = [];
 
   /**
    * Returns the current state of the tables hands.
@@ -122,8 +118,10 @@ export default class BlackjackAreaController extends GameAreaController<
         newHands.push(hand);
       });
       if (!_.isEqual(newHands, this.hands)) {
-        this._hands = newHands;
-        this.emit('handsChanged', this._hands);
+        if (this._model.game) {
+          this._model.game.state.hands = newHands;
+        }
+        this.emit('handsChanged', this.hands);
       }
 
       // Wants to Leave emitter
@@ -142,8 +140,10 @@ export default class BlackjackAreaController extends GameAreaController<
         newDealerHand.push(card);
       });
       if (!_.isEqual(newDealerHand, this.dealerHand)) {
-        this._dealerHand = newDealerHand;
-        this.emit('dealerHandChanged', this._dealerHand);
+        if (this._model.game) {
+          this._model.game.state.dealerHand = newDealerHand;
+        }
+        this.emit('dealerHandChanged', this.dealerHand || []);
       }
     }
     const newWhoTurn = this.currentPlayer;
@@ -164,7 +164,7 @@ export default class BlackjackAreaController extends GameAreaController<
     }
     if (this.hands && this.currentPlayer) {
       const move: BlackjackMove = {
-        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player.id,
+        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player,
         action: bjMove,
       };
       await this._townController.sendInteractableCommand(this.id, {

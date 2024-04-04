@@ -3,7 +3,7 @@ import BlackjackAreaController from '../../../../classes/interactable/BlackjackA
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { GameStatus, BlackjackPlayer, InteractableID } from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
 import BlackjackUser from './BlackjackUser';
 
@@ -21,17 +21,22 @@ export default function BlackjackArea({
 
   const [joiningGame, setJoiningGame] = useState(false);
   const [players, setPlayers] = useState<PlayerController[]>([]);
+  const [hands, setHands] = useState<BlackjackPlayer[]>([]);
 
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
     const updateGameState = () => {
       setGameStatus(casinoAreaController.status || 'WAITING_FOR_PLAYERS');
+      setHands(casinoAreaController.hands || []);
+      console.log(casinoAreaController);
+      console.log(hands);
       setPlayers(casinoAreaController.players);
+      console.log(players);
     };
 
-    console.log(casinoAreaController);
-    console.log(casinoAreaController.status);
+    setHands(casinoAreaController.hands || []);
+
     casinoAreaController.addListener('gameUpdated', updateGameState);
     return () => {
       casinoAreaController.removeListener('gameUpdated', updateGameState);
@@ -71,7 +76,9 @@ export default function BlackjackArea({
           <p>DEALER</p>
         </div>
 
-        {gameStatus === 'WAITING_TO_START' && <BlackjackBetSetter />}
+        {gameStatus === 'WAITING_TO_START' &&
+          hands.find(hand => hand.player === townController.ourPlayer.id)?.hands[0]?.wager ===
+            0 && <BlackjackBetSetter />}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
           {players.map((player, i) => (
