@@ -13,9 +13,9 @@ import GameAreaController, { GameEventTypes, NO_GAME_IN_PROGRESS_ERROR } from '.
 
 export type BlackjackEvents = GameEventTypes & {
   playerHandChanged: (hands: PlayerHand[]) => void;
-  dealerHandChanged: (cards: Card[]) => void;
+  dealerHandChanged: (dealerHandCards: Card[]) => void;
   playerChanged: (player: number) => void;
-  currencyChanged: (newUnits: CasinoScore) => void;
+  wantsToLeaveChanged: (wantsToLeave: string[]) => void;
 };
 
 export default class BlackjackAreaController extends GameAreaController<
@@ -23,6 +23,8 @@ export default class BlackjackAreaController extends GameAreaController<
   BlackjackEvents
 > {
   protected _hands: PlayerHand[] = [];
+  protected _wantsToLeave: string[] = [];
+  protected _dealerHand: Card[] = [];
    /**
    * Returns the current state of the tables hands.
    *
@@ -111,6 +113,7 @@ export default class BlackjackAreaController extends GameAreaController<
       super._updateFrom(newModel);
       const newGame = newModel.game;
       if (newGame) {
+        //Hand changed emitter
         const newHands: PlayerHand[] = [];
         newGame.state.hands.forEach(hand => {
           newHands.push(hand);
@@ -119,9 +122,29 @@ export default class BlackjackAreaController extends GameAreaController<
           this._hands = newHands;
           this.emit('handsChanged', this._hands);
         }
+
+        //Wants to Leave emitter
+        const newWTL: string[] = [];
+        newGame.state.wantsToLeave.forEach(player => {
+          newWTL.push(player);
+        });
+        if (!_.isEqual(newWTL, this.whoWantsToLeave)) {
+          this._wantsToLeave = newWTL;
+          this.emit('wantsToLeaveChanged', this._wantsToLeave);
+        }
+
+        //Dealer changed emitter
+        const newDealerHand: Card[] = [];
+        newGame.state.dealerHand.forEach(card => {
+          newDealerHand.push(card);
+        });
+        if (!_.isEqual(newDealerHand, this.dealerHand)) {
+          this._dealerHand = newDealerHand;
+          this.emit('dealerHandChanged', this._dealerHand);
+        }
       }
       const newWhoTurn = this.currentPlayer;
-      if (whoTurn !== newWhoTurn) this.emit('turnChanged', newWhoTurn);
+      if (whoTurn !== newWhoTurn && newWhoTurn) this.emit('playerChanged', newWhoTurn);
     }
 
     /**
