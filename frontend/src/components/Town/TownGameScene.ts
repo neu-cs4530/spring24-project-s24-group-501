@@ -8,7 +8,7 @@ import Interactable from './Interactable';
 import ConversationArea from './interactables/ConversationArea';
 import GameArea from './interactables/GameArea';
 import Transporter from './interactables/Transporter';
-import CasinoArea from './interactables/CasinoArea';
+import CasinoArea from './interactables/Casino/CasinoArea';
 import ViewingArea from './interactables/ViewingArea';
 
 // Still not sure what the right type is here... "Interactable" doesn't do it

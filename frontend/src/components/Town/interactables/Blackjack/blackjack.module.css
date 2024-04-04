@@ -1,0 +1,82 @@
+/* Card */
+
+.card > svg {
+  width: 44px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.card > p {
+  margin: 0;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 32px;
+  font-weight: 700;
+  font-family: "Helvetica", "Helvetica Neue", sans-serif;
+  margin-top: -5px;
+  letter-spacing: -3px;
+}
+
+.card {
+  height: 115px;
+  width: 82px;
+  max-width: 82px;
+  max-height: 115px;
+  border: 1px solid black;
+  position: relative;
+  background-color: white;
+}
+
+/* Blackjack Player */
+
+.player {
+  position: relative;
+}
+
+.player > img {
+  height: 150px;
+  width: 100px;
+  object-fit: cover;
+  border-radius: 130px;
+  border: 1px solid black;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: 5px;
+  position: absolute;
+  left: 90px;
+  bottom: -10px;
+}
+
+.left > .info {
+  right: 90px;
+  left: auto;
+  align-items: flex-end;
+}
+
+.info > div {
+  border-radius: 10px;
+  border: 1px solid black;
+  width: fit-content;
+  background-color: white;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 2px;
+}
+
+.cardHolder {
+  display: flex;
+  position: absolute;
+  top: -90px;
+  left: 40px;
+}
+
+.left > .cardHolder {
+  right: 40px;
+  left: auto;
+}

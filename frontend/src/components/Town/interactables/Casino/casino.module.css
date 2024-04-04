@@ -1,0 +1,27 @@
+@font-face {
+	font-family: 'ABC Diatype Edu';
+	src: url('/assets/fonts/ABCDiatype-Bold.woff2') format('woff2'),
+			url('/assets/fonts/ABCDiatype-Bold.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+.casino {
+	font-family: 'ABC Diatype Edu', Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 19px;
+	padding: 20px;
+	line-height: 115%;
+	text-transform: uppercase;
+}
+
+.interactHolder {
+	display: flex;
+	gap: 10px;
+}
+.interactHolder > div {
+	border: 1px solid #000;
+	border-radius: 15px;
+	padding: 10px;
+}
