@@ -8,6 +8,18 @@
   height: 100%;
 }
 
+.board > div > div > button {
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 10px;
+  padding-bottom: 8px;
+  text-transform: uppercase;
+  margin-top: -5px;
+  
+  
+  
+}
+
 /* Card */
 
 .card > svg {
