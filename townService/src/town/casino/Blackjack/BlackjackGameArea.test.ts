@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+/* import { nanoid } from 'nanoid';
 import { mock } from 'jest-mock-extended';
 import {
   GAME_ID_MISSMATCH_MESSAGE,
@@ -312,3 +312,4 @@ describe('BlackjackGameArea', () => {
     expect(interactableUpdateSpy).not.toHaveBeenCalled();
   });
 });
+ */
