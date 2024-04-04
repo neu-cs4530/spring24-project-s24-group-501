@@ -12,6 +12,19 @@ interface PlayerProps {
   left?: boolean;
 }
 
+function numberComma(number: number) {
+  let formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  // Check if the number has exactly one decimal place
+  const hasOneDecimalPlace = /\.\d$/.test(formattedNumber);
+
+  // If it does, add a trailing zero
+  if (hasOneDecimalPlace) {
+    formattedNumber += '0';
+  }
+
+  return formattedNumber.replace('.00', '');
+}
+
 const Player: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, cards, left }) => {
   const totalarc = 120;
   const numcards = cards.length;
@@ -26,18 +39,20 @@ const Player: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, cards, l
           );
 
   return (
-    <div className={styles.player + (left && ' left')}>
+    <div className={styles.player + (left ? ' left ' : '')}>
       <img alt='player' src='https://source.unsplash.com/random/?face' />
-      <div className={styles.info}>
+      <div className={styles.info + ' ' + (left ? styles.leftInfo : '')}>
         <div>{username}</div>
-        <div>${cash}</div>
+        <div>${numberComma(cash)}</div>
       </div>
-      <div className={styles.cardHolder} style={{ transform: `rotate(${left ? -30 : 30}deg)` }}>
+      <div
+        className={styles.cardHolder + ' ' + (left ? styles.leftCardHolder : '')}
+        style={{ transform: `rotate(${left ? -30 : 30}deg)` }}>
         {cards.map((card, index) => (
           <div
             key={index}
             style={{
-              transform: `rotate(${angles[index]}deg)`,
+              transform: `rotate(${angles[index] + (left && numcards === 1 ? 30 : 0)}deg)`,
               marginLeft: `${index === 0 ? 0 : Math.max(-cards.length * 7 - 30, -70)}px`,
               transformOrigin: 'bottom center',
             }}>

@@ -43,15 +43,11 @@ function CasinoArea({ interactableID }: { interactableID: InteractableID }): JSX
 
   return (
     <>
-      <Flex>
-        <Box>
-          {casinoAreaController.toInteractableAreaModel().type === 'BlackjackArea' ? (
-            <BlackjackArea interactableID={interactableID} />
-          ) : (
-            <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>
-          )}
-        </Box>
-      </Flex>
+      {casinoAreaController.toInteractableAreaModel().type === 'BlackjackArea' ? (
+        <BlackjackArea interactableID={interactableID} />
+      ) : (
+        <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>
+      )}
     </>
   );
 }

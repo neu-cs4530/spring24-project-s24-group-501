@@ -68,9 +68,9 @@ describe('BlackjackGame', () => {
 
   describe('join', () => {
     it('should throw an error if the player is already in the game', () => {
-      expect(game.state.results.length).toEqual(0)
+      expect(game.state.results.length).toEqual(0);
       game.join(player1);
-      expect(game.state.results.length).toEqual(1)
+      expect(game.state.results.length).toEqual(1);
       expect(() => game.join(player1)).toThrowError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     });
     it('should throw an error if the table is full', () => {
