@@ -27,8 +27,6 @@ const MAX_PLAYERS = 4;
  * @see https://www.blackjack.org/blackjack/how-to-play/
  */
 export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackMove> {
-  private _stakeSize: CoveyBucks;
-
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {
     super({
       hands: [],
@@ -38,8 +36,8 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       results: [],
       shuffler: new Shuffler(definedDeck),
       wantsToLeave: [],
+      stake: stakeSize ?? 10,
     });
-    this._stakeSize = stakeSize ?? 10;
   }
 
   /**
@@ -52,7 +50,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     if (this.state.status !== 'WAITING_TO_START') {
       throw new InvalidParametersError(GAME_NOT_BETTABLE_MESSAGE);
     }
-    if (bet % this._stakeSize !== 0 || bet < this._stakeSize || bet > 5 * this._stakeSize) {
+    if (bet % this.state.stake !== 0 || bet < this.state.stake || bet > 5 * this.state.stake) {
       throw new InvalidParametersError(INVALID_BET_MESSAGE);
     }
     for (const blackjackPlayer of this.state.hands) {
@@ -276,7 +274,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     this.state.hands.unshift({
       player: player.id,
-      hands: [],
+      hands: [{ cards: [], wager: 0 }],
       currentHand: 0,
       active,
     });
