@@ -595,23 +595,6 @@
                  "y":1061.55695019362
                 }, 
                 {
-                 "height":0,
-                 "id":49,
-                 "name":"Blackjack 2",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Blackjack"
-                        }],
-                 "rotation":0,
-                 "type":"CasinoArea",
-                 "visible":false,
-                 "width":1.33529176124966,
-                 "x":3296.83535852584,
-                 "y":1068.23340899987
-                }, 
-                {
                  "height":182.995,
                  "id":52,
                  "name":"Stairs Up",
