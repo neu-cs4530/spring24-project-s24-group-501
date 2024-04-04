@@ -1,5 +1,5 @@
 import CasinoTracker from './CasinoTracker';
-import { CasinoScore, CasinoSession } from '../../../types/CoveyTownSocket';
+import { CasinoScore, CasinoSession } from '../../types/CoveyTownSocket';
 import CasinoTrackerFactory from './CasinoTrackerFactory';
 
 describe('CasinoTracker', () => {

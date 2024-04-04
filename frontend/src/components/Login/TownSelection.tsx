@@ -26,9 +26,9 @@ import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { supabase } from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
+import { supabase } from '../../authentication/PlayerTracker';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import CasinoTrackerFactory from '../../../../townService/src/town/games/Blackjack/CasinoTrackerFactory';
+import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -41,30 +41,45 @@ export default function TownSelection(): JSX.Element {
   const { setTownController, townsService } = loginController;
   const { connect: videoConnect } = useVideoContext();
   const [session, setSession] = useState<Session | null>(null);
+  const [playerID, setPlayerID] = useState<string>('');
 
   const toast = useToast();
 
-  const casinoTracker = CasinoTrackerFactory.instance();
+  const playerTracker = PlayerTrackerFactory.instance();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      if (session?.user.email) {
-        casinoTracker.postUser(session.user.email);
-      }
-      // session?.user.id
-    });
+    const fetchSession = async () => {
+        const { data: session, error } = await supabase.auth.getSession();
+        if (session) {
+            setSession(session.session);
+            if (session.session?.user?.email) {
+                const playerID = await playerTracker.handleUser(session.session.user.email);
+                setPlayerID(playerID);
+            }
+        }
+    };
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
-      setSession(newSession);
+    fetchSession();
+
+    const authListener = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
+        if (newSession) {
+            setSession(newSession);
+            if (newSession.user?.email) {
+                playerTracker.handleUser(newSession.user.email).then(playerID => {
+                    setPlayerID(playerID);
+                });
+            }
+        } else {
+            setSession(null);
+            setPlayerID('');
+        }
     });
 
     return () => {
-      subscription.unsubscribe();
+        authListener.data.subscription.unsubscribe();
     };
-  }, []);
+}, []);
+
 
   const logOut = () => {
     supabase.auth.signOut();
@@ -89,14 +104,14 @@ export default function TownSelection(): JSX.Element {
       let connectWatchdog: NodeJS.Timeout | undefined = undefined;
       let loadingToast: ToastId | undefined = undefined;
       try {
-        if (!session) {
-          toast({
-            title: 'Unable to join town',
-            description: 'Please log in',
-            status: 'error',
-          });
-          return;
-        }
+        // if (!session) {
+        //   toast({
+        //     title: 'Unable to join town',
+        //     description: 'Please log in',
+        //     status: 'error',
+        //   });
+        //   return;
+        // }
         if (!userName || userName.length === 0) {
           toast({
             title: 'Unable to join town',
@@ -290,7 +305,8 @@ export default function TownSelection(): JSX.Element {
                   // @ts-ignore (explicit any required for supabaseClient prop type)
                   supabaseClient={supabase as any}
                   appearance={{ theme: ThemeSupa }}
-                  providers={[]}
+                  providers={['google', 'github']}
+                  redirectTo="current"
                 />
               ) : (
                 <div>

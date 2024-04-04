@@ -9,12 +9,12 @@ import Player from '../../../lib/Player';
 import {
   BlackjackMove,
   Card,
-  CasinoState,
+  BlackjackCasinoState,
   CoveyBucks,
   GameMove,
 } from '../../../types/CoveyTownSocket';
-import Game from '../Game';
-import Shuffler from './Shuffler';
+import Game from '../../games/Game';
+import Shuffler from '../Shuffler';
 
 const MAX_PLAYERS = 4;
 
@@ -22,7 +22,7 @@ const MAX_PLAYERS = 4;
  * A BlackjackGame is a Game that implements the rules of Blackjack.
  * @see https://www.blackjack.org/blackjack/how-to-play/
  */
-export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
+export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackMove> {
   private _stakeSize: CoveyBucks;
 
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {
@@ -118,9 +118,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
     if (this.state.hands.filter(p => p.active).length === 0) {
       this.state.currentPlayer = 0;
       this._overHandler();
-      
     }
-    
   }
 
   /**
@@ -178,7 +176,11 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
       active: false,
     });
     this.state.status = 'IN_PROGRESS';
-
+    // Add player to results
+    this.state.results = [
+      ...this.state.results,
+      { player: player.id, netCurrency: player.getUnits },
+    ];
   }
 
   /**
@@ -225,6 +227,7 @@ export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
     this.state = {
       ...this.state,
       hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
+      results: this.state.results.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
     };
 
     if (this.state.hands.length === 0) {

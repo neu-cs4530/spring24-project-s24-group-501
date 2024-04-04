@@ -4,8 +4,8 @@ import {
   BlackjackMove,
   Card,
   CasinoScore,
-  CasinoState,
   GameArea,
+  BlackjackCasinoState,
   GameStatus,
   PlayerHand,
 } from '../../../../shared/types/CoveyTownSocket';
@@ -19,7 +19,7 @@ export type BlackjackEvents = GameEventTypes & {
 };
 
 export default class BlackjackAreaController extends GameAreaController<
-  CasinoState,
+  BlackjackCasinoState,
   BlackjackEvents
 > {
   protected _hands: PlayerHand[] = [];
@@ -66,6 +66,14 @@ export default class BlackjackAreaController extends GameAreaController<
     return this._model.game?.state.currentPlayer;
   }
 
+  /**
+   * Returns true if the current player is a player in this game
+   */
+  get isPlayer(): boolean {
+    return this._model.game?.players.includes(this._townController.ourPlayer.id) || false;
+  }
+
+
   /** 
    * Reurns every players results in the game
    * This is a list of every player and their total net profit/loss in Covey Bucks
@@ -82,7 +90,7 @@ export default class BlackjackAreaController extends GameAreaController<
   }
 
   public isActive(): boolean {
-    throw new Error('Method not implemented.');
+    
     return this._model.game?.state.hands.length !== 0;
   }
 
@@ -98,7 +106,7 @@ export default class BlackjackAreaController extends GameAreaController<
    * If the turn has changed, emits a turnChanged event with the new turn 
    * If the turn has not changed, does not emit a turnChanged event.
    */
-    protected _updateFrom(newModel: GameArea<CasinoState>): void {
+    protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
       const whoTurn = this.currentPlayer;
       super._updateFrom(newModel);
       const newGame = newModel.game;

@@ -64,6 +64,10 @@ export default class Player {
     return this._sessionToken;
   }
 
+  get getUnits(): CoveyBucks {
+    return this._units;
+  }
+
   toPlayerModel(): PlayerModel {
     return {
       id: this._id,

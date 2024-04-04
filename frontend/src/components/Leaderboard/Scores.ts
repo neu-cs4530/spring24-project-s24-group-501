@@ -1,5 +1,5 @@
 import { CasinoScore, PlayerID } from '../../../../shared/types/CoveyTownSocket';
-import CasinoTracker from '../../../../townService/src/town/games/Blackjack/CasinoTracker';
+import CasinoTracker from '../../../../townService/src/town/casino/CasinoTracker';
 
 /**
  * Fetches all player balances from the database

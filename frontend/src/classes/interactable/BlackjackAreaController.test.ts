@@ -5,7 +5,7 @@ import BlackjackAreaController from "./BlackjackAreaController";
 import { nanoid } from 'nanoid';
 import { mock } from 'jest-mock-extended';
 import assert from 'assert';
-import Shuffler from "../../../../townService/src/town/games/Blackjack/Shuffler";
+import Shuffler from "../../../../townService/src/town/casino/Shuffler";
 
 describe('BlackjackAreaController'  , () => {
     const ourPlayer = new PlayerController(nanoid(), nanoid(), {
@@ -13,10 +13,10 @@ describe('BlackjackAreaController'  , () => {
       y: 0,
       moving: false,
       rotation: 'front',
-    });
+    }, 0);
     const otherPlayers = [
-      new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
-      new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
+      new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
+      new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
     ];
   
     const mockTownController = mock<TownController>();
@@ -50,14 +50,16 @@ describe('BlackjackAreaController'  , () => {
       status,
       currentPlayer,
       dealerHand,
+      player,
       results,
       wantsToLeave,
       observers,
     }: {
-        hands?: [];
+        hands?: PlayerHand[];
         currentPlayer?: number;
         dealerHand?: Card[];
         results?: [];
+        player?: string;
         wantsToLeave?: [];
         status?: GameStatus;
         gameInstanceID?: string;
@@ -67,7 +69,8 @@ describe('BlackjackAreaController'  , () => {
     }) {
       const id = _id || `INTERACTABLE-ID-${nanoid()}`;
       const instanceID = gameInstanceID || `GAME-INSTANCE-ID-${nanoid()}`;
-      const players = [];
+      let players = [];
+      if (player) {players.push(player)}
       if (observers) players.push(...observers);
       const ret = new BlackjackAreaController(
         id,
@@ -100,17 +103,65 @@ describe('BlackjackAreaController'  , () => {
       return ret;
     }
 
-    describe('[T1.1] Properties at the start of the game', () => {
-        describe('hand', () => {
+    describe('Properties at the start of the game', () => {
+        describe('Player', () => {
           it('returns an empty hand if there are no players yet', () => {
             const controller = BlackjackAreaControllerWithProps({ status: 'IN_PROGRESS', hands: [] });
             //Expect correct number of hands
             expect(controller?.hands?.length).toBe(0);
-            
-            
+          });
+
+          it('returns the player if there is a single player', () => {
+            const controller = BlackjackAreaControllerWithProps({ player: ourPlayer.id });
+            expect(controller.players[0]).toBe(ourPlayer);
+          });
+
+          it('returns undefined if there is no player', () => {
+            const controller = BlackjackAreaControllerWithProps({ player: undefined });
+            expect(controller.players[0]).toBeUndefined();
           });
         });
+
+        describe('hands', () => {
+          it('returns the number of hands from the game state', () => {
+            const controller = BlackjackAreaControllerWithProps({
+              hands: [
+                {player: "1", hand: [
+                  {type: "Diamonds",value:5, faceUp:true},
+                  {type: "Diamonds",value:6, faceUp:true},
+                ],
+                ante: 1,
+                active: true,
+              },
+              ],
+            });
+            expect(controller.hands?.length).toBe(1);
+          });
+        });
+
        
+      });
+
+      describe('isOurTurn', () => {
+        it('returns true if it is our turn', () => {
+          const controller = BlackjackAreaControllerWithProps({
+            player: ourPlayer.id,
+            status: 'IN_PROGRESS',
+          });
+          expect(controller.currentPlayer).toBe(0);
+          expect(controller.isPlayer).toBe(true);
+        });
+      });
+
+      describe('status', () => {
+        it('Wa', () => {
+          const controller = BlackjackAreaControllerWithProps({
+            player: ourPlayer.id,
+            status: 'IN_PROGRESS',
+          });
+          expect(controller.currentPlayer).toBe(0);
+          expect(controller.isPlayer).toBe(true);
+        });
       });
 
 

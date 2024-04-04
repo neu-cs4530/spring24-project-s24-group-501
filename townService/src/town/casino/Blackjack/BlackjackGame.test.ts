@@ -8,7 +8,7 @@ import {
 import { createPlayerForTesting } from '../../../TestUtils';
 import { BlackjackMove, Player } from '../../../types/CoveyTownSocket';
 import BlackjackGame from './BlackjackGame';
-import Shuffler from './Shuffler';
+import Shuffler from '../Shuffler';
 
 function createGameFromPattern(game: BlackjackGame, moves: BlackjackMove[]) {
   for (const move of moves) {
@@ -68,7 +68,9 @@ describe('BlackjackGame', () => {
 
   describe('join', () => {
     it('should throw an error if the player is already in the game', () => {
+      expect(game.state.results.length).toEqual(0)
       game.join(player1);
+      expect(game.state.results.length).toEqual(1)
       expect(() => game.join(player1)).toThrowError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     });
     it('should throw an error if the table is full', () => {
@@ -369,6 +371,15 @@ describe('BlackjackGame', () => {
             { type: 'Clubs', value: 'Q', faceUp: true },
           ],
         },
+        {
+          player: '5',
+          active: false,
+          ante: 100,
+          hand: [
+            { type: 'Diamonds', value: 'J', faceUp: true },
+            { type: 'Diamonds', value: 'Q', faceUp: true },
+          ],
+        },
       ];
       game.state.shuffler = new Shuffler([
         { type: 'Diamonds', value: 5, faceUp: true },
@@ -386,9 +397,10 @@ describe('BlackjackGame', () => {
         { player: '2', netCurrency: 500 },
         { player: '3', netCurrency: 5000 },
         { player: '4', netCurrency: 5000 },
+        { player: '5', netCurrency: 1000 },
       ];
 
-      game.state.wantsToLeave = ['4'];
+      game.state.wantsToLeave = ['5'];
     });
 
     test('Player should lose ante if they have busted no matter what', () => {
@@ -474,7 +486,8 @@ describe('BlackjackGame', () => {
 
     test('Function should update the state to remove all players who wish to leave', () => {
       game.state.status = 'IN_PROGRESS';
-      expect(game.state.hands.length).toEqual(4);
+      expect(game.state.hands.length).toEqual(5);
+      expect(game.state.results.length).toEqual(5);
       game.applyMove({
         playerID: '3',
         gameID: game.id,
@@ -483,7 +496,8 @@ describe('BlackjackGame', () => {
           action: 'Hit',
         },
       });
-      expect(game.state.hands.length).toEqual(3);
+      expect(game.state.hands.length).toEqual(4);
+      expect(game.state.results.length).toEqual(4);
     });
 
     test('Should give each player and the dealer two new cards and make them active', () => {

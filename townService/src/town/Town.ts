@@ -21,6 +21,7 @@ import {
 import { logError } from '../Utils';
 import ConversationArea from './ConversationArea';
 import GameAreaFactory from './games/GameAreaFactory';
+import CasinoAreaFactory from './casino/CasinoAreaFactory';
 import InteractableArea from './InteractableArea';
 import ViewingArea from './ViewingArea';
 
@@ -422,10 +423,15 @@ export default class Town {
       .filter(eachObject => eachObject.type === 'GameArea')
       .map(eachGameAreaObj => GameAreaFactory(eachGameAreaObj, this._broadcastEmitter));
 
+    const casinoAreas = objectLayer.objects
+      .filter(eachObject => eachObject.type === 'CasinoArea')
+      .map(eachCasinoAreaObj => CasinoAreaFactory(eachCasinoAreaObj, this._broadcastEmitter));
+
     this._interactables = this._interactables
       .concat(viewingAreas)
       .concat(conversationAreas)
-      .concat(gameAreas);
+      .concat(gameAreas)
+      .concat(casinoAreas);
     this._validateInteractables();
   }
 
