@@ -106,7 +106,7 @@ export default class BlackjackAreaController extends GameAreaController<
    * If the turn has changed, emits a turnChanged event with the new turn 
    * If the turn has not changed, does not emit a turnChanged event.
    */
-    protected _updateFrom(newModel: GameArea<CasinoState>): void {
+    protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
       const whoTurn = this.currentPlayer;
       super._updateFrom(newModel);
       const newGame = newModel.game;

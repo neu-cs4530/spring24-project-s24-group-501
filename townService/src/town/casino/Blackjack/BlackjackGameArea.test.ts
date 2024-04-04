@@ -13,7 +13,7 @@ import { createPlayerForTesting } from '../../../TestUtils';
 import {
   BlackjackMove,
   CasinoScore,
-  CasinoState,
+  BlackjackCasinoState,
   CoveyBucks,
   GameInstanceID,
   GameMove,
@@ -23,7 +23,7 @@ import Shuffler from '../Shuffler';
 
 jest.setTimeout(70000); // in milliseconds
 
-class TestingGame extends Game<CasinoState, BlackjackMove> {
+class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
   public constructor() {
     super({
       hands: [],

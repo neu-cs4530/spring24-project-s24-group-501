@@ -9,7 +9,7 @@ import Player from '../../../lib/Player';
 import {
   BlackjackMove,
   Card,
-  CasinoState,
+  BlackjackCasinoState,
   CoveyBucks,
   GameMove,
 } from '../../../types/CoveyTownSocket';
@@ -22,7 +22,7 @@ const MAX_PLAYERS = 4;
  * A BlackjackGame is a Game that implements the rules of Blackjack.
  * @see https://www.blackjack.org/blackjack/how-to-play/
  */
-export default class BlackjackGame extends Game<CasinoState, BlackjackMove> {
+export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackMove> {
   private _stakeSize: CoveyBucks;
 
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {

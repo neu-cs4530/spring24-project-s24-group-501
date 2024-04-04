@@ -175,7 +175,8 @@ export interface BlackjackCasinoState extends GameState {
   hands: PlayerHand[]; 
   currentPlayer: number;
   dealerHand: Card[];
-  // shuffler: shuffler;
+  results: CasinoScore[];
+  shuffler: shuffler;
   wantsToLeave: PlayerID[];
 }
 

@@ -103,7 +103,7 @@ describe('BlackjackAreaController'  , () => {
       return ret;
     }
 
-    describe('[T1.1] Properties at the start of the game', () => {
+    describe('Properties at the start of the game', () => {
         describe('Player', () => {
           it('returns an empty hand if there are no players yet', () => {
             const controller = BlackjackAreaControllerWithProps({ status: 'IN_PROGRESS', hands: [] });
