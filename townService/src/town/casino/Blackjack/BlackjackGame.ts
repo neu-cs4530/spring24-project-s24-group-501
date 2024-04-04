@@ -82,6 +82,12 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * Handles dishing out antes and resseting the game after a round is over
    */
   private _overHandler(): void {
+    // const finalDealerValue = this._handValue(this.state.dealerHand);
+    // for (const player of this.state.hands) {
+    //   player.hands.forEach(hand => {
+    //   })
+    //   const playerValue =
+    // }
     // const finalDealerValue = this._dealerHandler();
     // for (const player of this.state.hands) {
     //   if (this._handValue(player.hand) > 21) {

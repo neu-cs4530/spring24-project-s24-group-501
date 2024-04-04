@@ -8,6 +8,7 @@ import {
   BlackjackCasinoState,
   GameStatus,
   BlackjackPlayer,
+  CoveyBucks,
 } from '../../../../shared/types/CoveyTownSocket';
 import GameAreaController, {
   GameEventTypes,
@@ -25,12 +26,6 @@ export default class BlackjackAreaController extends GameAreaController<
   BlackjackCasinoState,
   BlackjackEvents
 > {
-  protected _hands: BlackjackPlayer[] = [];
-
-  protected _wantsToLeave: string[] = [];
-
-  protected _dealerHand: Card[] = [];
-
   /**
    * Returns the current state of the tables hands.
    *
@@ -93,6 +88,10 @@ export default class BlackjackAreaController extends GameAreaController<
    */
   get whoWantsToLeave(): string[] | undefined {
     return this._model.game?.state.wantsToLeave;
+  }
+
+  get stake(): CoveyBucks {
+    return this._model.game?.state.stake || 0;
   }
 
   public isActive(): boolean {
