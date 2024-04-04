@@ -1,8 +1,8 @@
 import React from 'react';
 import { Heading, StackDivider, VStack } from '@chakra-ui/react';
-import Top10PlayerRanks from './PlayerRanks';
-import DailyCasinoSessions from './DailySessions';
 import SessionsStats from './SessionsStats';
+import PlayerRanks from './PlayerRanks';
+import DailySessions from './DailySessions';
 
 /**
  * Assembles a leaderboard component that displays the top 10 players, the daily casino sessions, and the statistics of the casino
@@ -14,9 +14,9 @@ export default function Leaderboard(): JSX.Element {
             <Heading fontSize='xl' as='h1'>
                 Casino Statistics
             </Heading>
-            <Top10PlayerRanks />
+            <PlayerRanks />
             <SessionsStats />
-            <DailyCasinoSessions />
+            <DailySessions />
         </VStack>
     );
 }

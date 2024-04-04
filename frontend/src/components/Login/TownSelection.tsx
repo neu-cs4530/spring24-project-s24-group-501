@@ -24,11 +24,10 @@ import { Town } from '../../generated/client';
 import useLoginController from '../../hooks/useLoginController';
 import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '../../authentication/PlayerTracker';
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
+
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -40,8 +39,8 @@ export default function TownSelection(): JSX.Element {
   const loginController = useLoginController();
   const { setTownController, townsService } = loginController;
   const { connect: videoConnect } = useVideoContext();
-  const [session, setSession] = useState<Session | null>(null);
-  const [playerID, setPlayerID] = useState<string>('');
+  const [playerID, setPlayerID] = useState<string | undefined>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   const toast = useToast();
 
@@ -49,41 +48,37 @@ export default function TownSelection(): JSX.Element {
 
   useEffect(() => {
     const fetchSession = async () => {
-        const { data: session, error } = await supabase.auth.getSession();
-        if (session) {
-            setSession(session.session);
-            if (session.session?.user?.email) {
-                const playerID = await playerTracker.handleUser(session.session.user.email);
-                setPlayerID(playerID);
-            }
-        }
+        const { data } = await supabase.auth.getSession();
+        const session = data.session;
+        setUser(session?.user);
     };
 
     fetchSession();
 
-    const authListener = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
-        if (newSession) {
-            setSession(newSession);
-            if (newSession.user?.email) {
-                playerTracker.handleUser(newSession.user.email).then(playerID => {
-                    setPlayerID(playerID);
-                });
-            }
-        } else {
-            setSession(null);
-            setPlayerID('');
-        }
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
+      switch (_event) {
+        case 'SIGNED_IN':
+          setUser(newSession?.user);
+          break;
+        case 'SIGNED_OUT':
+          setUser(undefined);
+          setPlayerID(undefined);
+          break;
+      }
     });
 
     return () => {
-        authListener.data.subscription.unsubscribe();
-    };
-}, []);
+      authListener.subscription.unsubscribe();
+    }
+  });
+
+  const login = async () => {
+    await supabase.auth.signInWithOAuth({ provider: 'github' });
+  };
 
 
-  const logOut = () => {
-    supabase.auth.signOut();
-    setSession(null);
+  const logout = async () => {
+    await supabase.auth.signOut();
   };
 
   const updateTownListings = useCallback(() => {
@@ -104,14 +99,14 @@ export default function TownSelection(): JSX.Element {
       let connectWatchdog: NodeJS.Timeout | undefined = undefined;
       let loadingToast: ToastId | undefined = undefined;
       try {
-        // if (!session) {
-        //   toast({
-        //     title: 'Unable to join town',
-        //     description: 'Please log in',
-        //     status: 'error',
-        //   });
-        //   return;
-        // }
+        if (!user) {
+          toast({
+            title: 'Unable to join town',
+            description: 'Please log in',
+            status: 'error',
+          });
+          return;
+        }
         if (!userName || userName.length === 0) {
           toast({
             title: 'Unable to join town',
@@ -151,10 +146,12 @@ export default function TownSelection(): JSX.Element {
           }
         }, 1000);
         setIsJoining(true);
+        // await playerTracker.handleUser(user?.email || '');
         const newController = new TownController({
           userName,
           townID: coveyRoomID,
           loginController,
+          email: user?.email || '',
         });
         await newController.connect();
         const videoToken = newController.providerVideoToken;
@@ -189,7 +186,7 @@ export default function TownSelection(): JSX.Element {
         }
       }
     },
-    [setTownController, userName, toast, videoConnect, loginController, session],
+    [setTownController, userName, toast, videoConnect, loginController],
   );
 
   const handleCreate = async () => {
@@ -294,35 +291,29 @@ export default function TownSelection(): JSX.Element {
     <>
       <form>
         <Stack>
-          <Box p='4' borderWidth='1px' borderRadius='lg'>
-            <Heading as='h2' size='lg'>
-              Login
-            </Heading>
-            <div>
-              {!session ? (
-                <Auth
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore (explicit any required for supabaseClient prop type)
-                  supabaseClient={supabase as any}
-                  appearance={{ theme: ThemeSupa }}
-                  providers={['google', 'github']}
-                  redirectTo="current"
-                />
-              ) : (
-                <div>
-                  <h1>Logged in!</h1>
-                  <Button data-testid='logOutButton' onClick={logOut}>
-                    Log Out
-                  </Button>
-                </div>
-              )}
-            </div>
-          </Box>
+          {!user ? (
+            <Box p='4' borderWidth='1px' borderRadius='lg'>
+              <Heading as='h2' size='lg'>
+                Login
+              </Heading>
+              <Button data-testid='loginButton' onClick={login}>
+                Login with GitHub
+              </Button>
+            </Box>
+            ) : (
+            <Box p='4' borderWidth='1px' borderRadius='lg'>
+              <Heading as='h2' size='lg'>
+                Authenticated!
+              </Heading>
+              <Button data-testid='logoutButton' onClick={logout}>
+                Log Out
+              </Button>
+            </Box>
+            )}
           <Box p='4' borderWidth='1px' borderRadius='lg'>
             <Heading as='h2' size='lg'>
               Select a username
             </Heading>
-
             <FormControl>
               <FormLabel htmlFor='name'>Name</FormLabel>
               <Input
@@ -377,7 +368,6 @@ export default function TownSelection(): JSX.Element {
           <Heading p='4' as='h2' size='lg'>
             -or-
           </Heading>
-
           <Box borderWidth='1px' borderRadius='lg'>
             <Heading p='4' as='h2' size='lg'>
               Join an Existing Town
@@ -402,7 +392,6 @@ export default function TownSelection(): JSX.Element {
                 </Button>
               </Flex>
             </Box>
-
             <Heading p='4' as='h4' size='md'>
               Select a public town to join
             </Heading>

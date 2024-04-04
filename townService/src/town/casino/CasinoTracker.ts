@@ -1,14 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import Player from '../../lib/Player';
-import {
-  CasinoGame,
-  CasinoScore,
-  CasinoSession,
-  CasinoStake,
-  CoveyBucks,
-  PlayerID,
-} from '../../types/CoveyTownSocket';
+import { CasinoScore, CasinoSession, CoveyBucks, PlayerID } from '../../../types/CoveyTownSocket';
 
 dotenv.config();
 
@@ -18,69 +10,40 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY || '');
 
 /**
  * A CasinoTracker is used to perist currency changes and track tables for players in CoveyTown using a database service.
- * Errors are propogated to its user.
  * @see https://supabase.com/dashboard/project/domiwhhznvhnvxdfptjp
  */
 export default class CasinoTracker {
   /**
-   * Retrieves all players and their updated currency balance.
-   * @returns a Promise of players and their units.
+   * Retrieves the player's currency balance.
+   * @param id the player's ID.
+   * @returns a Promise of the player's balance or 0 if the player does not exist.
    */
-  async getPlayersCurrency(): Promise<CasinoScore[]> {
+  async getPlayerCurrency(id: PlayerID): Promise<CoveyBucks> {
+    const response = await supabase.from('Player').select('balance').eq('id', id).select();
+    if (response.data && response.data.length > 0) {
+      return response.data[0].balance as CoveyBucks;
+    }
+    return 0;
+  }
+
+  /**
+   * Updates the player's balance to reflect the net change.
+   * @param id the player's id
+   * @param netCurrency the player's change to their currency balance, can be positive or negative
+   * @returns a Promise of the player's updated balance or 0 if the player does not exist.
+   */
+  async putPlayerCurrency(playerScore: CasinoScore): Promise<CoveyBucks> {
     const response = await supabase
       .from('Player')
-      .select('id, balance')
-      .order('balance', { ascending: false });
-    return (response.data ?? []).map(item => ({
-      player: String(item.id) as PlayerID,
-      netCurrency: item.balance as CoveyBucks,
-    })) as CasinoScore[];
-  }
-
-  async getPlayerCurrency(player: Player): Promise<CasinoScore> {
-    const response = await this.getPlayersCurrency();
-    return response.filter(score => score.player === player.id)[0];
-  }
-
-  /**
-   * Updates the player balances of the supplied entries.
-   * @param scores a list of players and new balances.
-   * @returns a Promise of the updated scores.
-   */
-  async putPlayerScores(scores: CasinoScore[]): Promise<CasinoScore[]> {
-    scores.map(async score => ({
-      id: score.player,
-      netCurrency: await supabase
-        .from('Player')
-        .update({ balance: score.netCurrency })
-        .eq('id', score.player)
-        .select(),
-    }));
-
-    await Promise.all(scores);
-
-    return (await this.getPlayersCurrency()).filter(fullScore =>
-      scores.map(updatedScore => updatedScore.player).includes(fullScore.player),
-    );
-  }
-
-  /**
-   * Fetches all casino sessions that have been played for the specified game.
-   * @param game the type of casino game.
-   * @returns a Promise with the stake and creation date for a table.
-   */
-  async getCasinoSessions(game: CasinoGame): Promise<CasinoSession[]> {
-    const response = await supabase
-      .from('Session')
-      .select('id, player_id, stakes, start_date')
-      .eq('game', game);
-    return (response.data ?? []).map(item => ({
-      id: item.id,
-      playerID: item.player_id as PlayerID,
-      stakes: item.stakes as CasinoStake,
-      game,
-      date: item.start_date as Date,
-    })) as CasinoSession[];
+      .update({
+        balance: (await this.getPlayerCurrency(playerScore.player)) + playerScore.netCurrency,
+      })
+      .eq('id', playerScore.player)
+      .select();
+    if (response.data && response.data.length > 0) {
+      return response.data[0].balance as CoveyBucks;
+    }
+    return 0;
   }
 
   /**
@@ -88,28 +51,14 @@ export default class CasinoTracker {
    * @param session the table to be stored.
    * @returns a Promise containing the constructed session entry.
    */
-  async postCasinoSession(session: CasinoSession): Promise<CasinoSession[]> {
+  async postCasinoSession(session: CasinoSession): Promise<number> {
     const response = await supabase
       .from('Session')
-      .insert([
-        { id: session.id, player_id: session.playerID, stakes: session.stakes, game: session.game },
-      ])
+      .insert([{ stakes: session.stakes, game: session.game }])
       .select();
-    return (response.data ?? []).map(item => ({
-      id: item.id,
-      playerID: item.player_id as PlayerID,
-      stakes: item.stakes as CasinoStake,
-      game: item.game as CasinoGame,
-      date: item.start_date as Date,
-    }));
-  }
-
-  /**
-   * Inserts the player into the database if they do not already exist.
-   * @param email the email address of the user to be added.
-   */
-  async postUser(email: string): Promise<void> {
-    // this could also maintain a map of emails to ids
-    await supabase.from('Player').insert([{ email }]);
+    if (response.data && response.data.length > 0) {
+      return response.data[0].id as number;
+    }
+    return 0;
   }
 }

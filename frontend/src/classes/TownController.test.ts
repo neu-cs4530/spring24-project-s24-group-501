@@ -84,7 +84,7 @@ describe('TownController', () => {
     mockClear(mockSocket);
     userName = nanoid();
     townID = nanoid();
-    testController = new TownController({ userName, townID, loginController: mockLoginController });
+    testController = new TownController({ userName, townID, loginController: mockLoginController, email: '' });
   });
   describe('With an unsuccesful connection', () => {
     it('Throws an error', async () => {
@@ -411,6 +411,7 @@ describe('TownController', () => {
         id: nanoid(),
         location: { moving: false, rotation: 'back', x: 0, y: 1, interactableID: nanoid() },
         userName: nanoid(),
+        units: 0,
       };
       //Add that player to the test town
       testPlayerPlayersChangedFn = emitEventAndExpectListenerFiring(

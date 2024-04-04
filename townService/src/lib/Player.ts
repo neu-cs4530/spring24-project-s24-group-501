@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import CasinoTrackerFactory from '../town/games/Blackjack/CasinoTrackerFactory';
 import {
   Player as PlayerModel,
   PlayerLocation,
@@ -28,6 +29,7 @@ export default class Player {
   /** A special town emitter that will emit events to the entire town BUT NOT to this player */
   public readonly townEmitter: TownEmitter;
 
+  /** The player's units, to persist across sessions */
   private _units: CoveyBucks;
 
   constructor(userName: string, townEmitter: TownEmitter) {
@@ -41,7 +43,7 @@ export default class Player {
     this._id = nanoid();
     this._sessionToken = nanoid();
     this.townEmitter = townEmitter;
-    this._units = 0; // TODO: update to pull units from backend
+    this._units = 0;
   }
 
   get userName(): string {
@@ -64,7 +66,12 @@ export default class Player {
     return this._sessionToken;
   }
 
-  get getUnits(): CoveyBucks {
+  get units(): CoveyBucks {
+    CasinoTrackerFactory.instance()
+      .getPlayerCurrency(this._id)
+      .then(units => {
+        this._units = units;
+      });
     return this._units;
   }
 

@@ -1,5 +1,4 @@
-import { CasinoGame, CasinoSession } from "../../../../shared/types/CoveyTownSocket";
-import CasinoTracker from "../../../../townService/src/town/casino/CasinoTracker";
+import { CasinoGame } from "../../../../shared/types/CoveyTownSocket";
 
 /**
  * Fetches the casino games available in CoveyTown
@@ -8,17 +7,4 @@ import CasinoTracker from "../../../../townService/src/town/casino/CasinoTracker
 export default function offeredGames(): CasinoGame[] {
     return ['Blackjack'];
 }
-
-/**
- * Retrieves all logged sessions for a casino game
- * @param game the casino game
- * @returns all sessions of the given game
- */
-export function sessionsByGame(game: CasinoGame): CasinoSession[] {
-    // TODO: use Singleton
-    new CasinoTracker().getCasinoSessions(game).then(sessions => {
-      return sessions;
-    });
-    return [];
-  }
   
