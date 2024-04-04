@@ -66,12 +66,11 @@ export default class Player {
     return this._sessionToken;
   }
 
+  set units(newUnits: CoveyBucks) {
+    this._units = newUnits;
+  }
+
   get units(): CoveyBucks {
-    CasinoTrackerFactory.instance()
-      .getPlayerCurrency(this._id)
-      .then((units: number) => {
-        this._units = units;
-      });
     return this._units;
   }
 
