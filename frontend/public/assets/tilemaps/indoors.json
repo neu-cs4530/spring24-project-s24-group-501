@@ -629,23 +629,6 @@
                  "y":462.624860022396
                 }, 
                 {
-                 "height":185.333,
-                 "id":64,
-                 "name":"Blackjack 2",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Blackjack"
-                        }],
-                 "rotation":0,
-                 "type":"CasinoArea",
-                 "visible":false,
-                 "width":136,
-                 "x":860.500186636805,
-                 "y":469.958360022396
-                }, 
-                {
                  "height":0,
                  "id":70,
                  "name":"",
