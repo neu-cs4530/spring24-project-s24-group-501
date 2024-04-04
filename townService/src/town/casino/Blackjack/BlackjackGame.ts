@@ -31,7 +31,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {
     super({
-      hands: new Array(4),
+      hands: [],
       status: 'WAITING_FOR_PLAYERS',
       currentPlayer: 0,
       dealerHand: [],
@@ -209,6 +209,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     // The round is over if all players are inactive
     if (this.state.hands.filter(player => player.active).length === 0) {
       this.state.currentPlayer = 0;
+      // this.
       this._overHandler();
     }
   }
@@ -273,20 +274,12 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       active = false;
     }
 
-    for (let i = 0; i < this.state.hands.length; i += 1) {
-      if (this.state.hands[i] === undefined) {
-        this.state.hands[i] = {
-          player: player.id,
-          hands: [],
-          currentHand: 0,
-          active,
-        };
-        this.state.results.push({ player: player.id, netCurrency: 0 });
-        return;
-      }
-    }
-    throw new InvalidParametersError(GAME_FULL_MESSAGE);
-    // this.state.results = [...this.state.results, { player: player.id, netCurrency: 0 }]; // player.units }];
+    this.state.hands.unshift({
+      player: player.id,
+      hands: [],
+      currentHand: 0,
+      active,
+    });
   }
 
   /**
