@@ -4,8 +4,10 @@ import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
-import styles from './blackjack.module.css';
+import BlackjackBetSetter from './BlackjackBetSetter';
 import BlackjackPlayer from './BlackjackPlayer';
+
+import styles from './blackjack.module.css';
 
 export default function BlackjackArea({
   interactableID,
@@ -41,8 +43,7 @@ export default function BlackjackArea({
   if (gameStatus === 'IN_PROGRESS') {
     gameStatusText = <>Game in progress</>;
   } else if (gameStatus === 'WAITING_TO_START') {
-    const startGameButton = <div>waiting to start</div>;
-    gameStatusText = <b>Waiting for players to press start. {startGameButton}</b>;
+    gameStatusText = <b>BETTING STAGE.</b>;
   } else {
     const joinGameButton = (
       <button
@@ -65,9 +66,13 @@ export default function BlackjackArea({
     <>
       <div className={styles.board}>
         <div>
-          <div>{gameStatusText}</div>
+          <div style={{ position: 'fixed' }}>{gameStatusText}</div>
+
           <p>DEALER</p>
         </div>
+
+        {gameStatus === 'WAITING_TO_START' && <BlackjackBetSetter />}
+
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
           {players.map((player, i) => (
             <BlackjackPlayer

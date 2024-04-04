@@ -15,9 +15,61 @@
   padding-bottom: 8px;
   text-transform: uppercase;
   margin-top: -5px;
-  
-  
-  
+}
+
+/* Currency Selector */
+.selectorHolder {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.slider {
+  border: 1px solid black;
+  border-radius: 25px;
+  padding: 5px;
+  width: 100%;
+  margin: 0 auto;
+  height: 52px;
+}
+
+.slider > input {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 40px; /* Height of the slider */
+  outline: none;
+  top: 0;
+}
+
+.slider > input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  background: #00A858;
+  cursor: pointer;
+}
+
+.slider > input::-moz-range-thumb {
+  width: 25px; 
+  height: 25px;
+  background: #00A858; 
+  border-radius: 50%; 
+  cursor: pointer;
+}
+
+.selectorHolder > button {
+  text-transform: uppercase;
+  background-color: #00A858;
+  border: 1px solid black;
+  width: fit-content;
+  padding: 5px;
+  padding-bottom: 3px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Card */
