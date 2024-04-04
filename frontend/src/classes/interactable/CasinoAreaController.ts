@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-
+  CasinoArea,
   GameState,
   InteractableID,
 } from '../../types/CoveyTownSocket';
@@ -32,7 +32,7 @@ export const NO_GAME_STARTABLE = 'No casino startable';
  * It is also responsible for notifying the UI when the state of the casino changes, by emitting events.
  */
 export default abstract class CasinoAreaController<
-  State extends CasinoState,
+  State extends GameState,
   EventTypes extends CasinoEventTypes,
 > extends InteractableAreaController<EventTypes, any> {
   protected _instanceID?: any;
@@ -43,7 +43,7 @@ export default abstract class CasinoAreaController<
 
   protected _players: PlayerController[] = [];
 
-  constructor(id: InteractableID, casinoArea: any, townController: TownController) {
+  constructor(id: InteractableID, casinoArea: CasinoArea<State>, townController: TownController) {
     super(id);
     this._model = casinoArea;
     this._townController = townController;
@@ -80,7 +80,7 @@ export default abstract class CasinoAreaController<
    */
   public async joinCasino() {
     const { casinoID } = await this._townController.sendInteractableCommand(this.id, {
-      type: 'JoinCasino',
+      type: 'JoinGame',
     });
     this._instanceID = casinoID;
   }
@@ -93,12 +93,12 @@ export default abstract class CasinoAreaController<
     if (instanceID) {
       await this._townController.sendInteractableCommand(this.id, {
         type: 'LeaveGame',
-        casinoID: instanceID,
+        gameID: instanceID,
       });
     }
   }
 
-  protected _updateFrom(newModel: any): void {
+  protected _updateFrom(newModel: CasinoArea<State>): void {
     const casinoEnding =
       this._model.casino?.state.status === 'IN_PROGRESS' && newModel.casino?.state.status === 'OVER';
     const newPlayers =
