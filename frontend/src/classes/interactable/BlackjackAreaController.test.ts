@@ -8,7 +8,7 @@ import assert from 'assert';
 import Shuffler from "../../../../townService/src/town/casino/Shuffler";
 
 describe('BlackjackAreaController'  , () => {
-    const ourPlayer = new PlayerController(nanoid(), nanoid(), {
+    const ourPlayer = new PlayerController("1", "1", {
       x: 0,
       y: 0,
       moving: false,
@@ -18,6 +18,8 @@ describe('BlackjackAreaController'  , () => {
       new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
       new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
     ];
+
+    const deck = new Shuffler();
   
     const mockTownController = mock<TownController>();
     Object.defineProperty(mockTownController, 'ourPlayer', {
@@ -41,6 +43,17 @@ describe('BlackjackAreaController'  , () => {
       nextState.game = nextGame;
       const newState = Object.assign({}, nextGame.state);
       nextGame.state = newState;
+      if (nextMove.action === 'Stand' && controller.hands) {
+        for (let hand of controller.hands) {
+          hand.active = false;
+        }  
+      }
+      if (nextMove.action === 'Hit' && controller.hands) {
+        for (let hand of controller.hands) {
+          hand.active = false;
+          hand.hand.push(deck.deal(true));
+        }  
+      }
       controller.updateFrom(nextState, controller.occupants);
     }
     function BlackjackAreaControllerWithProps({
@@ -109,6 +122,21 @@ describe('BlackjackAreaController'  , () => {
             const controller = BlackjackAreaControllerWithProps({ status: 'IN_PROGRESS', hands: [] });
             //Expect correct number of hands
             expect(controller?.hands?.length).toBe(0);
+            expect(controller?.isActive()).toBe(false);
+          });
+
+          it('returns a list of a single hand if there is a hand', () => {
+            const hand1: PlayerHand = {
+              player: "1",
+              hand: [{type:"Diamonds",value:2,faceUp:true},{type:"Diamonds",value:3,faceUp:true}],
+              ante: 5,
+              active: true
+
+            }
+            const controller = BlackjackAreaControllerWithProps({ status: 'IN_PROGRESS', hands: [hand1] });
+            //Expect correct number of hands
+            expect(controller?.hands?.length).toBe(1);
+            expect(controller?.isActive()).toBe(true);
           });
 
           it('returns the player if there is a single player', () => {
@@ -153,14 +181,76 @@ describe('BlackjackAreaController'  , () => {
         });
       });
 
-      describe('status', () => {
-        it('Wa', () => {
+      describe('Status', () => {
+        it('returns Waiting for Players if undefined', () => {
           const controller = BlackjackAreaControllerWithProps({
             player: ourPlayer.id,
-            status: 'IN_PROGRESS',
+            status: undefined,
           });
+          expect(controller.status).toEqual("WAITING_FOR_PLAYERS");
+          
+        });
+
+        it('returns status if defined', () => {
+          const stat = "IN_PROGRESS"
+          const controller = BlackjackAreaControllerWithProps({
+            player: ourPlayer.id,
+            status: stat,
+          });
+          expect(controller.status).toEqual(stat);
+          
         });
       });
 
+      describe('Properties during the game, modified by _updateFrom ', () => {
+        let controller: BlackjackAreaController;
+        beforeEach(() => {
+          controller = BlackjackAreaControllerWithProps({
+            player: ourPlayer.id,
+            hands: [
+              {player: "1", hand: [
+                {type: "Diamonds",value:5, faceUp:true},
+                {type: "Diamonds",value:6, faceUp:true},
+              ],
+              ante: 1,
+              active: true,
+            },
+            ],
+            status: 'IN_PROGRESS',
+          });
+        });
 
-});
+
+        it('returns the correct hand amount after a move', () => {
+          updateGameWithMove(controller, {
+            player: "1",
+            action: "Hit"
+          });
+          if (controller.hands) {expect(controller.hands[0].hand.length).toEqual(3);}
+          else {expect(2).toEqual(3);}
+          
+        });
+
+        it('emits a boardChange event if the board has changed', () => {
+          const spy = jest.fn();
+          controller.addListener('boardChanged', spy);
+          updateGameWithMove(controller, { col: 0, gamePiece: 'Red', row: 0 });
+          expect(spy).toHaveBeenCalledWith(controller.board);
+        });
+        it('does not emit a boardChange event if the board has not changed', () => {
+          const spy = jest.fn();
+          controller.addListener('boardChanged', spy);
+          controller.updateFrom(
+            { ...controller.toInteractableAreaModel() },
+            otherPlayers.concat(ourPlayer),
+          );
+          expect(spy).not.toHaveBeenCalled();
+        });
+          
+      });
+
+
+    });
+      
+
+
