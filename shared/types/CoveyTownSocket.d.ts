@@ -220,7 +220,6 @@ export interface Card {
 export interface Hand {
   cards: Card[];
   wager: CoveyBucks;
-  // active: 
 }
 
 export type BlackjackAction = 'Hit' | 'Stand' | 'Split' | 'Double Down';

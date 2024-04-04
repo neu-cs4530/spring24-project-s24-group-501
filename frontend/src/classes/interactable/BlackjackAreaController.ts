@@ -116,7 +116,7 @@ export default class BlackjackAreaController extends GameAreaController<
     super._updateFrom(newModel);
     const newGame = newModel.game;
     if (newGame) {
-      //Hand changed emitter
+      // Hand changed emitter
       const newHands: BlackjackPlayer[] = [];
       newGame.state.hands.forEach(hand => {
         newHands.push(hand);
@@ -126,7 +126,7 @@ export default class BlackjackAreaController extends GameAreaController<
         this.emit('handsChanged', this._hands);
       }
 
-      //Wants to Leave emitter
+      // Wants to Leave emitter
       const newWTL: string[] = [];
       newGame.state.wantsToLeave.forEach(player => {
         newWTL.push(player);
@@ -136,7 +136,7 @@ export default class BlackjackAreaController extends GameAreaController<
         this.emit('wantsToLeaveChanged', this._wantsToLeave);
       }
 
-      //Dealer changed emitter
+      // Dealer changed emitter
       const newDealerHand: Card[] = [];
       newGame.state.dealerHand.forEach(card => {
         newDealerHand.push(card);
@@ -164,7 +164,7 @@ export default class BlackjackAreaController extends GameAreaController<
     }
     if (this.hands && this.currentPlayer) {
       const move: BlackjackMove = {
-        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player,
+        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player.id,
         action: bjMove,
       };
       await this._townController.sendInteractableCommand(this.id, {

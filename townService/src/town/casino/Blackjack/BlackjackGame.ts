@@ -152,7 +152,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * @throws InvalidParametersError if the player is not active (PLAYER_NOT_ACTIVE_MESSAGE)
    * @throws InvalidParametersError is not a valid split (INVALID_SPLIT_MESSAGE)
    */
-  public async applyMove(move: GameMove<BlackjackMove>): Promise<void> {
+  public applyMove(move: GameMove<BlackjackMove>): void {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new Error(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
