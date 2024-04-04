@@ -5,7 +5,7 @@ import { useInteractableAreaController } from '../../../../classes/TownControlle
 import useTownController from '../../../../hooks/useTownController';
 import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
-import BlackjackPlayer from './BlackjackPlayer';
+import BlackjackUser from './BlackjackUser';
 
 import styles from './blackjack.module.css';
 
@@ -75,7 +75,7 @@ export default function BlackjackArea({
 
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
           {players.map((player, i) => (
-            <BlackjackPlayer
+            <BlackjackUser
               key={i}
               username={player.userName}
               cash={player.units}
