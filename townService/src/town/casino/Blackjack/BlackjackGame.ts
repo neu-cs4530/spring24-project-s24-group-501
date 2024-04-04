@@ -2,6 +2,7 @@ import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_BETTABLE_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
+  INSUFFICIENT_UNITS_MESSAGE,
   INVALID_BET_MESSAGE,
   INVALID_SPLIT_MESSAGE,
   MOVE_NOT_YOUR_TURN_MESSAGE,
@@ -27,8 +28,6 @@ const MAX_PLAYERS = 4;
  * @see https://www.blackjack.org/blackjack/how-to-play/
  */
 export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackMove> {
-  private _stakeSize: CoveyBucks;
-
   public constructor(stakeSize?: CoveyBucks, definedDeck?: Card[]) {
     super({
       hands: [],
@@ -38,8 +37,8 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       results: [],
       shuffler: new Shuffler(definedDeck),
       wantsToLeave: [],
+      stake: stakeSize || 10,
     });
-    this._stakeSize = stakeSize ?? 10;
   }
 
   /**
@@ -52,11 +51,14 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     if (this.state.status !== 'WAITING_TO_START') {
       throw new InvalidParametersError(GAME_NOT_BETTABLE_MESSAGE);
     }
-    if (bet % this._stakeSize !== 0 || bet < this._stakeSize || bet > 5 * this._stakeSize) {
+    if (bet % this.state.stake !== 0 || bet < this.state.stake || bet > 5 * this.state.stake) {
       throw new InvalidParametersError(INVALID_BET_MESSAGE);
     }
+    if (bet > player.units) {
+      throw new InvalidParametersError(INSUFFICIENT_UNITS_MESSAGE);
+    }
     for (const blackjackPlayer of this.state.hands) {
-      if (blackjackPlayer.player === player.id) {
+      if (blackjackPlayer.player.id === player.id) {
         blackjackPlayer.hands[0].wager = bet;
 
         // the game can commence once all players have made their bet
@@ -127,18 +129,18 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * Deals out the cards for the dealer (hit until over 17, always stands if value is 17 or higher)
    * @returns the value of the dealers hand
    */
-  private _dealerHandler(): number {
+  private _dealerAction(): void {
     this.state.dealerHand[0].faceUp = true;
     while (this._handValue(this.state.dealerHand) < 17) {
       this.state.dealerHand.push(this.state.shuffler.deal(true));
     }
-    let finalDealerValue = 0;
-    if (this._handValue(this.state.dealerHand) > 21) {
-      finalDealerValue = 0;
-    } else {
-      finalDealerValue = this._handValue(this.state.dealerHand);
-    }
-    return finalDealerValue;
+    // let finalDealerValue = 0;
+    // if (this._handValue(this.state.dealerHand) > 21) {
+    //   finalDealerValue = 0;
+    // } else {
+    //   finalDealerValue = this._handValue(this.state.dealerHand);
+    // }
+    // return finalDealerValue;
   }
 
   /**
@@ -150,14 +152,14 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * @throws InvalidParametersError if the player is not active (PLAYER_NOT_ACTIVE_MESSAGE)
    * @throws InvalidParametersError is not a valid split (INVALID_SPLIT_MESSAGE)
    */
-  public applyMove(move: GameMove<BlackjackMove>): void {
+  public async applyMove(move: GameMove<BlackjackMove>): Promise<void> {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new Error(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
     // Extract the current player
     const currPlayerHand = this.state.hands[this.state.currentPlayer];
-    if (currPlayerHand.player !== move.playerID) {
+    if (currPlayerHand.player.id !== move.playerID) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
     if (!currPlayerHand.active) {
@@ -182,6 +184,12 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
         }
       }
     } else if (move.move.action === 'Double Down') {
+      if (
+        currPlayerHand.player.units <
+        currPlayerHand.hands[currPlayerHand.currentHand].wager * 2
+      ) {
+        throw new InvalidParametersError(INSUFFICIENT_UNITS_MESSAGE);
+      }
       currPlayerHand.hands[currPlayerHand.currentHand].cards.push(this.state.shuffler.deal(true));
       currPlayerHand.hands[currPlayerHand.currentHand].wager *= 2;
       currPlayerHand.currentHand += 1;
@@ -190,6 +198,12 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
         this.state.currentPlayer += 1;
       }
     } else if (move.move.action === 'Split') {
+      if (
+        currPlayerHand.player.units <
+        currPlayerHand.hands[currPlayerHand.currentHand].wager * 2
+      ) {
+        throw new InvalidParametersError(INSUFFICIENT_UNITS_MESSAGE);
+      }
       // A split is only valid if the player has a pair and hasn't split already
       if (
         currPlayerHand.hands.length !== 1 ||
@@ -209,7 +223,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     // The round is over if all players are inactive
     if (this.state.hands.filter(player => player.active).length === 0) {
       this.state.currentPlayer = 0;
-      // this.
+      this._dealerAction();
       this._overHandler();
     }
   }
@@ -255,7 +269,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    *  or the game is full (GAME_FULL_MESSAGE)
    */
   protected _join(player: Player): void {
-    if (this.state.hands.map(h => h.player).includes(player.id)) {
+    if (this.state.hands.map(hand => hand.player.id).includes(player.id)) {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     }
     if (this.state.hands.length === MAX_PLAYERS) {
@@ -275,7 +289,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     }
 
     this.state.hands.unshift({
-      player: player.id,
+      player,
       hands: [],
       currentHand: 0,
       active,
@@ -289,11 +303,11 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
   protected _leave(player: Player): void {
-    if (!this.state.hands.map(h => h.player).includes(player.id)) {
+    if (!this.state.hands.map(hand => hand.player.id).includes(player.id)) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     if (this.state.status === 'WAITING_TO_START') {
-      this.state.hands = this.state.hands.filter(playerHand => playerHand.player !== player.id);
+      this.state.hands = this.state.hands.filter(playerHand => playerHand.player.id !== player.id);
       if (this.state.hands.length === 0) {
         this.state.status = 'WAITING_FOR_PLAYERS';
       }

@@ -178,11 +178,12 @@ export interface BlackjackCasinoState extends GameState {
   results: CasinoScore[];
   shuffler: shuffler;
   wantsToLeave: PlayerID[];
+  stake: CoveyBucks;
 }
 
 
 export interface BlackjackPlayer {
-  player: PlayerID;
+  player: Player;
   hands: Hand[];
   currentHand: number;
   active: boolean;
