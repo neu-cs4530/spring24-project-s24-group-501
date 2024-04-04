@@ -24,6 +24,7 @@ import {
   import {  InteractableID } from '../../../types/CoveyTownSocket';
   import CasinoAreaInteractable from './CasinoArea';
   import Leaderboard from './Leaderboard';
+import BlackjackArea from './Blackjack/BlackjackArea';
   
   export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid casino area type';
   
@@ -61,42 +62,10 @@ import {
     
     return (
       <>
-        <Accordion allowToggle>
-          <AccordionItem>
-            <Heading as='h3'>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  Leaderboard
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                ADD LEADERBOARD
-              </AccordionPanel>
-            </Heading>
-          </AccordionItem>
-          <AccordionItem>
-            <Heading as='h3'>
-              <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
-                  Current Observers
-                  <AccordionIcon />
-                </Box>
-              </AccordionButton>
-            </Heading>
-            <AccordionPanel>
-              <List aria-label='list of observers in the casino'>
-                {observers.map(player => {
-                  return <ListItem key={player.id}>{player.userName}</ListItem>;
-                })}
-              </List>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-        <Flex>
+        <Flex >
           <Box>
             {casinoAreaController.toInteractableAreaModel().type === 'BlackjackArea' ? (
-              <div>Black Jack Wack</div>
+              <BlackjackArea interactableID={interactableID} />
             )  : (
               <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>
             )}
@@ -123,14 +92,22 @@ import {
     }, [townController, casinoArea]);
     if (casinoArea) {
       return (
-        <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false} size='xl'>
+        <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false} size='full'>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{casinoArea.name}</ModalHeader>
+            <div style={{padding: "20px"}}>
             <ModalCloseButton />
-            <ModalBody>
-              <CasinoArea interactableID={casinoArea.id} />
-            </ModalBody>
+            <div className='interact-holder'>
+<div>
+:)
+</div>
+<div>
+  CHAT
+</div>
+            </div>
+            <CasinoArea interactableID={casinoArea.id} />
+
+            </div>
           </ModalContent>
         </Modal>
       );
