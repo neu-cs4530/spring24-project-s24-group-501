@@ -159,6 +159,8 @@ describe('BlackjackAreaController'  , () => {
             player: ourPlayer.id,
             status: 'IN_PROGRESS',
           });
+          expect(controller.currentPlayer).toBe(0);
+          expect(controller.isPlayer).toBe(true);
         });
       });
 
