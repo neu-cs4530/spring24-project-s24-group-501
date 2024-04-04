@@ -1,4 +1,4 @@
-import Interactable, { KnownInteractableTypes } from '../Interactable';
+import Interactable, { KnownInteractableTypes } from '../../Interactable';
 
 export default class CasinoArea extends Interactable {
   private _isInteracting = false;

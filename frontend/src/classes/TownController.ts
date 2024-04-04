@@ -10,7 +10,7 @@ import PlayerTrackerFactory from '../authentication/PlayerTrackerFactory';
 import Interactable from '../components/Town/Interactable';
 import ConversationArea from '../components/Town/interactables/ConversationArea';
 import GameArea from '../components/Town/interactables/GameArea';
-import CasinoArea from '../components/Town/interactables/CasinoArea';
+import CasinoArea from '../components/Town/interactables/Casino/CasinoArea';
 import ViewingArea from '../components/Town/interactables/ViewingArea';
 import { LoginController } from '../contexts/LoginControllerContext';
 import { TownsService, TownsServiceClient } from '../generated/client';
@@ -34,7 +34,7 @@ import {
   isConversationArea,
   isTicTacToeArea,
   isViewingArea,
-  isBlackJackArea
+  isBlackJackArea,
 } from '../types/TypeUtils';
 import ConnectFourAreaController from './interactable/ConnectFourAreaController';
 import ConversationAreaController from './interactable/ConversationAreaController';
@@ -714,8 +714,9 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     }
   }
 
-
-  public getCasinoAreaController(casinoArea: CasinoArea): CasinoAreaController<GameState, CasinoEventTypes>{
+  public getCasinoAreaController(
+    casinoArea: CasinoArea,
+  ): CasinoAreaController<GameState, CasinoEventTypes> {
     const existingController = this._interactableControllers.find(
       eachExistingArea => eachExistingArea.id === casinoArea.name,
     );

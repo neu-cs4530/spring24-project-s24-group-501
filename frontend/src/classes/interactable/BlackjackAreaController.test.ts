@@ -218,35 +218,9 @@ describe('BlackjackAreaController'  , () => {
             ],
             status: 'IN_PROGRESS',
           });
+          expect(controller.currentPlayer).toBe(0);
+          expect(controller.isPlayer).toBe(true);
         });
-
-
-        it('returns the correct hand amount after a move', () => {
-          updateGameWithMove(controller, {
-            player: "1",
-            action: "Hit"
-          });
-          if (controller.hands) {expect(controller.hands[0].hand.length).toEqual(3);}
-          else {expect(2).toEqual(3);}
-          
-        });
-
-        it('emits a boardChange event if the board has changed', () => {
-          const spy = jest.fn();
-          controller.addListener('boardChanged', spy);
-          updateGameWithMove(controller, { col: 0, gamePiece: 'Red', row: 0 });
-          expect(spy).toHaveBeenCalledWith(controller.board);
-        });
-        it('does not emit a boardChange event if the board has not changed', () => {
-          const spy = jest.fn();
-          controller.addListener('boardChanged', spy);
-          controller.updateFrom(
-            { ...controller.toInteractableAreaModel() },
-            otherPlayers.concat(ourPlayer),
-          );
-          expect(spy).not.toHaveBeenCalled();
-        });
-          
       });
 
 

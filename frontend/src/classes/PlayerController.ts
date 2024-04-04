@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 import PlayerTrackerFactory from '../authentication/PlayerTrackerFactory';
 import { CoveyBucks, Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
-export const MOVEMENT_SPEED = 175;
+export const MOVEMENT_SPEED = 400;
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
@@ -30,9 +30,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._userName = userName;
     this._location = location;
     this._units = 0;
-    PlayerTrackerFactory.instance().getPlayerCurrency(id).then(units => { 
-      this._units = units;
-    });
+    PlayerTrackerFactory.instance()
+      .getPlayerCurrency(id)
+      .then(units => {
+        this._units = units;
+      });
   }
 
   set location(newLocation: PlayerLocation) {
@@ -54,9 +56,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
   }
 
   get units(): CoveyBucks {
-    PlayerTrackerFactory.instance().getPlayerCurrency(this.id).then(units => { 
-      this._units = units;
-    });
+    PlayerTrackerFactory.instance()
+      .getPlayerCurrency(this.id)
+      .then(units => {
+        this._units = units;
+      });
     return this._units;
   }
 
@@ -98,6 +102,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
   }
 
   static fromPlayerModel(modelPlayer: PlayerModel): PlayerController {
-    return new PlayerController(modelPlayer.id, modelPlayer.userName, modelPlayer.location, modelPlayer.units);
+    return new PlayerController(
+      modelPlayer.id,
+      modelPlayer.userName,
+      modelPlayer.location,
+      modelPlayer.units,
+    );
   }
 }
