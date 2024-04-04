@@ -20,7 +20,7 @@ import {
   TownEmitter,
 } from '../../../types/CoveyTownSocket';
 import Shuffler from '../Shuffler';
-
+/* 
 jest.setTimeout(70000); // in milliseconds
 
 class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
@@ -64,7 +64,7 @@ class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
   }
 }
 
-/* describe('BlackjackGameArea', () => {
+describe('BlackjackGameArea', () => {
   let gameArea: BlackjackGameArea;
   let player1: Player;
   let player2: Player;
