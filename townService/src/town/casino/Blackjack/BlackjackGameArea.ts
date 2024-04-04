@@ -54,30 +54,30 @@ export default class BlackJackGameArea extends GameArea<BlackjackGame> {
   }
 
   private _stateUpdated(updatedState: GameInstance<BlackjackCasinoState>) {
-    if (updatedState.state.status === 'WAITING_TO_START') {
-      // If we haven't yet recorded the outcome, do so now.
-      const gameID = this._game?.id;
-      if (gameID) {
-        const { hands } = updatedState.state;
-        hands
-          .filter(hand => hand.ante !== 0)
-          .forEach(hand =>
-            this._casinoTracker.putPlayerCurrency({ player: hand.player, netCurrency: hand.ante }),
-          );
-        hands.filter(hand => hand.active);
-        if (results.length > 0) {
-          this._updatePlayerScores([...results]);
-          const mutableResults: { [playerName: string]: number } = {};
-          results.forEach(result => {
-            const player = this._occupants.find(eachPlayer => eachPlayer.id === result.player);
-            if (player) {
-              mutableResults[player.userName] = result.netCurrency;
-            }
-          });
-          this._history.push({ gameID, scores: mutableResults });
-        }
-      }
-    }
+    // if (updatedState.state.status === 'WAITING_TO_START') {
+    //   // If we haven't yet recorded the outcome, do so now.
+    //   const gameID = this._game?.id;
+    //   if (gameID) {
+    //     const { hands } = updatedState.state;
+    //     hands
+    //       .filter(hand => hand.ante !== 0)
+    //       .forEach(hand =>
+    //         this._casinoTracker.putPlayerCurrency({ player: hand.player, netCurrency: hand.ante }),
+    //       );
+    //     hands.filter(hand => hand.active);
+    //     if (results.length > 0) {
+    //       this._updatePlayerScores([...results]);
+    //       const mutableResults: { [playerName: string]: number } = {};
+    //       results.forEach(result => {
+    //         const player = this._occupants.find(eachPlayer => eachPlayer.id === result.player);
+    //         if (player) {
+    //           mutableResults[player.userName] = result.netCurrency;
+    //         }
+    //       });
+    //       this._history.push({ gameID, scores: mutableResults });
+    //     }
+    //   }
+    // }
     this._emitAreaChanged();
   }
 
