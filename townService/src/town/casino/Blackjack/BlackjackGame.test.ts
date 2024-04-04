@@ -9,6 +9,7 @@ import { createPlayerForTesting } from '../../../TestUtils';
 import { BlackjackMove, Player } from '../../../types/CoveyTownSocket';
 import BlackjackGame from './BlackjackGame';
 import Shuffler from '../Shuffler';
+
 /*
 function createGameFromPattern(game: BlackjackGame, moves: BlackjackMove[]) {
   for (const move of moves) {

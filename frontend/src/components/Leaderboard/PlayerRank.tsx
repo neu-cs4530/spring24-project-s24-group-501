@@ -9,14 +9,16 @@ export default function PlayerRank({ player }: PlayerRankProps): JSX.Element {
   const [rank, setRank] = useState<string>('#');
 
   useEffect(() => {
-    PlayerTrackerFactory.instance().getPlayersCurrency().then(scores => {
-      for (let i = 0; i < scores.length; i++) {
-        if (scores[i].player === player.player) {
-          setRank((i + 1).toString());
+    PlayerTrackerFactory.instance()
+      .getPlayersCurrency()
+      .then(scores => {
+        for (let i = 0; i < scores.length; i++) {
+          if (scores[i].player === player.player) {
+            setRank((i + 1).toString());
+          }
         }
-      }
-    });
-  })
+      });
+  });
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>

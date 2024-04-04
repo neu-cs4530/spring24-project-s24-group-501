@@ -8,7 +8,7 @@ export default class PlayerTrackerFactory {
 
   public static instance(): PlayerTracker {
     if (!PlayerTrackerFactory._instance) {
-        PlayerTrackerFactory._instance = new PlayerTracker();
+      PlayerTrackerFactory._instance = new PlayerTracker();
     }
     return PlayerTrackerFactory._instance;
   }

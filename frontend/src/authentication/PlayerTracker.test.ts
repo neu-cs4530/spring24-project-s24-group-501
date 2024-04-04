@@ -1,5 +1,10 @@
 import PlayerTracker from './PlayerTracker';
-import { CasinoRankScore, CasinoSession, CoveyBucks, PlayerID } from '../../../shared/types/CoveyTownSocket';
+import {
+  CasinoRankScore,
+  CasinoSession,
+  CoveyBucks,
+  PlayerID,
+} from '../../../shared/types/CoveyTownSocket';
 import PlayerTrackerFactory from './PlayerTrackerFactory';
 import { nanoid } from 'nanoid';
 
@@ -41,7 +46,7 @@ describe('PlayerTracker', () => {
       expect(updatePlayerInfoSpy).not.toHaveBeenCalled();
       expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
     });
-    test('retrieves the player\'s id if they already exist', async () => {
+    test("retrieves the player's id if they already exist", async () => {
       getPlayerCurrencySpy.mockResolvedValue(0);
       await expect(dbConnection.getPlayerCurrency('1')).resolves.toEqual(0);
       handleUserSpy.mockResolvedValue('1');
@@ -92,7 +97,7 @@ describe('PlayerTracker', () => {
       expect(updatePlayerInfoSpy).not.toHaveBeenCalled();
       expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
     });
-    test('retrives the player\'s currency balance', async () => {
+    test("retrives the player's currency balance", async () => {
       getPlayerCurrencySpy.mockResolvedValue(1000);
       await expect(dbConnection.getPlayerCurrency('1')).resolves.toEqual(1000);
       expect(getPlayerCurrencySpy).toHaveBeenCalled();
@@ -112,7 +117,7 @@ describe('PlayerTracker', () => {
     });
   });
   describe('updatePlayerInfo', () => {
-    test('updates the player\'s id and username to be in sync with the townService', async () => {
+    test("updates the player's id and username to be in sync with the townService", async () => {
       getPlayersCurrencySpy.mockResolvedValue(sampleCurrency);
       await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(sampleCurrency);
       await dbConnection.updatePlayerInfo('test@email.com', '5', 'NewName');

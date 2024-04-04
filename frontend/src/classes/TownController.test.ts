@@ -84,7 +84,12 @@ describe('TownController', () => {
     mockClear(mockSocket);
     userName = nanoid();
     townID = nanoid();
-    testController = new TownController({ userName, townID, loginController: mockLoginController, email: '' });
+    testController = new TownController({
+      userName,
+      townID,
+      loginController: mockLoginController,
+      email: '',
+    });
   });
   describe('With an unsuccesful connection', () => {
     it('Throws an error', async () => {

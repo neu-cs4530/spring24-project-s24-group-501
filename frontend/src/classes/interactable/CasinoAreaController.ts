@@ -1,9 +1,5 @@
 import _ from 'lodash';
-import {
-  CasinoArea,
-  GameState,
-  InteractableID,
-} from '../../types/CoveyTownSocket';
+import { CasinoArea, GameState, InteractableID } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import InteractableAreaController, {
@@ -100,7 +96,8 @@ export default abstract class CasinoAreaController<
 
   protected _updateFrom(newModel: CasinoArea<State>): void {
     const casinoEnding =
-      this._model.casino?.state.status === 'IN_PROGRESS' && newModel.casino?.state.status === 'OVER';
+      this._model.casino?.state.status === 'IN_PROGRESS' &&
+      newModel.casino?.state.status === 'OVER';
     const newPlayers =
       newModel.casino?.players.map(playerID => this._townController.getPlayer(playerID)) ?? [];
     if (!newPlayers && this._players.length > 0) {

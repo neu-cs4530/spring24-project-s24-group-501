@@ -28,7 +28,6 @@ import { supabase } from '../../authentication/PlayerTracker';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
 
-
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
   const [newTownName, setNewTownName] = useState<string>('');
@@ -48,34 +47,35 @@ export default function TownSelection(): JSX.Element {
 
   useEffect(() => {
     const fetchSession = async () => {
-        const { data } = await supabase.auth.getSession();
-        const session = data.session;
-        setUser(session?.user);
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      setUser(session?.user);
     };
 
     fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
-      switch (_event) {
-        case 'SIGNED_IN':
-          setUser(newSession?.user);
-          break;
-        case 'SIGNED_OUT':
-          setUser(undefined);
-          setPlayerID(undefined);
-          break;
-      }
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, newSession: Session | null) => {
+        switch (_event) {
+          case 'SIGNED_IN':
+            setUser(newSession?.user);
+            break;
+          case 'SIGNED_OUT':
+            setUser(undefined);
+            setPlayerID(undefined);
+            break;
+        }
+      },
+    );
 
     return () => {
       authListener.subscription.unsubscribe();
-    }
+    };
   });
 
   const login = async () => {
     await supabase.auth.signInWithOAuth({ provider: 'github' });
   };
-
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -300,7 +300,7 @@ export default function TownSelection(): JSX.Element {
                 Login with GitHub
               </Button>
             </Box>
-            ) : (
+          ) : (
             <Box p='4' borderWidth='1px' borderRadius='lg'>
               <Heading as='h2' size='lg'>
                 Authenticated!
@@ -309,7 +309,7 @@ export default function TownSelection(): JSX.Element {
                 Log Out
               </Button>
             </Box>
-            )}
+          )}
           <Box p='4' borderWidth='1px' borderRadius='lg'>
             <Heading as='h2' size='lg'>
               Select a username

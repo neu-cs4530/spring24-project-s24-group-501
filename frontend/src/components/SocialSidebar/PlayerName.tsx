@@ -6,8 +6,10 @@ type PlayerNameProps = {
   player: PlayerController;
 };
 export default function PlayerName({ player }: PlayerNameProps): JSX.Element {
-  return <HStack>
-  {player.userName}
-  {player.units}
-  </HStack>;
+  return (
+    <HStack>
+      {player.userName}
+      {player.units}
+    </HStack>
+  );
 }

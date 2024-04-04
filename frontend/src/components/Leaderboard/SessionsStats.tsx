@@ -8,7 +8,7 @@ import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
 type GameSessions = {
   game: CasinoGame;
   gamesPlayed: number;
-}
+};
 
 /**
  * Lists how many sessions of each casino game have been played across towns
@@ -20,11 +20,13 @@ export default function CasinoGameFrequency(): JSX.Element {
 
   useEffect(() => {
     games.forEach(game => {
-      PlayerTrackerFactory.instance().getCasinoSessions(game).then(casinoSessions => {
-        setSessions([...sessions, { game, gamesPlayed: casinoSessions.length }]);
-      });
+      PlayerTrackerFactory.instance()
+        .getCasinoSessions(game)
+        .then(casinoSessions => {
+          setSessions([...sessions, { game, gamesPlayed: casinoSessions.length }]);
+        });
     });
-  }, [])
+  }, []);
 
   return (
     <Box>

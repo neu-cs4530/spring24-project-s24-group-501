@@ -600,7 +600,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     this._loginController.setTownController(null);
   }
 
-  private async updateID() {
+  private async _updateID() {
     await PlayerTrackerFactory.instance().handleUser(this._email, this.userID);
     await PlayerTrackerFactory.instance().updatePlayerInfo(this._email, this.userID, this.userName);
   }
@@ -652,7 +652,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           }
         });
         this._userID = initialData.userID;
-        this.updateID();
+        this._updateID();
         // await PlayerTrackerFactory.instance().updatePlayerID(this._email, this._userID);
         this._ourPlayer = this.players.find(eachPlayer => eachPlayer.id == this.userID);
         this.emit('connect', initialData.providerVideoToken);
