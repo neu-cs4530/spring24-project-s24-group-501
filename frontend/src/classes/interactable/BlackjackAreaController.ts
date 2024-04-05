@@ -115,6 +115,19 @@ export default class BlackjackAreaController extends GameAreaController<
     });
   }
 
+  public async applyMove(move: BlackjackMove): Promise<void> {
+    const instanceID = this._instanceID;
+    if (!instanceID || this._model.game?.state.status !== 'IN_PROGRESS') {
+      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
+    }
+
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'GameMove',
+      gameID: instanceID,
+      move,
+    });
+  }
+
   /**
    * Updates the internal state of this BlackjackAreaController based on the new model.
    *
