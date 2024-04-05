@@ -9,10 +9,12 @@ import {
   GameStatus,
   BlackjackPlayer,
   CoveyBucks,
+  PlayerID,
 } from '../../../../shared/types/CoveyTownSocket';
 import GameAreaController, {
   GameEventTypes,
   NO_GAME_IN_PROGRESS_ERROR,
+  NO_GAME_STARTABLE,
 } from './GameAreaController';
 
 export type BlackjackEvents = GameEventTypes & {
@@ -98,6 +100,19 @@ export default class BlackjackAreaController extends GameAreaController<
 
   public isActive(): boolean {
     return this._model.game?.state.hands.length !== 0;
+  }
+
+  public async placeBet(bet: CoveyBucks): Promise<void> {
+    const instanceID = this._instanceID;
+    if (!instanceID || this._model.game?.state.status !== 'WAITING_TO_START') {
+      throw new Error(NO_GAME_STARTABLE);
+    }
+
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'PlaceBet',
+      gameID: instanceID,
+      bet,
+    });
   }
 
   /**
