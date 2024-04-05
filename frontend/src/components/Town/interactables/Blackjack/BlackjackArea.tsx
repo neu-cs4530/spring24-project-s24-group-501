@@ -78,7 +78,12 @@ export default function BlackjackArea({
 
         {gameStatus === 'WAITING_TO_START' &&
           hands.find(hand => hand.player === townController.ourPlayer.id)?.hands[0]?.wager ===
-            0 && <BlackjackBetSetter />}
+            0 && (
+            <BlackjackBetSetter
+              stake={casinoAreaController.stake}
+              placeBet={casinoAreaController.placeBet}
+            />
+          )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
           {players.map((player, i) => (
@@ -87,7 +92,7 @@ export default function BlackjackArea({
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}
-              cards={[{ type: 'Hearts', value: 'A', faceUp: true }]}
+              hands={hands.find(hand => hand.player === townController.ourPlayer.id)}
             />
           ))}
         </div>
