@@ -75,10 +75,10 @@ export default abstract class CasinoAreaController<
    * @throws An error if the server rejects the request to join the casino.
    */
   public async joinCasino() {
-    const { casinoID } = await this._townController.sendInteractableCommand(this.id, {
+    const { gameID } = await this._townController.sendInteractableCommand(this.id, {
       type: 'JoinGame',
     });
-    this._instanceID = casinoID;
+    this._instanceID = gameID;
   }
 
   /**

@@ -58,7 +58,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
         blackjackPlayer.hands[0].wager = bet;
 
         // the game can commence once all players have made their bet
-        if (this.state.hands.filter(playerHand => playerHand.hands[0].wager !== 0).length === 0) {
+        if (this.state.hands.filter(playerHand => playerHand.hands[0].wager === 0).length === 0) {
           this.state = {
             ...this.state,
             status: 'IN_PROGRESS',
