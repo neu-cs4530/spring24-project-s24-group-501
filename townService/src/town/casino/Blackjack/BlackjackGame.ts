@@ -68,6 +68,8 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
               this.state.shuffler.deal(true),
               this.state.shuffler.deal(true),
             ];
+            playerHand.hands[0].text = this._render(playerHand.hands[0].cards);
+            playerHand.hands[0].bust = false;
           });
           this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
         }
@@ -204,9 +206,12 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       }
       const card = currPlayerHand.hands[0].cards.pop();
       currPlayerHand.hands[0].cards.push(this.state.shuffler.deal(true));
+      const secondHandCards = [card, this.state.shuffler.deal(true)];
       currPlayerHand.hands.push({
-        cards: [card, this.state.shuffler.deal(true)],
+        cards: secondHandCards,
         wager: currPlayerHand.hands[0].wager,
+        text: this._render(secondHandCards),
+        bust: false,
       });
     }
 
@@ -216,6 +221,16 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       // this.
       this._overHandler();
     }
+  }
+
+  private _render(cards: Card[]): string {
+    const handValue = this._handValue(cards);
+    const nonAces = cards.filter(card => card.value !== 'A');
+    const numAces = cards.length - nonAces.length;
+    if (numAces === 0 || handValue > 21 || this._handValue(nonAces) + numAces === handValue) {
+      return `${handValue}`;
+    }
+    return `${handValue}/${handValue - 10}`;
   }
 
   /**
@@ -280,7 +295,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     this.state.hands.unshift({
       player: player.id,
-      hands: [{ cards: [], wager: 0 }],
+      hands: [{ cards: [], wager: 0, text: '', bust: false }],
       currentHand: 0,
       active,
     });
