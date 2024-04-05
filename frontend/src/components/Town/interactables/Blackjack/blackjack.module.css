@@ -137,7 +137,7 @@
   align-items: flex-end;
 }
 
-.info > div {
+.info > div, .countIndicator{
   border-radius: 10px;
   border: 1px solid black;
   width: fit-content;
@@ -157,6 +157,13 @@
 .leftCardHolder {
   right: 40px;
   left: auto;
+}
+
+.countIndicator {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 99999
 }
 
 

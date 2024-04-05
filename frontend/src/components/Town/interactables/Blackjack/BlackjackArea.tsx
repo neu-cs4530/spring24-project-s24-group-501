@@ -105,10 +105,46 @@ export default function BlackjackArea({
           casinoAreaController.currentPlayer !== -1 &&
           hands.find(hand => hand.player === townController.ourPlayer.id)?.active && (
             <div className={styles.selectors}>
-              <button>Stand</button>
-              <button>Hit</button>
-              <button>Double Down</button>
-              <button>Split</button>
+              <button
+                onClick={() => {
+                  casinoAreaController.applyMove({
+                    player: townController.ourPlayer.id,
+                    action: 'Stand',
+                  });
+                }}>
+                Stand
+              </button>
+              <button
+                onClick={() => {
+                  casinoAreaController.applyMove({
+                    player: townController.ourPlayer.id,
+                    action: 'Hit',
+                  });
+                }}>
+                Hit
+              </button>
+              {casinoAreaController.canDoubleDown && (
+                <button
+                  onClick={() => {
+                    casinoAreaController.applyMove({
+                      player: townController.ourPlayer.id,
+                      action: 'Double Down',
+                    });
+                  }}>
+                  Double Down
+                </button>
+              )}
+              {casinoAreaController.canSplit && (
+                <button
+                  onClick={() => {
+                    casinoAreaController.applyMove({
+                      player: townController.ourPlayer.id,
+                      action: 'Split',
+                    });
+                  }}>
+                  Split
+                </button>
+              )}
             </div>
           )}
 

@@ -52,6 +52,16 @@ const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, h
                   );
           return (
             <>
+              {numcards > 0 && (
+                <p
+                  className={styles.countIndicator}
+                  style={{
+                    transform: `rotate(${left ? 30 : -30}deg)`,
+                    background: hand.bust ? '#F20C43' : 'white',
+                  }}>
+                  {hand.text}
+                </p>
+              )}
               {hand.cards.map((card, cardIndex) => (
                 <div
                   key={cardIndex}
