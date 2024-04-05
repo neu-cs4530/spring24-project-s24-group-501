@@ -37,6 +37,8 @@ export default function BlackjackArea({
 
     setHands(casinoAreaController.hands || []);
 
+    console.log(casinoAreaController);
+
     casinoAreaController.addListener('gameUpdated', updateGameState);
     return () => {
       casinoAreaController.removeListener('gameUpdated', updateGameState);

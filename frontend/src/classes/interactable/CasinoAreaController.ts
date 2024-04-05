@@ -95,11 +95,10 @@ export default abstract class CasinoAreaController<
   }
 
   protected _updateFrom(newModel: CasinoArea<State>): void {
-    const casinoEnding =
-      this._model.casino?.state.status === 'IN_PROGRESS' &&
-      newModel.casino?.state.status === 'OVER';
+    const gameEnding =
+      this._model.game?.state.status === 'IN_PROGRESS' && newModel.game?.state.status === 'OVER';
     const newPlayers =
-      newModel.casino?.players.map(playerID => this._townController.getPlayer(playerID)) ?? [];
+      newModel.game?.players.map(playerID => this._townController.getPlayer(playerID)) ?? [];
     if (!newPlayers && this._players.length > 0) {
       this._players = [];
       //TODO - Bounty for figuring out how to make the types work here
@@ -108,7 +107,7 @@ export default abstract class CasinoAreaController<
       this.emit('playersChange', []);
     }
     if (
-      this._players.length != newModel.casino?.players.length ||
+      this._players.length != newModel.game?.players.length ||
       _.xor(newPlayers, this._players).length > 0
     ) {
       this._players = newPlayers;
@@ -121,13 +120,13 @@ export default abstract class CasinoAreaController<
     //TODO - Bounty for figuring out how to make the types work here
     //eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.emit('casinoUpdated');
-    this._instanceID = newModel.casino?.id ?? this._instanceID;
-    if (casinoEnding) {
+    this.emit('gameUpdated');
+    this._instanceID = newModel.game?.id ?? this._instanceID;
+    if (gameEnding) {
       //TODO - Bounty for figuring out how to make the types work here
       //eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.emit('casinoEnd');
+      this.emit('gameEnd');
     }
   }
 
