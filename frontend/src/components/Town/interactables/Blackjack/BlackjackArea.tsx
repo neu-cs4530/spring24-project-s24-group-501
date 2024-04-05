@@ -101,10 +101,22 @@ export default function BlackjackArea({
             />
           )}
 
+        {gameStatus === 'IN_PROGRESS' &&
+          casinoAreaController.currentPlayer !== -1 &&
+          hands.find(hand => hand.player === townController.ourPlayer.id)?.active && (
+            <div className={styles.selectors}>
+              <button>Stand</button>
+              <button>Hit</button>
+              <button>Double Down</button>
+              <button>Split</button>
+            </div>
+          )}
+
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}>
           {players.map((player, i) => (
             <BlackjackUser
               key={i}
+              isCurrentTurn={i === casinoAreaController.currentPlayer}
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}

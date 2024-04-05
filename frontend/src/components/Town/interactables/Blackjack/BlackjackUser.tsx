@@ -32,8 +32,8 @@ const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, h
     <div className={styles.player + (left ? ' left ' : '')}>
       <img alt='player' src='https://source.unsplash.com/random/?face' />
       <div className={styles.info + ' ' + (left ? styles.leftInfo : '')}>
-        <div>{username}</div>
-        <div>${numberComma(cash)}</div>
+        <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>{username}</div>
+        <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>${numberComma(cash)}</div>
       </div>
       <div
         className={styles.cardHolder + ' ' + (left ? styles.leftCardHolder : '')}
@@ -50,18 +50,24 @@ const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, h
                     (a, i) =>
                       (totalarc / numcards) * (i + 1) - (totalarc / 2 + totalarc / numcards / 2),
                   );
-          return hand.cards.map((card, cardIndex) => (
-            <div
-              key={cardIndex}
-              style={{
-                transform: `rotate(${angles[cardIndex] + (left && numcards === 1 ? 30 : 0)}deg)`,
-                marginLeft: `${cardIndex === 0 ? 0 : Math.max(-numcards * 7 - 30, -70)}px`,
-                transformOrigin: 'bottom center',
-                marginTop: `${hands.hands.length > 1 && handIndex === 0 ? -50 : 0}px`,
-              }}>
-              <BlackjackCard type={card.type} value={card.value} faceUp={card.faceUp} />
-            </div>
-          ));
+          return (
+            <>
+              {hand.cards.map((card, cardIndex) => (
+                <div
+                  key={cardIndex}
+                  style={{
+                    transform: `rotate(${
+                      angles[cardIndex] + (left && numcards === 1 ? 30 : 0)
+                    }deg)`,
+                    marginLeft: `${cardIndex === 0 ? 0 : Math.max(-numcards * 7 - 30, -70)}px`,
+                    transformOrigin: 'bottom center',
+                    marginTop: `${hands.hands.length > 1 && handIndex === 0 ? -50 : 0}px`,
+                  }}>
+                  <BlackjackCard type={card.type} value={card.value} faceUp={card.faceUp} />
+                </div>
+              ))}
+            </>
+          );
         })}
       </div>
     </div>

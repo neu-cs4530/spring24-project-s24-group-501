@@ -166,3 +166,22 @@
   gap: 10px;
   justify-content: center;
 }
+
+/* Selectors */
+.selectors {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.selectors > button {
+  font-size: 32px;
+  text-transform: uppercase;
+  background-color: #F20C43;
+  color: white;
+  border: 1px solid black;
+  width: fit-content;
+  padding: 15px;
+  padding-bottom: 12px;
+  border-radius: 50px;
+}
