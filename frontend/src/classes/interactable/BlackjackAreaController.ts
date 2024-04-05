@@ -75,6 +75,42 @@ export default class BlackjackAreaController extends CasinoAreaController<
   }
 
   /**
+   * Returns if the current player is eligible to apply moves or not
+   */
+  get playerActive(): boolean {
+    if (this.hands && this.currentPlayer) {
+      return this.hands[this.currentPlayer].active;
+    }
+    return false;
+  }
+
+  /**
+   * Returns if the current player is able to split their hand
+   */
+  get canSplit(): boolean {
+    if (this.hands && this.currentPlayer) {
+      const currPlayerHand = this.hands[this.currentPlayer];
+      return (
+        currPlayerHand.hands.length === 1 &&
+        currPlayerHand.hands[0].cards.length === 2 &&
+        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1]
+      );
+    }
+    return false;
+  }
+
+  /**
+   * Returns if the current player is able to double down
+   */
+  get canDoubleDown(): boolean {
+    if (this.hands && this.currentPlayer) {
+      const currPlayerHand = this.hands[this.currentPlayer];
+      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2;
+    }
+    return false;
+  }
+
+  /**
    * Returns true if the current player is a player in this game
    */
   get isPlayer(): boolean {
