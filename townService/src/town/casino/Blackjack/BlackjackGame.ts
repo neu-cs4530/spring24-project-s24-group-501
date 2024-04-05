@@ -44,13 +44,13 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * @param player the player to place a bet
    * @param bet the amount of currency to bet
    * @throws InvalidParametersError if the game is not in the betting phase (GAME_NOT_BETTABLE_MESSAGE)
-   * @throws InvalidParametersError if the bet is not a multiple of the stake size or beyond 1-5x (INVALID_BET_MESSAGE)
+   * @throws InvalidParametersError if the bet is not a multiple of the stake size or beyond 1-10x (INVALID_BET_MESSAGE)
    */
   public placeBet(player: Player, bet: CoveyBucks): void {
     if (this.state.status !== 'WAITING_TO_START') {
       throw new InvalidParametersError(GAME_NOT_BETTABLE_MESSAGE);
     }
-    if (bet % this.state.stake !== 0 || bet < this.state.stake || bet > 5 * this.state.stake) {
+    if (bet % this.state.stake !== 0 || bet < this.state.stake || bet > 10 * this.state.stake) {
       throw new InvalidParametersError(INVALID_BET_MESSAGE);
     }
     for (const blackjackPlayer of this.state.hands) {
