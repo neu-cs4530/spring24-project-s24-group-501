@@ -83,7 +83,9 @@ export default function BlackjackArea({
             0 && (
             <BlackjackBetSetter
               stake={casinoAreaController.stake}
-              placeBet={casinoAreaController.placeBet}
+              placeBet={bet => {
+                casinoAreaController.placeBet(bet);
+              }}
             />
           )}
 
