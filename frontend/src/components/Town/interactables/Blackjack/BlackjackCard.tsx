@@ -40,6 +40,10 @@ function SuitSvg({ suit }: { suit: Suit }) {
 }
 
 const BlackjackCard: React.FC<Card> = ({ type, value, faceUp }) => {
+  if (!faceUp) {
+    return <div className={styles.card} style={{ background: '#F20C43' }} />;
+  }
+
   return (
     <div className={styles.card}>
       <p

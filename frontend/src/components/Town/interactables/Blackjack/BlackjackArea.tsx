@@ -3,11 +3,17 @@ import BlackjackAreaController from '../../../../classes/interactable/BlackjackA
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameStatus, BlackjackPlayer, InteractableID } from '../../../../types/CoveyTownSocket';
+import {
+  GameStatus,
+  BlackjackPlayer,
+  InteractableID,
+  Card,
+} from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
 import BlackjackUser from './BlackjackUser';
 
 import styles from './blackjack.module.css';
+import BlackjackCard from './BlackjackCard';
 
 export default function BlackjackArea({
   interactableID,
@@ -22,6 +28,7 @@ export default function BlackjackArea({
   const [joiningGame, setJoiningGame] = useState(false);
   const [players, setPlayers] = useState<PlayerController[]>([]);
   const [hands, setHands] = useState<BlackjackPlayer[]>([]);
+  const [dealerHand, setDealerHand] = useState<Card[]>([]);
 
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
@@ -31,6 +38,7 @@ export default function BlackjackArea({
       setHands(casinoAreaController.hands || []);
       console.log(casinoAreaController);
       console.log(hands);
+      setDealerHand(casinoAreaController.dealerHand || []);
       setPlayers(casinoAreaController.players);
       console.log(players);
     };
@@ -75,7 +83,11 @@ export default function BlackjackArea({
         <div>
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
 
-          <p>DEALER</p>
+          <div className={styles.dealer}>
+            {dealerHand.map((card, i) => (
+              <BlackjackCard key={i} type={card.type} faceUp={card.faceUp} value={card.value} />
+            ))}
+          </div>
         </div>
 
         {gameStatus === 'WAITING_TO_START' &&

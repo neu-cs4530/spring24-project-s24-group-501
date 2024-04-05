@@ -158,3 +158,11 @@
   right: 40px;
   left: auto;
 }
+
+
+/* Dealer */
+.dealer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
