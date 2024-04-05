@@ -10,21 +10,23 @@ import {
   BlackjackPlayer,
   CoveyBucks,
   PlayerID,
+  CasinoArea,
 } from '../../../../shared/types/CoveyTownSocket';
+import CasinoAreaController, { CasinoEventTypes } from './CasinoAreaController';
 import GameAreaController, {
   GameEventTypes,
   NO_GAME_IN_PROGRESS_ERROR,
   NO_GAME_STARTABLE,
 } from './GameAreaController';
 
-export type BlackjackEvents = GameEventTypes & {
+export type BlackjackEvents = CasinoEventTypes & {
   playerHandChanged: (hands: BlackjackPlayer[]) => void;
   dealerHandChanged: (dealerHandCards: Card[]) => void;
   playerChanged: (player: number) => void;
   wantsToLeaveChanged: (wantsToLeave: string[]) => void;
 };
 
-export default class BlackjackAreaController extends GameAreaController<
+export default class BlackjackAreaController extends CasinoAreaController<
   BlackjackCasinoState,
   BlackjackEvents
 > {
@@ -140,7 +142,7 @@ export default class BlackjackAreaController extends GameAreaController<
    * If the turn has changed, emits a turnChanged event with the new turn
    * If the turn has not changed, does not emit a turnChanged event.
    */
-  protected _updateFrom(newModel: GameArea<BlackjackCasinoState>): void {
+  protected _updateFrom(newModel: CasinoArea<BlackjackCasinoState>): void {
     const whoTurn = this.currentPlayer;
     super._updateFrom(newModel);
     const newGame = newModel.game;
