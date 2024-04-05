@@ -50,21 +50,21 @@ export default function BlackjackArea({
   } else if (gameStatus === 'WAITING_TO_START') {
     gameStatusText = <b>BETTING STAGE.</b>;
   } else {
-    const joinGameButton = (
+    const joinCasinoButton = (
       <button
         onClick={async () => {
           setJoiningGame(true);
-          casinoAreaController.joinGame();
+          casinoAreaController.joinCasino();
           setJoiningGame(false);
         }}
         disabled={joiningGame}>
-        Join GAME
+        Join casino
       </button>
     );
     let gameStatusStr;
     if (gameStatus === 'OVER') gameStatusStr = 'over';
     else if (gameStatus === 'WAITING_FOR_PLAYERS') gameStatusStr = 'waiting for players to join';
-    gameStatusText = joinGameButton;
+    gameStatusText = joinCasinoButton;
   }
 
   return (
