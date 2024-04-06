@@ -93,7 +93,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
       return (
         currPlayerHand.hands.length === 1 &&
         currPlayerHand.hands[0].cards.length === 2 &&
-        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1]
+        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1] &&
+        this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
       );
     }
     return false;
@@ -105,7 +106,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
   get canDoubleDown(): boolean {
     if (this.hands && this.currentPlayer) {
       const currPlayerHand = this.hands[this.currentPlayer];
-      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2;
+      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2 &&
+        this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[currPlayerHand.currentHand].wager;
     }
     return false;
   }

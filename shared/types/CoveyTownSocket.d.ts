@@ -200,6 +200,7 @@ export interface CasinoRankScore extends CasinoScore {
 
 export type CasinoStake = 'Low' | 'Medium' | 'High'
 export type CasinoGame = 'Blackjack'
+export type BlackjackOutcome = 'Bust' | 'Win' | 'Loss'
 
 export interface CasinoSession {
   id: number;
@@ -221,7 +222,7 @@ export interface Hand {
   cards: Card[];
   wager: CoveyBucks;
   text: string;
-  bust: boolean;
+  outcome: BlackjackOutcome | undefined;
 }
 
 export type BlackjackAction = 'Hit' | 'Stand' | 'Split' | 'Double Down';
@@ -364,6 +365,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   chatMessage: (message: ChatMessage) => void;
   playerMovement: (movementData: PlayerLocation) => void;
+  // currencyUpdate: (currency: CoveyBucks) => void;
   interactableUpdate: (update: Interactable) => void;
   interactableCommand: (command: InteractableCommand & InteractableCommandBase) => void;
 }
