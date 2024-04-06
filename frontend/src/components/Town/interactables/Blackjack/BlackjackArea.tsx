@@ -84,6 +84,16 @@ export default function BlackjackArea({
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
 
           <div className={styles.dealer}>
+            {/*      {dealerHand.length > 0 && dealerHand[0].faceUp &&  (
+                     <p
+                     className={styles.countIndicator}
+                     style={{
+                       transform: `rotate(${left ? 30 : -30}deg)`,
+                       background: hand.bust ? '#F20C43' : 'white',
+                     }}>
+                     {hand.text}
+                   </p>
+            )} */}
             {dealerHand.map((card, i) => (
               <BlackjackCard key={i} type={card.type} faceUp={card.faceUp} value={card.value} />
             ))}
@@ -152,7 +162,9 @@ export default function BlackjackArea({
           {players.map((player, i) => (
             <BlackjackUser
               key={i}
-              isCurrentTurn={i === casinoAreaController.currentPlayer}
+              isCurrentTurn={
+                hands.find(hand => hand.player === townController.ourPlayer.id)?.active || false
+              }
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}

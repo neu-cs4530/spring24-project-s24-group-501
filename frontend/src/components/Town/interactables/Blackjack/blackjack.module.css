@@ -167,6 +167,23 @@
 }
 
 
+.money {
+  z-index: 999999;
+  position: absolute;
+  top: -150px;
+  height: 330px;
+  width: 230px;
+
+}
+
+.money > img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+
+}
+
+
 /* Dealer */
 .dealer {
   display: flex;

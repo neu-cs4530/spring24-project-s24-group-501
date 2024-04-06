@@ -35,6 +35,12 @@ const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, h
         <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>{username}</div>
         <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>${numberComma(cash)}</div>
       </div>
+      {hands?.hands.some(hand => hand.outcome === 'Win') && (
+        <div className={styles.money}>
+          <img alt='money falling' src='/assets/casino/money.gif' />
+        </div>
+      )}
+
       <div
         className={styles.cardHolder + ' ' + (left ? styles.leftCardHolder : '')}
         style={{ transform: `rotate(${left ? -30 : 30}deg)` }}>
@@ -57,7 +63,8 @@ const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, h
                   className={styles.countIndicator}
                   style={{
                     transform: `rotate(${left ? 30 : -30}deg)`,
-                    background: hand.bust ? '#F20C43' : 'white',
+                    background:
+                      hand.outcome === 'Bust' || hand.outcome === 'Loss' ? '#F20C43' : 'white',
                   }}>
                   {hand.text}
                 </p>
