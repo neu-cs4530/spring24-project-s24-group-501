@@ -175,6 +175,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       }, ms);
     }).then(() => {
       this.state.dealerHand.cards.push(card);
+      console.log('dealt new dealer card');
       this.state.dealerHand.text = this._render(this.state.dealerHand.cards);
     });
   }
@@ -280,6 +281,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     // The round is over if all players are inactive
     if (this.state.hands.filter(player => player.active).length === 0) {
+      this.state.status = 'OVER';
       this._endGame();
     }
   }

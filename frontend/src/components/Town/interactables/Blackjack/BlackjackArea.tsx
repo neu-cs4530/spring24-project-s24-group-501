@@ -38,7 +38,7 @@ export default function BlackjackArea({
       setHands(casinoAreaController.hands || []);
       console.log(casinoAreaController);
       console.log(hands);
-      setDealerHand(casinoAreaController.dealerHand || []);
+      setDealerHand(casinoAreaController.dealerHand?.cards || []);
       setPlayers(casinoAreaController.players);
       console.log(players);
     };
@@ -47,9 +47,9 @@ export default function BlackjackArea({
 
     console.log(casinoAreaController);
 
-    casinoAreaController.addListener('gameUpdated', updateGameState);
+    casinoAreaController.addListener('casinoUpdated', updateGameState);
     return () => {
-      casinoAreaController.removeListener('gameUpdated', updateGameState);
+      casinoAreaController.removeListener('casinoUpdated', updateGameState);
     };
   }, [casinoAreaController]);
 
