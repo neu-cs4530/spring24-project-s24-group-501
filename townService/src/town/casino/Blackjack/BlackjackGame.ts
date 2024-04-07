@@ -96,7 +96,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     await new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
-      }, 3000);
+      }, 5000);
     });
     this._resetGame();
   }
@@ -105,7 +105,6 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
    * Processes the wagers of the game and updates the player's currency.
    */
   private async _dishWagers(): Promise<void> {
-    // await this._dealerHandler();
     let dealerValue = this._handValue(this.state.dealerHand.cards);
     if (dealerValue > 21) {
       this.state.dealerHand.bust = true;
@@ -115,20 +114,18 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       let netPlayerWinnings = 0;
       for (const hand of bjPlayer.hands) {
         const playerValue = this._handValue(hand.cards);
-        if (playerValue > 21) {
+        if (hand.outcome === 'Bust') {
           netPlayerWinnings -= hand.wager;
-          hand.outcome = 'Bust';
-        }
-        if (dealerValue > playerValue) {
+        } else if (dealerValue > playerValue) {
           netPlayerWinnings -= hand.wager;
           hand.outcome = 'Loss';
-        } else {
+        } else if (dealerValue < playerValue) {
           netPlayerWinnings += hand.wager;
           hand.outcome = 'Win';
         }
       }
       const playerObj = this._players.find(player => player.id === bjPlayer.player);
-      if (playerObj) {
+      if (playerObj && netPlayerWinnings !== 0) {
         playerObj.units += netPlayerWinnings;
         this._updateCurrency({ player: bjPlayer.player, netCurrency: netPlayerWinnings });
       }
@@ -175,7 +172,6 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       }, ms);
     }).then(() => {
       this.state.dealerHand.cards.push(card);
-      console.log('dealt new dealer card');
       this.state.dealerHand.text = this._render(this.state.dealerHand.cards);
     });
   }
@@ -194,7 +190,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     while (this._handValue(this.state.dealerHand.cards.concat(dealerCards)) < 17) {
       dealerCards.push(this.state.shuffler.deal(true));
     }
-    await Promise.all(dealerCards.map((card, index) => this._sleep(card, 1000 * (index + 1))));
+    await Promise.all(dealerCards.map((card, index) => this._sleep(card, 2000 * (index + 1))));
   }
 
   /**
@@ -258,6 +254,9 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       hand.wager *= 2;
       hand.text = this._render(hand.cards);
       updatePlayerAndHand();
+      if (this._handValue(hand.cards) > 21) {
+        hand.outcome = 'Bust';
+      }
     } else if (move.move.action === 'Split') {
       // A split is only valid if the player has a pair and hasn't split already
       if (

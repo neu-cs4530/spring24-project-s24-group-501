@@ -14,6 +14,7 @@ import {
 } from '../../../types/CoveyTownSocket';
 import BlackjackGame from './BlackjackGame';
 import CasinoArea from '../CasinoArea';
+import CasinoTrackerFactory from '../CasinoTrackerFactory';
 
 /**
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
@@ -23,10 +24,6 @@ import CasinoArea from '../CasinoArea';
  * @see GameArea
  */
 export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
-  public constructor(id: string, rect: BoundingBox, townEmitter: TownEmitter) {
-    super(id, rect, townEmitter);
-  }
-
   protected getType(): InteractableType {
     return 'BlackjackArea';
   }
@@ -36,15 +33,12 @@ export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
       if (this.game) {
         if (this.game.state.status === 'OVER') {
           this._emitAreaChanged();
-          console.log('refreshing');
         } else {
           this._emitAreaChanged();
-          console.log('refreshed!!!');
           clearInterval(intervalId);
         }
       } else {
-        clearInterval(intervalId); // Clear the interval if there's no game
-        console.log('clearing interval - no game in progress');
+        clearInterval(intervalId);
       }
     }, 1000);
   }
@@ -66,13 +60,9 @@ export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
         playerID: player.id,
         move: command.move as BlackjackMove,
       });
-      // this._emitAreaChanged();
-      if (game.state.currentPlayer === -1) {
-        console.log('game over');
+      this._emitAreaChanged();
+      if (game.state.status === 'OVER') {
         this._delayGameEnd();
-      } else {
-        console.log('game not over');
-        this._emitAreaChanged();
       }
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -82,6 +72,12 @@ export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
         // No game in progress, make a new one
         game = new BlackjackGame();
         this._game = game;
+        CasinoTrackerFactory.instance().postCasinoSession({
+          id: undefined,
+          stakes: 'Low',
+          game: 'Blackjack',
+          date: new Date(),
+        });
       }
       game.join(player);
       this._emitAreaChanged();
