@@ -10,6 +10,8 @@ interface PlayerProps {
   isCurrentTurn: boolean;
   hands: BlackjackPlayer;
   left?: boolean;
+  photo?: string;
+  changePhoto: () => void;
 }
 
 function numberComma(number: number) {
@@ -25,12 +27,24 @@ function numberComma(number: number) {
   return formattedNumber.replace('.00', '');
 }
 
-const BlackjackUser: React.FC<PlayerProps> = ({ username, cash, isCurrentTurn, hands, left }) => {
+const BlackjackUser: React.FC<PlayerProps> = ({
+  username,
+  cash,
+  isCurrentTurn,
+  hands,
+  left,
+  photo,
+  changePhoto,
+}) => {
   const totalarc = 120;
 
   return (
     <div className={styles.player + (left ? ' left ' : '')}>
-      <img alt='player' src='https://source.unsplash.com/random/?face' />
+      <img
+        onClick={changePhoto}
+        alt='player'
+        src={photo || 'https://source.unsplash.com/random/?face'}
+      />
       <div className={styles.info + ' ' + (left ? styles.leftInfo : '')}>
         <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>{username}</div>
         <div style={{ background: isCurrentTurn ? '#F1F105' : 'white' }}>${numberComma(cash)}</div>
