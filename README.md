@@ -23,14 +23,20 @@ To create an account and configure your local environment:
 
 1. Go to [Twilio](https://www.twilio.com/) and create an account. You do not need to provide a credit card to create a trial account.
 2. Create an API key and secret (select "API Keys" on the left under "Settings")
+
+You must also create a Supabase account. Go to [Supabase](https://supabase.com/) and sign up. You must be added to the organization and project.
+Email Dallon Archibald (archibald.d@northeastern.edu) for access.
+Keys can be retrieved by selecting "Project Settings" on the left menu, then "API" under configuration. Copy the public anon key.
+
 3. Create a `.env` file in the `townService` directory, setting the values as follows:
 
-| Config Value            | Description                               |
-| ----------------------- | ----------------------------------------- |
-| `TWILIO_ACCOUNT_SID`    | Visible on your twilio account dashboard. |
-| `TWILIO_API_KEY_SID`    | The SID of the new API key you created.   |
-| `TWILIO_API_KEY_SECRET` | The secret for the API key you created.   |
-| `TWILIO_API_AUTH_TOKEN` | Visible on your twilio account dashboard. |
+| Config Value            | Description                                |
+| ----------------------- | ------------------------------------------ |
+| `TWILIO_ACCOUNT_SID`    | Visible on your twilio account dashboard.  |
+| `TWILIO_API_KEY_SID`    | The SID of the new API key you created.    |
+| `TWILIO_API_KEY_SECRET` | The secret for the API key you created.    |
+| `TWILIO_API_AUTH_TOKEN` | Visible on your twilio account dashboard.  |
+| `SUPABASE_KEY`          | Visible on Supabase Project Settings > API |
 
 ### Starting the backend
 
@@ -39,7 +45,7 @@ The backend will automatically restart if you change any of the files in the `to
 
 ### Configuring the frontend
 
-Create a `.env` file in the `frontend` directory, with the line: `NEXT_PUBLIC_TOWNS_SERVICE_URL=http://localhost:8081` (if you deploy the towns service to another location, put that location here instead)
+Create a `.env` file in the `frontend` directory, with the lines: `NEXT_PUBLIC_TOWNS_SERVICE_URL=http://localhost:8081` (if you deploy the towns service to another location, put that location here instead) and `NEXT_PUBLIC_SUPABASE_KEY=` (with the same Supabase key above for the value).
 
 For ease of debugging, you might also set the environmental variable `NEXT_PUBLIC_TOWN_DEV_MODE=true`. When set to `true`, the frontend will
 automatically connect to the town with the friendly name "DEBUG_TOWN" (creating one if needed), and will *not* try to connect to the Twilio API. This is useful if you want to quickly test changes to the frontend (reloading the page and re-acquiring video devices can be much slower than re-loading without Twilio).
