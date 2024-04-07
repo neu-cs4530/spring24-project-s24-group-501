@@ -89,6 +89,10 @@ export type TownEvents = {
    * the new location can be found on the PlayerController.
    */
   playerMoved: (movedPlayer: PlayerController) => void;
+  /**
+   * An event that indicates that a player's currency has been updated. This event is dispatched after updating the player's currency.
+   */
+  currencyUpdated: (updatedPlayer: PlayerController) => void;
 
   /**
    * An event that indicates that the set of active interactable areas has changed. This event is dispatched
@@ -452,6 +456,16 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
         this.emit('playerMoved', playerToUpdate);
       }
     });
+    /**
+     * When a player's currency changes, update local state and emit an event to the controller's event listeners
+     */
+    this._socket.on('currencyUpdated', updatedPlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === updatedPlayer.id);
+      if (playerToUpdate) {
+        playerToUpdate.units = updatedPlayer.units;
+        this.emit('currencyUpdated', playerToUpdate);
+      }
+    });
 
     /**
      * When an interactable's state changes, push that update into the relevant controller
@@ -495,6 +509,20 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.location = newLocation;
     this.emit('playerMoved', ourPlayer);
+  }
+
+  /**
+   * Emit a currency update event for the current player, updating the state locally and
+   * also notifying the townService that our player's currency has changed.
+   * 
+   * @param newCurrency the updated currency amount
+   */
+  public emitCurrencyUpdate(newCurrency: number) {
+    this._socket.emit('currencyUpdate', newCurrency);
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.units = newCurrency;
+    this.emit('currencyUpdated', ourPlayer);
   }
 
   /**

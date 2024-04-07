@@ -155,13 +155,10 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       this.state.status = 'WAITING_FOR_PLAYERS';
     } else {
       this.state.status = 'WAITING_TO_START';
-      for (let player of this.state.hands) {
-        player = {
-          ...player,
-          hands: [{ cards: [], wager: 0, text: '', outcome: undefined }],
-          active: true,
-          currentHand: 0,
-        };
+      for (const player of this.state.hands) {
+        player.hands = [{ cards: [], wager: 0, text: '', outcome: undefined }];
+        player.active = true;
+        player.currentHand = 0;
       }
     }
   }
