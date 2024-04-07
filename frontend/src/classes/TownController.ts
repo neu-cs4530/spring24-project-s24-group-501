@@ -514,7 +514,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
   /**
    * Emit a currency update event for the current player, updating the state locally and
    * also notifying the townService that our player's currency has changed.
-   * 
+   *
    * @param newCurrency the updated currency amount
    */
   public emitCurrencyUpdate(newCurrency: number) {
