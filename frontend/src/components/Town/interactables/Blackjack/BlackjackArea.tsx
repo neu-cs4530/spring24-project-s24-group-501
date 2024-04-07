@@ -43,8 +43,6 @@ export default function BlackjackArea({
       console.log(players);
     };
 
-    setHands(casinoAreaController.hands || []);
-
     console.log(casinoAreaController);
 
     casinoAreaController.addListener('gameUpdated', updateGameState);
@@ -163,7 +161,9 @@ export default function BlackjackArea({
             <BlackjackUser
               key={i}
               isCurrentTurn={
-                hands.find(hand => hand.player === townController.ourPlayer.id)?.active || false
+                (gameStatus === 'IN_PROGRESS' &&
+                  hands.find(hand => hand.player === townController.ourPlayer.id)?.active) ||
+                false
               }
               username={player.userName}
               cash={player.units}
