@@ -29,27 +29,41 @@ export default function BlackjackArea({
   const [players, setPlayers] = useState<PlayerController[]>([]);
   const [hands, setHands] = useState<BlackjackPlayer[]>([]);
   const [dealerHand, setDealerHand] = useState<Card[]>([]);
-
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
     const updateGameState = () => {
       setGameStatus(casinoAreaController.status || 'WAITING_FOR_PLAYERS');
       setHands(casinoAreaController.hands || []);
-      console.log(casinoAreaController);
-      console.log(hands);
       setDealerHand(casinoAreaController.dealerHand || []);
       setPlayers(casinoAreaController.players);
-      console.log(players);
     };
 
-    console.log(casinoAreaController);
-
     casinoAreaController.addListener('gameUpdated', updateGameState);
+
+    console.log('BlackjackAreaController', casinoAreaController);
     return () => {
       casinoAreaController.removeListener('gameUpdated', updateGameState);
     };
   }, [casinoAreaController]);
+
+  const captureWebcamScreenshot = async () => {
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const videoElement = document.createElement('video');
+    videoElement.srcObject = mediaStream;
+    await videoElement.play();
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      const base64Data = canvas.toDataURL('image/jpeg');
+      return base64Data;
+    }
+    return null;
+  };
 
   let gameStatusText = <></>;
 
@@ -62,8 +76,12 @@ export default function BlackjackArea({
       <button
         onClick={async () => {
           setJoiningGame(true);
-          casinoAreaController.joinCasino();
-          setJoiningGame(false);
+          const webcamScreenshot = await captureWebcamScreenshot();
+          console.log(webcamScreenshot);
+          casinoAreaController.joinCasino().then(() => {
+            casinoAreaController.setPlayerPhoto(webcamScreenshot || '');
+            setJoiningGame(false);
+          });
         }}
         disabled={joiningGame}>
         Join casino
@@ -82,16 +100,6 @@ export default function BlackjackArea({
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
 
           <div className={styles.dealer}>
-            {/*      {dealerHand.length > 0 && dealerHand[0].faceUp &&  (
-                     <p
-                     className={styles.countIndicator}
-                     style={{
-                       transform: `rotate(${left ? 30 : -30}deg)`,
-                       background: hand.bust ? '#F20C43' : 'white',
-                     }}>
-                     {hand.text}
-                   </p>
-            )} */}
             {dealerHand.map((card, i) => (
               <BlackjackCard key={i} type={card.type} faceUp={card.faceUp} value={card.value} />
             ))}
@@ -169,6 +177,12 @@ export default function BlackjackArea({
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}
               hands={hands.find(hand => hand.player === townController.ourPlayer.id)}
+              photo={hands.find(hand => hand.player === townController.ourPlayer.id)?.photo}
+              changePhoto={() => {
+                captureWebcamScreenshot().then(photo => {
+                  casinoAreaController.setPlayerPhoto(photo || '');
+                });
+              }}
             />
           ))}
         </div>

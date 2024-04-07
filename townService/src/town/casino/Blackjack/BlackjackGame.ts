@@ -285,6 +285,19 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
   }
 
   /**
+   * Sets the player's photo for the game, using a base64 string of an image.
+   *
+   * @param playerID the player to set the photo for
+   * @param photo the base64 string of the image
+   */
+  public setPlayerPhoto(playerID: string, photo: string): void {
+    const playerHand = this.state.hands.find(hand => hand.player === playerID);
+    if (playerHand) {
+      playerHand.photo = photo;
+    }
+  }
+
+  /**
    * Renders the text display for a player's hand
    * @param cards the cards in the hand
    * @returns the text display for someones hand

@@ -89,6 +89,19 @@ export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
       this._emitAreaChanged();
       return undefined as InteractableCommandReturnType<CommandType>;
     }
+    if (command.type === 'SetPlayerPhoto') {
+      const game = this._game;
+      if (!game) {
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      }
+      if (this._game?.id !== command.gameID) {
+        throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
+      }
+      game.setPlayerPhoto(player.id, command.photo);
+      this._emitAreaChanged();
+      return undefined as InteractableCommandReturnType<CommandType>;
+    }
+
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
   }
 }

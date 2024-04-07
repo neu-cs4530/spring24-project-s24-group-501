@@ -187,6 +187,8 @@ export interface BlackjackPlayer {
   hands: Hand[];
   currentHand: number;
   active: boolean;
+  photo?: string;
+
 }
 
 export interface BlackjackDealer {
@@ -315,7 +317,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | PlaceBetCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<BlackjackMove> | StartGameCommand | LeaveGameCommand | PlaceBetCommand | SetPlayerPhotoCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -341,12 +343,18 @@ export interface PlaceBetCommand {
   gameID: GameInstanceID;
   bet: CoveyBucks;
 }
+export interface SetPlayerPhotoCommand {
+  type: 'SetPlayerPhoto';
+  gameID: GameInstanceID;
+  photo: string;
+}
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
   CommandType extends PlaceBetCommand ? undefined :
+  CommandType extends SetPlayerPhotoCommand ? undefined :
   never;
 
 export type InteractableCommandResponse<MessageType> = {

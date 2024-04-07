@@ -106,8 +106,11 @@ export default class BlackjackAreaController extends CasinoAreaController<
   get canDoubleDown(): boolean {
     if (this.hands && this.currentPlayer) {
       const currPlayerHand = this.hands[this.currentPlayer];
-      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2 &&
-        this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[currPlayerHand.currentHand].wager;
+      return (
+        currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2 &&
+        this._townController.ourPlayer.units >=
+          2 * currPlayerHand.hands[currPlayerHand.currentHand].wager
+      );
     }
     return false;
   }
@@ -165,6 +168,19 @@ export default class BlackjackAreaController extends CasinoAreaController<
       type: 'GameMove',
       gameID: instanceID,
       move,
+    });
+  }
+
+  public async setPlayerPhoto(photo: string): Promise<void> {
+    const instanceID = this._instanceID;
+    if (!instanceID) {
+      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
+    }
+
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'SetPlayerPhoto',
+      gameID: instanceID,
+      photo,
     });
   }
 
