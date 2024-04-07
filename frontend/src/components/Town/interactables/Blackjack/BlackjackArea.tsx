@@ -76,10 +76,14 @@ export default function BlackjackArea({
       <button
         onClick={async () => {
           setJoiningGame(true);
-          const webcamScreenshot = await captureWebcamScreenshot();
-          console.log(webcamScreenshot);
+          let webcamScreenshot: string | null;
+          try {
+            webcamScreenshot = await captureWebcamScreenshot();
+          } catch (e) {
+            console.error('Failed to capture webcam screenshot', e);
+          }
           casinoAreaController.joinCasino().then(() => {
-            casinoAreaController.setPlayerPhoto(webcamScreenshot || '');
+            casinoAreaController.setPlayerPhoto(webcamScreenshot ?? '');
             setJoiningGame(false);
           });
         }}
@@ -179,9 +183,13 @@ export default function BlackjackArea({
               hands={hands.find(hand => hand.player === townController.ourPlayer.id)}
               photo={hands.find(hand => hand.player === townController.ourPlayer.id)?.photo}
               changePhoto={() => {
-                captureWebcamScreenshot().then(photo => {
-                  casinoAreaController.setPlayerPhoto(photo || '');
-                });
+                try {
+                  captureWebcamScreenshot().then(photo => {
+                    casinoAreaController.setPlayerPhoto(photo || '');
+                  });
+                } catch (e) {
+                  console.error('Failed to capture webcam screenshot', e);
+                }
               }}
             />
           ))}
