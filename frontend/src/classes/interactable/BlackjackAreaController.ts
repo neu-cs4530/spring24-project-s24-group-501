@@ -51,7 +51,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
    * 1 dimensional array
    */
   get dealerHand(): Card[] | undefined {
-    return this._model.game?.state.dealerHand;
+    return this._model.game?.state.dealerHand.cards;
   }
 
   /**
@@ -209,7 +209,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
 
       // Dealer changed emitter
       const newDealerHand: Card[] = [];
-      newGame.state.dealerHand.forEach(card => {
+      newGame.state.dealerHand.cards.forEach(card => {
         newDealerHand.push(card);
       });
       if (!_.isEqual(newDealerHand, this.dealerHand)) {

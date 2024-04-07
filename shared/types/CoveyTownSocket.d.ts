@@ -174,7 +174,7 @@ export type ConnectFourColor = 'Red' | 'Yellow';
 export interface BlackjackCasinoState extends GameState {
   hands: BlackjackPlayer[]; 
   currentPlayer: number;
-  dealerHand: Card[];
+  dealerHand: BlackjackDealer;
   results: CasinoScore[];
   shuffler: shuffler;
   wantsToLeave: PlayerID[];
@@ -187,6 +187,12 @@ export interface BlackjackPlayer {
   hands: Hand[];
   currentHand: number;
   active: boolean;
+}
+
+export interface BlackjackDealer {
+  cards: Card[];
+  text: string;
+  bust: boolean;
 }
 
 export interface CasinoScore {
@@ -354,6 +360,7 @@ export interface ServerToClientEvents {
   playerMoved: (movedPlayer: Player) => void;
   playerDisconnect: (disconnectedPlayer: Player) => void;
   playerJoined: (newPlayer: Player) => void;
+  currencyUpdated: (updatedPlayer: Player) => void;
   initialize: (initialData: TownJoinResponse) => void;
   townSettingsUpdated: (update: TownSettingsUpdate) => void;
   townClosing: () => void;
@@ -365,7 +372,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   chatMessage: (message: ChatMessage) => void;
   playerMovement: (movementData: PlayerLocation) => void;
-  // currencyUpdate: (currency: CoveyBucks) => void;
+  currencyUpdate: (currency: CoveyBucks) => void;
   interactableUpdate: (update: Interactable) => void;
   interactableCommand: (command: InteractableCommand & InteractableCommandBase) => void;
 }

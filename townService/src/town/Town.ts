@@ -9,6 +9,7 @@ import { isViewingArea } from '../TestUtils';
 import {
   ChatMessage,
   ConversationArea as ConversationAreaModel,
+  CoveyBucks,
   CoveyTownSocket,
   Interactable,
   InteractableCommand,
@@ -155,6 +156,16 @@ export default class Town {
       }
     });
 
+    // Register an event listener for the client socket: if the client updates their
+    // currency, inform the CoveyTownController
+    socket.on('currencyUpdate', (currency: number) => {
+      try {
+        this._updateCurrency(newPlayer, currency);
+      } catch (err) {
+        logError(err);
+      }
+    });
+
     // Set up a listener to process updates to interactables.
     // Currently only knows how to process updates for ViewingArea's, and
     // ignores any other updates for any other kind of interactable.
@@ -265,6 +276,11 @@ export default class Town {
     player.location = location;
 
     this._broadcastEmitter.emit('playerMoved', player.toPlayerModel());
+  }
+
+  private _updateCurrency(player: Player, newUnits: CoveyBucks) {
+    player.units = newUnits;
+    this._broadcastEmitter.emit('currencyUpdated', player.toPlayerModel());
   }
 
   /**

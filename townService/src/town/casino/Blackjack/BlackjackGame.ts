@@ -37,7 +37,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       hands: [],
       status: 'WAITING_FOR_PLAYERS',
       currentPlayer: 0,
-      dealerHand: [],
+      dealerHand: { cards: [], bust: false, text: '' },
       results: [],
       shuffler: new Shuffler(definedDeck),
       wantsToLeave: [],
@@ -78,7 +78,10 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
             ];
             playerHand.hands[0].text = this._render(playerHand.hands[0].cards);
           });
-          this.state.dealerHand = [this.state.shuffler.deal(false), this.state.shuffler.deal(true)];
+          this.state.dealerHand.cards = [
+            this.state.shuffler.deal(false),
+            this.state.shuffler.deal(true),
+          ];
         }
 
         return;
@@ -87,11 +90,27 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
   }
 
+  private async _endGame(): Promise<void> {
+    await this._dealerHandler();
+    await this._dishWagers();
+    await new Promise<void>(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 3000);
+    });
+    this._resetGame();
+  }
+
   /**
    * Processes the wagers of the game and updates the player's currency.
    */
-  private _dishWagers(): void {
-    const finalDealerValue = this._dealerHandler();
+  private async _dishWagers(): Promise<void> {
+    // await this._dealerHandler();
+    let dealerValue = this._handValue(this.state.dealerHand.cards);
+    if (dealerValue > 21) {
+      this.state.dealerHand.bust = true;
+      dealerValue = 0;
+    }
     for (const bjPlayer of this.state.hands) {
       let netPlayerWinnings = 0;
       for (const hand of bjPlayer.hands) {
@@ -100,7 +119,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
           netPlayerWinnings -= hand.wager;
           hand.outcome = 'Bust';
         }
-        if (finalDealerValue > playerValue) {
+        if (dealerValue > playerValue) {
           netPlayerWinnings -= hand.wager;
           hand.outcome = 'Loss';
         } else {
@@ -128,7 +147,9 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     this.state = {
       ...this.state,
       currentPlayer: 0,
+      dealerHand: { cards: [], bust: false, text: '' },
       hands: this.state.hands.filter(hand => !this.state.wantsToLeave.includes(hand.player)),
+      wantsToLeave: [],
     };
     if (this.state.hands.length === 0) {
       this.state.status = 'WAITING_FOR_PLAYERS';
@@ -146,24 +167,36 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
   }
 
   /**
+   * Pauses execution for a given duration.
+   * @param ms millisends to sleep
+   * @returns a Promise that resolves after the given duration
+   */
+  private _sleep(card: Card, ms: number): Promise<void> {
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, ms);
+    }).then(() => {
+      this.state.dealerHand.cards.push(card);
+      this.state.dealerHand.text = this._render(this.state.dealerHand.cards);
+    });
+  }
+
+  /**
    * Deals out the cards for the dealer.
    * - They hit while their hand value is under 17, then standing.
    * - If they bust, they return 0.
    *
    * @returns the value of the dealers hand
    */
-  private _dealerHandler(): number {
+  private async _dealerHandler(): Promise<void> {
     this.state.currentPlayer = -1;
-    this.state.dealerHand[0].faceUp = true;
-    while (this._handValue(this.state.dealerHand) < 17) {
-      // await sleep(2000);
-      this.state.dealerHand.push(this.state.shuffler.deal(true));
+    this.state.dealerHand.cards[0].faceUp = true;
+    const dealerCards = [];
+    while (this._handValue(this.state.dealerHand.cards.concat(dealerCards)) < 17) {
+      dealerCards.push(this.state.shuffler.deal(true));
     }
-    const finalDealerValue = this._handValue(this.state.dealerHand);
-    if (finalDealerValue > 21) {
-      return 0;
-    }
-    return finalDealerValue;
+    await Promise.all(dealerCards.map((card, index) => this._sleep(card, 1000 * (index + 1))));
   }
 
   /**
@@ -250,8 +283,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     // The round is over if all players are inactive
     if (this.state.hands.filter(player => player.active).length === 0) {
-      this._dishWagers();
-      this._resetGame();
+      this._endGame();
     }
   }
 
