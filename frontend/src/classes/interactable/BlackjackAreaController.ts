@@ -11,6 +11,7 @@ import {
   CoveyBucks,
   PlayerID,
   CasinoArea,
+  BlackjackDealer,
 } from '../../../../shared/types/CoveyTownSocket';
 import CasinoAreaController, { CasinoEventTypes } from './CasinoAreaController';
 import GameAreaController, {
@@ -21,8 +22,7 @@ import GameAreaController, {
 
 export type BlackjackEvents = CasinoEventTypes & {
   playerHandChanged: (hands: BlackjackPlayer[]) => void;
-  dealerHandChanged: (dealerHandCards: Card[]) => void;
-  playerChanged: (player: number) => void;
+  dealerHandChanged: (dealerHand: BlackjackDealer) => void;
   wantsToLeaveChanged: (wantsToLeave: string[]) => void;
 };
 
@@ -50,8 +50,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
    *
    * 1 dimensional array
    */
-  get dealerHand(): Card[] | undefined {
-    return this._model.game?.state.dealerHand.cards;
+  get dealerHand(): BlackjackDealer | undefined {
+    return this._model.game?.state.dealerHand;
   }
 
   /**
@@ -93,8 +93,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
       return (
         currPlayerHand.hands.length === 1 &&
         currPlayerHand.hands[0].cards.length === 2 &&
-        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1] &&
-        this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
+        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1]
+        // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
       );
     }
     return false;
@@ -106,11 +106,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
   get canDoubleDown(): boolean {
     if (this.hands && this.currentPlayer) {
       const currPlayerHand = this.hands[this.currentPlayer];
-      return (
-        currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2 &&
-        this._townController.ourPlayer.units >=
-          2 * currPlayerHand.hands[currPlayerHand.currentHand].wager
-      );
+      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2
+        // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[currPlayerHand.currentHand].wager;
     }
     return false;
   }
@@ -202,10 +199,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
     const newGame = newModel.game;
     if (newGame) {
       // Hand changed emitter
-      const newHands: BlackjackPlayer[] = [];
-      newGame.state.hands.forEach(hand => {
-        newHands.push(hand);
-      });
+      const newHands = newGame.state.hands;
       if (!_.isEqual(newHands, this.hands)) {
         if (this._model.game) {
           this._model.game.state.hands = newHands;
@@ -214,25 +208,19 @@ export default class BlackjackAreaController extends CasinoAreaController<
       }
 
       // Wants to Leave emitter
-      const newWTL: string[] = [];
-      newGame.state.wantsToLeave.forEach(player => {
-        newWTL.push(player);
-      });
+      const newWTL = newGame.state.wantsToLeave;
       if (!_.isEqual(newWTL, this.whoWantsToLeave)) {
         this._wantsToLeave = newWTL;
         this.emit('wantsToLeaveChanged', this._wantsToLeave);
       }
 
       // Dealer changed emitter
-      const newDealerHand: Card[] = [];
-      newGame.state.dealerHand.cards.forEach(card => {
-        newDealerHand.push(card);
-      });
+      const newDealerHand: BlackjackDealer = newGame.state.dealerHand;
       if (!_.isEqual(newDealerHand, this.dealerHand)) {
         if (this._model.game) {
           this._model.game.state.dealerHand = newDealerHand;
         }
-        this.emit('dealerHandChanged', this.dealerHand || []);
+        this.emit('dealerHandChanged', newDealerHand);
       }
     }
     const newWhoTurn = this.currentPlayer;

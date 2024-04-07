@@ -23,15 +23,30 @@ import CasinoArea from '../CasinoArea';
  * @see GameArea
  */
 export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
-  // private _casinoTracker: CasinoTracker;
-
   public constructor(id: string, rect: BoundingBox, townEmitter: TownEmitter) {
     super(id, rect, townEmitter);
-    // this._casinoTracker = CasinoTrackerFactory.instance();
   }
 
   protected getType(): InteractableType {
     return 'BlackjackArea';
+  }
+
+  private _delayGameEnd(): void {
+    const intervalId = setInterval(() => {
+      if (this.game) {
+        if (this.game.state.status === 'OVER') {
+          this._emitAreaChanged();
+          console.log('refreshing');
+        } else {
+          this._emitAreaChanged();
+          console.log('refreshed!!!');
+          clearInterval(intervalId);
+        }
+      } else {
+        clearInterval(intervalId); // Clear the interval if there's no game
+        console.log('clearing interval - no game in progress');
+      }
+    }, 1000);
   }
 
   public handleCommand<CommandType extends InteractableCommand>(
@@ -51,7 +66,14 @@ export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
         playerID: player.id,
         move: command.move as BlackjackMove,
       });
-      this._emitAreaChanged();
+      // this._emitAreaChanged();
+      if (game.state.currentPlayer === -1) {
+        console.log('game over');
+        this._delayGameEnd();
+      } else {
+        console.log('game not over');
+        this._emitAreaChanged();
+      }
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'JoinGame') {

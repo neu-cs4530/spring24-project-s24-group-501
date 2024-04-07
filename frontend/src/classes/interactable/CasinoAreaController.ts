@@ -120,13 +120,13 @@ export default abstract class CasinoAreaController<
     //TODO - Bounty for figuring out how to make the types work here
     //eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.emit('gameUpdated');
+    this.emit('casinoUpdated');
     this._instanceID = newModel.game?.id ?? this._instanceID;
     if (gameEnding) {
       //TODO - Bounty for figuring out how to make the types work here
       //eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      this.emit('gameEnd');
+      this.emit('casinoEnd');
     }
   }
 

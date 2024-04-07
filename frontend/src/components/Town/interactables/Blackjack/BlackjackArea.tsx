@@ -35,15 +35,14 @@ export default function BlackjackArea({
     const updateGameState = () => {
       setGameStatus(casinoAreaController.status || 'WAITING_FOR_PLAYERS');
       setHands(casinoAreaController.hands || []);
-      setDealerHand(casinoAreaController.dealerHand || []);
+      setDealerHand(casinoAreaController.dealerHand?.cards || []);
       setPlayers(casinoAreaController.players);
     };
 
-    casinoAreaController.addListener('gameUpdated', updateGameState);
-
     console.log('BlackjackAreaController', casinoAreaController);
+    casinoAreaController.addListener('casinoUpdated', updateGameState);
     return () => {
-      casinoAreaController.removeListener('gameUpdated', updateGameState);
+      casinoAreaController.removeListener('casinoUpdated', updateGameState);
     };
   }, [casinoAreaController]);
 
