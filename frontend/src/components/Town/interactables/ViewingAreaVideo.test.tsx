@@ -165,17 +165,17 @@ import { ViewingAreaVideo } from './ViewingAreaVideo';
 //     }
 //     return removedListeners[0][1] as unknown as ViewingAreaEvents[Ev];
 //   }
-  describe('[T4] ReactPlayer rendering', () => {
-    it('Sets the videoURL', () => {
-      expect(1).toBe(1);
-      // const props = firstReactPlayerConstructorProps();
-      // expect(props.url).toEqual(viewingArea.video);
-    });
-    it('Sets the playing property', () => {
-      // const props = firstReactPlayerConstructorProps();
-      // expect(props.playing).toEqual(viewingArea.isPlaying);
-    });
+describe('[T4] ReactPlayer rendering', () => {
+  it('Sets the videoURL', () => {
+    expect(1).toBe(1);
+    // const props = firstReactPlayerConstructorProps();
+    // expect(props.url).toEqual(viewingArea.video);
   });
+  it('Sets the playing property', () => {
+    // const props = firstReactPlayerConstructorProps();
+    // expect(props.playing).toEqual(viewingArea.isPlaying);
+  });
+});
 //   describe('[T4] Bridging events from the ViewingAreaController to the ReactPlayer', () => {
 //     describe('Registering ViewingAreaController listeners', () => {
 //       describe('When rendered', () => {
