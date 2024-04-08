@@ -98,10 +98,10 @@ describe('BlackjackAreaController', () => {
     if (observers) players.push(...observers);
     if (!dealerHand) {
       dealerHand = {
-        cards : [],
-        text :"",
-        bust: true
-      }
+        cards: [],
+        text:"",
+        bust: true,
+      };
     }
     const casino = {
       state: {
@@ -133,7 +133,7 @@ describe('BlackjackAreaController', () => {
             status: status || 'WAITING_FOR_PLAYERS',
             currentPlayer: currentPlayer || 0,
             results: results || [],
-            dealerHand : dealerHand,
+            dealerHand: dealerHand,
             shuffler: new Shuffler(),
             wantsToLeave: wantsToLeave || [],
             stake: 10,
@@ -162,10 +162,9 @@ describe('BlackjackAreaController', () => {
       });
 
       it('returns a list of a single hand if there is a hand', () => {
-      
         const controller = BlackjackAreaControllerWithProps({
           status: 'IN_PROGRESS',
-          hands: [{player : "1", hands : [], currentHand : 1, active : true}], // hand1
+          hands: [{ player : "1", hands: [], currentHand: 1, active: true }], // hand1
         });
         //Expect correct number of hands
         expect(controller?.hands?.length).toBe(1);
@@ -242,15 +241,14 @@ describe('BlackjackAreaController', () => {
         hands: [
           {
             player: '1',
-            currentHand : 1,
+            currentHand: 1,
             hands: [
-              { 
-                cards : [{ type: 'Diamonds', value: 6, faceUp: true }],
+              {
+                cards: [{ type: 'Diamonds', value: 6, faceUp: true }],
                 wager: 5,
-                text : "6",
-                outcome: undefined
-               },
-              
+                text: '6',
+                outcome: undefined,
+               },   
             ],
             active: true,
           },
