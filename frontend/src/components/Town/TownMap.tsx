@@ -63,7 +63,7 @@ export default function TownMap(): JSX.Element {
       physics: {
         default: 'arcade',
         arcade: {
-          gravity: { y: 0 }, // Top down game, so no gravity
+          gravity: { y: 0, x: 0 }, // Top down game, so no gravity
         },
       },
     };
