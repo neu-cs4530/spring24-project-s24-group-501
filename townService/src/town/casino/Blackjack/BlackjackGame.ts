@@ -407,7 +407,6 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
       currentHand: 0,
       active,
     });
-    player.units = 1000; // todo!
   }
 
   /**

@@ -89,8 +89,10 @@ export type TownEvents = {
    * the new location can be found on the PlayerController.
    */
   playerMoved: (movedPlayer: PlayerController) => void;
+
   /**
-   * An event that indicates that a player's currency has been updated. This event is dispatched after updating the player's currency.
+   * An event that indicates that a players units have been updated. This event is dispatched after updating the player's units -
+   * the new units can be found on the PlayerController.
    */
   currencyUpdated: (updatedPlayer: PlayerController) => void;
 
@@ -429,6 +431,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       const newPlayerObj = PlayerController.fromPlayerModel(newPlayer);
       this._players = this.players.concat([newPlayerObj]);
       this.emit('playerMoved', newPlayerObj);
+      this.emit('currencyUpdated', newPlayerObj);
     });
     /**
      * When a player disconnects from the town, update local state
@@ -515,13 +518,13 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
    * Emit a currency update event for the current player, updating the state locally and
    * also notifying the townService that our player's currency has changed.
    *
-   * @param newCurrency the updated currency amount
+   * @param newUnits
    */
-  public emitCurrencyUpdate(newCurrency: number) {
-    this._socket.emit('currencyUpdate', newCurrency);
+  public emitCurrencyUpdate(newUnits: number) {
+    this._socket.emit('currencyUpdate', newUnits);
     const ourPlayer = this._ourPlayer;
     assert(ourPlayer);
-    ourPlayer.units = newCurrency;
+    ourPlayer.units = newUnits;
     this.emit('currencyUpdated', ourPlayer);
   }
 
@@ -638,6 +641,11 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
   private async _updateID() {
     await PlayerTrackerFactory.instance().handleUser(this._email, this.userID);
     await PlayerTrackerFactory.instance().updatePlayerInfo(this._email, this.userID, this.userName);
+    await PlayerTrackerFactory.instance()
+      .getPlayerCurrency(this.userID)
+      .then(units => {
+        this.emitCurrencyUpdate(units);
+      });
   }
 
   /**
