@@ -7,7 +7,6 @@ import {
   GameStatus,
   BlackjackPlayer,
   InteractableID,
-  Card,
   BlackjackDealer,
 } from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
@@ -15,6 +14,7 @@ import BlackjackUser from './BlackjackUser';
 
 import styles from './blackjack.module.css';
 import BlackjackCard from './BlackjackCard';
+import { nanoid } from 'nanoid';
 
 export default function BlackjackArea({
   interactableID,
@@ -29,7 +29,9 @@ export default function BlackjackArea({
   const [joiningGame, setJoiningGame] = useState(false);
   const [players, setPlayers] = useState<PlayerController[]>([]);
   const [hands, setHands] = useState<BlackjackPlayer[]>([]);
-  const [dealerHand, setDealerHand] = useState<BlackjackDealer[]>([]);
+  const [dealerHand, setDealerHand] = useState<BlackjackDealer | undefined>(
+    casinoAreaController.dealerHand,
+  );
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
@@ -107,8 +109,8 @@ export default function BlackjackArea({
             {casinoAreaController.currentPlayer === -1 && (
               <div
                 className={styles.dealerCounter}
-                style={{ background: dealerHand.bust ? '#F20C43' : 'white' }}>
-                {dealerHand.text}
+                style={{ background: dealerHand?.bust ? '#F20C43' : 'white' }}>
+                {dealerHand?.text}
               </div>
             )}
             {dealerHand?.cards &&
@@ -188,7 +190,14 @@ export default function BlackjackArea({
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}
-              hands={hands.find(hand => hand.player === townController.ourPlayer.id)}
+              hands={
+                hands.find(hand => hand.player === townController.ourPlayer.id) || {
+                  player: nanoid(),
+                  hands: [],
+                  currentHand: 0,
+                  active: false,
+                }
+              }
               photo={hands.find(hand => hand.player === townController.ourPlayer.id)?.photo}
               changePhoto={() => {
                 try {

@@ -10,7 +10,7 @@ export default function BlackjackBetSetter({
 }) {
   const [betAmount, setBetAmount] = useState(stake); // State to hold the value of the slider
 
-  const handleSliderChange = event => {
+  const handleSliderChange = (event: { target: { value: string } }) => {
     setBetAmount(parseInt(event.target.value)); // Update the state with the slider value
   };
 
