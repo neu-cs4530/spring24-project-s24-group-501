@@ -68,6 +68,7 @@ export default class Player {
 
   set units(newUnits: CoveyBucks) {
     this._units = newUnits;
+    this.townEmitter.emit('currencyUpdated', this.toPlayerModel());
   }
 
   get units(): CoveyBucks {
