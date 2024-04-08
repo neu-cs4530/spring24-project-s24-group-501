@@ -95,12 +95,17 @@ describe('BlackjackAreaController', () => {
     if (player) {
       players.push(player);
     }
-    
     if (observers) players.push(...observers);
-    if (!dealerHand) {dealerHand = {cards : [], text :"",bust: true}}
+    if (!dealerHand) {
+      dealerHand = {
+        cards : [],
+        text :"",
+        bust: true
+      }
+    }
     const casino = {
       state: {
-        hands:  hands || [], 
+        hands: hands || [],
         currentPlayer: currentPlayer || 0,
         dealerHand: dealerHand,
         results: results || [],
@@ -114,7 +119,6 @@ describe('BlackjackAreaController', () => {
     };
     const ret = new BlackjackAreaController(
       id,
-      
       {
         casino: casino,
         id,
