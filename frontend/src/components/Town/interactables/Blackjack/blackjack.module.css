@@ -137,7 +137,7 @@
   align-items: flex-end;
 }
 
-.info > div, .countIndicator{
+.info > div, .countIndicator, .dealerCounter {
   border-radius: 10px;
   border: 1px solid black;
   width: fit-content;
@@ -183,12 +183,65 @@
 
 }
 
+.wagerHolder {
+  position: absolute;
+  z-index: 999999;
+  top: -150px;
+  left: 80px;
+  animation: wagerAnimation .5s 1 ease-in-out;
+}
+
+@keyframes wagerAnimation {
+  0% {
+    top: 200px;
+  }
+  100% {
+    top: -150px;
+  }
+}
+
+.wagerHolder > p {
+  background: #00A858;
+  border: 1px solid black;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 3px;
+}
+
+
+
+.wagerHolder > img {
+ position: absolute;
+ margin-top: 400px;
+ margin-left: -50px;
+ height: 400px; 
+ max-width: 1000px;
+  animation: handAnimation 1s 1 ease-in-out;
+}
+
+@keyframes handAnimation {
+  0% {
+    margin-top: -60px;
+  }
+  50% {
+    margin-top: -60px;
+  }
+  100% {
+    margin-top: 400px;
+  }
+}
 
 /* Dealer */
 .dealer {
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+.dealerCounter {
+  position: absolute;
+  z-index: 99999;
+  top: 195px;
 }
 
 /* Selectors */

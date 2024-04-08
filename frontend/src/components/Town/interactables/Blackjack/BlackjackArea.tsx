@@ -8,6 +8,7 @@ import {
   BlackjackPlayer,
   InteractableID,
   Card,
+  BlackjackDealer,
 } from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
 import BlackjackUser from './BlackjackUser';
@@ -28,14 +29,14 @@ export default function BlackjackArea({
   const [joiningGame, setJoiningGame] = useState(false);
   const [players, setPlayers] = useState<PlayerController[]>([]);
   const [hands, setHands] = useState<BlackjackPlayer[]>([]);
-  const [dealerHand, setDealerHand] = useState<Card[]>([]);
+  const [dealerHand, setDealerHand] = useState<BlackjackDealer[]>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
     const updateGameState = () => {
       setGameStatus(casinoAreaController.status || 'WAITING_FOR_PLAYERS');
       setHands(casinoAreaController.hands || []);
-      setDealerHand(casinoAreaController.dealerHand?.cards || []);
+      setDealerHand(casinoAreaController.dealerHand);
       setPlayers(casinoAreaController.players);
     };
 
@@ -103,9 +104,17 @@ export default function BlackjackArea({
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
 
           <div className={styles.dealer}>
-            {dealerHand.map((card, i) => (
-              <BlackjackCard key={i} type={card.type} faceUp={card.faceUp} value={card.value} />
-            ))}
+            {casinoAreaController.currentPlayer === -1 && (
+              <div
+                className={styles.dealerCounter}
+                style={{ background: dealerHand.bust ? '#F20C43' : 'white' }}>
+                {dealerHand.text}
+              </div>
+            )}
+            {dealerHand?.cards &&
+              dealerHand?.cards.map((card, i) => (
+                <BlackjackCard key={i} type={card.type} faceUp={card.faceUp} value={card.value} />
+              ))}
           </div>
         </div>
 
