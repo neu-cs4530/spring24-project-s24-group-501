@@ -96,7 +96,8 @@ export default abstract class CasinoAreaController<
 
   protected _updateFrom(newModel: CasinoArea<State>): void {
     const gameEnding =
-      this._model.game?.state.status === 'IN_PROGRESS' && newModel.game?.state.status !== 'IN_PROGRESS';
+      this._model.game?.state.status === 'IN_PROGRESS' &&
+       newModel.game?.state.status !== 'IN_PROGRESS';
     const newPlayers =
       newModel.game?.players.map(playerID => this._townController.getPlayer(playerID)) ?? [];
     if (!newPlayers && this._players.length > 0) {
