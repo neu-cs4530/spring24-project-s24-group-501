@@ -99,7 +99,7 @@ describe('BlackjackAreaController', () => {
     if (!dealerHand) {
       dealerHand = {
         cards: [],
-        text:"",
+        text: '',
         bust: true,
       };
     }
