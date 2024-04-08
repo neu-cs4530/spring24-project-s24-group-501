@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
+import PlayerTrackerFactory from '../authentication/PlayerTrackerFactory';
 import { CoveyBucks, Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
 export const MOVEMENT_SPEED = 550;
 
@@ -56,6 +57,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
   }
 
   get units(): CoveyBucks {
+    PlayerTrackerFactory.instance()
+      .getPlayerCurrency(this.id)
+      .then(units => {
+        this.units = units;
+      });
     return this._units;
   }
 
