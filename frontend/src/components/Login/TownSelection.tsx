@@ -250,8 +250,8 @@ export default function TownSelection(): JSX.Element {
         isClosable: true,
         duration: null,
       });
-      if (!user) { toast(
-        {
+      if (!user) {
+        toast({
           title:
             'Please sign in through GitHub to persist your currency! You will have insufficient funds for casino games otherwise.',
           status: 'info',
