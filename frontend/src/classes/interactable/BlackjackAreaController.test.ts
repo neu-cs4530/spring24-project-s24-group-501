@@ -164,7 +164,7 @@ describe('BlackjackAreaController', () => {
       it('returns a list of a single hand if there is a hand', () => {
         const controller = BlackjackAreaControllerWithProps({
           status: 'IN_PROGRESS',
-          hands: [{ player : "1", hands: [], currentHand: 1, active: true }], // hand1
+          hands: [{ player: '1', hands: [], currentHand: 1, active: true }], // hand1
         });
         //Expect correct number of hands
         expect(controller?.hands?.length).toBe(1);
@@ -248,7 +248,7 @@ describe('BlackjackAreaController', () => {
                 wager: 5,
                 text: '6',
                 outcome: undefined,
-               },   
+              },
             ],
             active: true,
           },

@@ -251,11 +251,12 @@ export default function TownSelection(): JSX.Element {
         duration: null,
       });
       if (!user) {
-        toast({
+        toast(
+        {
           title: 'Please sign in through GitHub to persist your currency! You will have insufficient funds for casino games otherwise.',
           status: 'info',
           isClosable: true,
-          duration: null
+          duration: null,
         });
       }
       await handleJoin(newTownInfo.townID);
