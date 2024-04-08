@@ -51,11 +51,11 @@ class MockReactPlayer extends React.Component {
   }
 }
 
-const reactPlayerSpy = jest.spyOn(ReactPlayer, 'default');
+//const reactPlayerSpy = jest.spyOn(ReactPlayer, 'default');
 // This TS ignore is necessary in order to spy on a react class based component, apparently...
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-reactPlayerSpy.prototype = React.Component.prototype;
+//reactPlayerSpy.prototype = React.Component.prototype;
 
 function renderViewingArea(viewingArea: ViewingAreaController, controller: TownController) {
   return (
@@ -87,14 +87,14 @@ describe('[T4] Viewing Area Video', () => {
   let townController: MockProxy<TownController>;
 
   let renderData: RenderResult;
-  beforeAll(() => {
-    reactPlayerSpy.mockImplementation(function (props) {
-      mockReactPlayerConstructor(props);
-      const ret = new MockReactPlayer(props, componentDidUpdateSpy, seekSpy);
-      mockReactPlayer = ret;
-      return ret as any;
-    });
-  });
+  // beforeAll(() => {
+  //   reactPlayerSpy.mockImplementation(function (props) {
+  //     mockReactPlayerConstructor(props);
+  //     const ret = new MockReactPlayer(props, componentDidUpdateSpy, seekSpy);
+  //     mockReactPlayer = ret;
+  //     return ret as any;
+  //   });
+  // });
   beforeEach(() => {
     mockReactPlayerConstructor.mockClear();
     componentDidUpdateSpy.mockClear();
