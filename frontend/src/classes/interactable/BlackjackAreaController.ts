@@ -93,7 +93,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
       return (
         currPlayerHand.hands.length === 1 &&
         currPlayerHand.hands[0].cards.length === 2 &&
-        currPlayerHand.hands[0].cards[0] === currPlayerHand.hands[0].cards[1]
+        currPlayerHand.hands[0].cards[0].value === currPlayerHand.hands[0].cards[1].value
         // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
       );
     }

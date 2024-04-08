@@ -13,7 +13,7 @@ import Game from '../games/Game';
 
 /**
  * A CasinoArea is an InteractableArea on the map that can host a game.
- * At any given point in time, there is at most one game in progress in a GameArea.
+ * At any given point in time, there is at most one game in progress in a CasinoArea.
  */
 export default abstract class CasinoArea<
   GameType extends Game<GameState, unknown>,

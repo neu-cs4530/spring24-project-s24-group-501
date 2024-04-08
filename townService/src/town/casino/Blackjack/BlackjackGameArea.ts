@@ -6,11 +6,9 @@ import InvalidParametersError, {
 import Player from '../../../lib/Player';
 import {
   BlackjackMove,
-  BoundingBox,
   InteractableCommand,
   InteractableCommandReturnType,
   InteractableType,
-  TownEmitter,
 } from '../../../types/CoveyTownSocket';
 import BlackjackGame from './BlackjackGame';
 import CasinoArea from '../CasinoArea';
@@ -20,8 +18,7 @@ import CasinoTrackerFactory from '../CasinoTrackerFactory';
  * The BlackJackGameArea class is responsible for managing the state of a single game area for Blackjack.
  * Responsibilty for managing the state of the game itself is delegated to the BlackJackGame class.
  *
- * @see ConnectFourGame
- * @see GameArea
+ * @see CasinoArea
  */
 export default class BlackJackGameArea extends CasinoArea<BlackjackGame> {
   protected getType(): InteractableType {

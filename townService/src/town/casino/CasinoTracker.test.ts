@@ -75,6 +75,7 @@ describe('CasinoTracker', () => {
         { id: 1, stakes: 'Low', game: 'Blackjack', date: new Date() },
         { id: 2, stakes: 'Medium', game: 'Blackjack', date: new Date() },
       ];
+      expect(sampleSessions).not.toContain(newSession);
       postCasinoSessionSpy.mockResolvedValue(3);
       await expect(dbConnection.postCasinoSession(newSession)).resolves.toEqual(3);
       expect(postCasinoSessionSpy).toHaveBeenCalled();

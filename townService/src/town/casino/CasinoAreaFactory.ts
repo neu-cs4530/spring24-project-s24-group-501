@@ -4,8 +4,9 @@ import InteractableArea from '../InteractableArea';
 import BlackjackGameArea from './Blackjack/BlackjackGameArea';
 
 /**
- * Creates a new GameArea from a map object
- * @param mapObject the map object to create the game area from
+ * Creates a new CasinoArea from a map object
+ *
+ * @param mapObject the map object to create the casino area from
  * @param broadcastEmitter a broadcast emitter that can be used to emit updates to players
  * @returns the interactable area
  * @throws an error if the map object is malformed

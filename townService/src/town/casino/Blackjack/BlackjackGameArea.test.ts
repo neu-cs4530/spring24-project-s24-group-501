@@ -12,7 +12,6 @@ import * as BlackjackGameModule from './BlackjackGame';
 import { createPlayerForTesting } from '../../../TestUtils';
 import {
   BlackjackMove,
-  CasinoScore,
   BlackjackCasinoState,
   CoveyBucks,
   GameInstanceID,
@@ -20,7 +19,7 @@ import {
   TownEmitter,
 } from '../../../types/CoveyTownSocket';
 import Shuffler from '../Shuffler';
-/* 
+
 jest.setTimeout(70000); // in milliseconds
 
 class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
@@ -29,25 +28,24 @@ class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
       hands: [],
       status: 'WAITING_FOR_PLAYERS',
       currentPlayer: 0,
-      dealerHand: [],
+      dealerHand: { cards: [], bust: false, text: '' },
       results: [],
       shuffler: new Shuffler(),
       wantsToLeave: [],
+      stake: 10,
     });
   }
 
-  public endGame(scores?: CasinoScore[]) {
-    this.state = {
-      ...this.state,
-      status: 'OVER',
-      results: this.state.results.concat(scores || []),
-    };
+  public endGame() {
+    this.state.hands.forEach(hand => {
+      hand.active = false;
+    });
   }
 
   public placeBet(player: Player, bet: CoveyBucks): void {
     for (const hand of this.state.hands) {
       if (hand.player === player.id) {
-        hand.ante = bet;
+        hand.hands[0].wager = bet;
       }
     }
   }
@@ -55,13 +53,21 @@ class TestingGame extends Game<BlackjackCasinoState, BlackjackMove> {
   public applyMove(move: GameMove<BlackjackMove>): void {}
 
   protected _join(player: Player): void {
-    this.state.hands.unshift({ player: player.id, hand: [], ante: 0, active: false });
+    this.state.hands.unshift({
+      player: player.id,
+      hands: [{ cards: [], wager: 0, outcome: undefined, text: '' }],
+      currentHand: 0,
+      active: false,
+      photo: undefined,
+    });
     this._players.push(player);
   }
 
   protected _leave(player: Player): void {
     this.state.wantsToLeave.concat(player.id);
   }
+
+  public setPlayerPhoto(playerID: string, photo: string): void {}
 }
 
 describe('BlackjackGameArea', () => {
@@ -166,7 +172,9 @@ describe('BlackjackGameArea', () => {
       test('should call placeBet on the game and call _emitAreaChanged', () => {
         const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
         interactableUpdateSpy.mockClear();
-        gameArea.handleCommand({ type: 'PlaceBet', bet: 20, gameID }, player2);
+        const betSpy = jest.spyOn(game, 'placeBet');
+        gameArea.handleCommand({ type: 'PlaceBet', bet: 20, gameID }, player1);
+        expect(betSpy).toHaveBeenCalledWith(player1, 20);
         expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
       });
       test('should not call _emitAreaChanged if the game throws an error', () => {
@@ -182,7 +190,7 @@ describe('BlackjackGameArea', () => {
         expect(() =>
           gameArea.handleCommand({ type: 'PlaceBet', bet: 20, gameID: game.id }, player2),
         ).toThrowError('Test Error');
-        // expect(placeBetSpy).toHaveBeenCalledWith(player2);
+        placeBetSpy.mockClear();
         expect(interactableUpdateSpy).not.toHaveBeenCalled();
       });
       test('when the game ID mismatches, it should throw an error and not call _emitAreaChanged', () => {
@@ -300,7 +308,45 @@ describe('BlackjackGameArea', () => {
         });
         expect(interactableUpdateSpy).not.toHaveBeenCalled();
       });
-      describe('when the game ends', () => {}); // todo
+    });
+  });
+  describe('SetPlayerPhoto command', () => {
+    test('should throw an error if there is no game in progress and not call _emitAreaChanged', () => {
+      interactableUpdateSpy.mockClear();
+      expect(() =>
+        gameArea.handleCommand(
+          { type: 'SetPlayerPhoto', photo: 'newBase64Photo', gameID: nanoid() },
+          player1,
+        ),
+      ).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      expect(interactableUpdateSpy).not.toHaveBeenCalled();
+    });
+    describe('when there is a game in progress', () => {
+      test('should throw an error if the gameID does not match the game and not call _emitAreaChanged', () => {
+        gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        interactableUpdateSpy.mockClear();
+        expect(() =>
+          gameArea.handleCommand(
+            { type: 'SetPlayerPhoto', photo: 'newBase64Photo', gameID: nanoid() },
+            player1,
+          ),
+        ).toThrowError(GAME_ID_MISSMATCH_MESSAGE);
+        expect(interactableUpdateSpy).not.toHaveBeenCalled();
+      });
+      test('should update the players photo and call _emitAreaChanged', () => {
+        const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player1);
+        if (!game) {
+          throw new Error('Game was not created by the first call to join');
+        }
+        expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+        const photoSpy = jest.spyOn(game, 'setPlayerPhoto');
+        gameArea.handleCommand(
+          { type: 'SetPlayerPhoto', photo: 'newBase64Photo', gameID },
+          player1,
+        );
+        expect(photoSpy).toHaveBeenCalledWith(player1.id, 'newBase64Photo');
+        expect(interactableUpdateSpy).toHaveBeenCalledTimes(2);
+      });
     });
   });
   test('When given an invalid command it should throw an error', () => {
@@ -310,11 +356,5 @@ describe('BlackjackGameArea', () => {
       INVALID_COMMAND_MESSAGE,
     );
     expect(interactableUpdateSpy).not.toHaveBeenCalled();
-  });
-}); */
-
-describe('testThatWillAlwaysWin', () => {
-  test('testThatWillAlwaysWin', () => {
-    expect(true).toBeTruthy();
   });
 });
