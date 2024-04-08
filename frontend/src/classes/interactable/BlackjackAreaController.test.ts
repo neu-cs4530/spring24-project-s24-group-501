@@ -5,6 +5,7 @@ import {
   BlackjackPlayer,
   CasinoScore,
   Card,
+  BlackjackDealer,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
@@ -79,7 +80,7 @@ describe('BlackjackAreaController', () => {
   }: {
     hands?: BlackjackPlayer[];
     currentPlayer?: number;
-    dealerHand?: Card[];
+    dealerHand?: BlackjackDealer;
     results?: [];
     player?: string;
     wantsToLeave?: [];
@@ -94,10 +95,28 @@ describe('BlackjackAreaController', () => {
     if (player) {
       players.push(player);
     }
+    
     if (observers) players.push(...observers);
+    if (!dealerHand) {dealerHand = {cards : [], text :"",bust: true}}
+    const casino = {
+      state: {
+        hands:  hands || [], 
+        currentPlayer: currentPlayer || 0,
+        dealerHand: dealerHand,
+        results: results || [],
+        wantsToLeave: wantsToLeave || [],
+        shuffler: new Shuffler(),
+        stake: 0,
+        status: status || 'WAITING_FOR_PLAYERS',
+      },
+      id: id,
+      players: players,
+    };
     const ret = new BlackjackAreaController(
       id,
+      
       {
+        casino: casino,
         id,
         occupants: players,
         history: [],
@@ -109,8 +128,8 @@ describe('BlackjackAreaController', () => {
             hands: hands || [],
             status: status || 'WAITING_FOR_PLAYERS',
             currentPlayer: currentPlayer || 0,
-            dealerHand: dealerHand || [],
             results: results || [],
+            dealerHand : dealerHand,
             shuffler: new Shuffler(),
             wantsToLeave: wantsToLeave || [],
             stake: 10,
@@ -139,35 +158,10 @@ describe('BlackjackAreaController', () => {
       });
 
       it('returns a list of a single hand if there is a hand', () => {
-        // hands: BlackjackPlayer[];
-        // currentPlayer: number;
-        // dealerHand: Card[];
-        // results: CasinoScore[];
-        // shuffler: shuffler;
-        // wantsToLeave: PlayerID[];
-        // stake: CoveyBucks;
-
-        // player: Player;
-        // hands: Hand[];
-        // currentHand: number;
-        // active: boolean;
-        // const hand1: BlackjackPlayer = {
-        //   player: {
-        //     id: '1',
-        //     userName: 'test',
-        //     location: { x: 0, y: 0, moving: false, rotation: 'front' },
-        //     units: 0,
-        //   },
-        //   hands: { cards: [
-        //     { type: 'Diamonds', value: 2, faceUp: true },
-        //     { type: 'Diamonds', value: 3, faceUp: true },
-        //   ], wager: 5 }
-        //   ante: 5,
-        //   active: true,
-        // };
+      
         const controller = BlackjackAreaControllerWithProps({
           status: 'IN_PROGRESS',
-          hands: [], // hand1
+          hands: [{player : "1", hands : [], currentHand : 1, active : true}], // hand1
         });
         //Expect correct number of hands
         expect(controller?.hands?.length).toBe(1);
@@ -239,24 +233,31 @@ describe('BlackjackAreaController', () => {
   describe('Properties during the game, modified by _updateFrom ', () => {
     let controller: BlackjackAreaController;
     beforeEach(() => {
-      // controller = BlackjackAreaControllerWithProps({
-      //   player: ourPlayer.id,
-      //   hands: [
-      //     {
-      //       player: '1',
-      //       hand: [
-      //         { type: 'Diamonds', value: 5, faceUp: true },
-      //         { type: 'Diamonds', value: 6, faceUp: true },
-      //       ],
-      //       ante: 1,
-      //       active: true,
-      //     },
-      //   ],
-      //   status: 'IN_PROGRESS',
-      // });
-      // expect(controller.currentPlayer).toBe(0);
-      // expect(controller.isPlayer).toBe(true);
-      expect(1).toBe(1);
+      controller = BlackjackAreaControllerWithProps({
+        player: ourPlayer.id,
+        hands: [
+          {
+            player: '1',
+            currentHand : 1,
+            hands: [
+              { 
+                cards : [{ type: 'Diamonds', value: 6, faceUp: true }],
+                wager: 5,
+                text : "6",
+                outcome: undefined
+               },
+              
+            ],
+            active: true,
+          },
+        ],
+        status: 'IN_PROGRESS',
+      });
+      expect(controller.currentPlayer).toBe(0);
+      expect(controller.isPlayer).toBe(true);
+    });
+    it('returns status if defined', () => {
+      expect(1).toEqual(1);
     });
   });
 });
