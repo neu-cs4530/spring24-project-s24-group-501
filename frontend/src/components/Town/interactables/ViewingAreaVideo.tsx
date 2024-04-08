@@ -78,25 +78,25 @@ export function ViewingAreaVideo({
         onProgress={state => {
           if (state.playedSeconds != 0 && state.playedSeconds != controller.elapsedTimeSec) {
             controller.elapsedTimeSec = state.playedSeconds;
-            townController.emitViewingAreaUpdate(controller);
+            //townController.emitViewingAreaUpdate(controller);
           }
         }}
         onPlay={() => {
           if (!controller.isPlaying) {
             controller.isPlaying = true;
-            townController.emitViewingAreaUpdate(controller);
+            //townController.emitViewingAreaUpdate(controller);
           }
         }}
         onPause={() => {
           if (controller.isPlaying) {
             controller.isPlaying = false;
-            townController.emitViewingAreaUpdate(controller);
+            //townController.emitViewingAreaUpdate(controller);
           }
         }}
         onEnded={() => {
           if (controller.isPlaying) {
             controller.isPlaying = false;
-            townController.emitViewingAreaUpdate(controller);
+            //townController.emitViewingAreaUpdate(controller);
           }
         }}
         controls={true}
