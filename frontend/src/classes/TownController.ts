@@ -687,8 +687,9 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           }
         });
         this._userID = initialData.userID;
-        this._updateID();
-        // await PlayerTrackerFactory.instance().updatePlayerID(this._email, this._userID);
+        if (this._email !== '') {
+          this._updateID();
+        }
         this._ourPlayer = this.players.find(eachPlayer => eachPlayer.id == this.userID);
         this.emit('connect', initialData.providerVideoToken);
         resolve();

@@ -26,7 +26,6 @@ import TownController from '../../classes/TownController';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
 import { supabase } from '../../authentication/PlayerTracker';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
-import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
 
 export default function TownSelection(): JSX.Element {
   const [userName, setUserName] = useState<string>('');
@@ -38,12 +37,9 @@ export default function TownSelection(): JSX.Element {
   const loginController = useLoginController();
   const { setTownController, townsService } = loginController;
   const { connect: videoConnect } = useVideoContext();
-  const [playerID, setPlayerID] = useState<string | undefined>(undefined);
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const toast = useToast();
-
-  const playerTracker = PlayerTrackerFactory.instance();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -62,7 +58,6 @@ export default function TownSelection(): JSX.Element {
             break;
           case 'SIGNED_OUT':
             setUser(undefined);
-            setPlayerID(undefined);
             break;
         }
       },
@@ -99,14 +94,6 @@ export default function TownSelection(): JSX.Element {
       let connectWatchdog: NodeJS.Timeout | undefined = undefined;
       let loadingToast: ToastId | undefined = undefined;
       try {
-        if (!user) {
-          toast({
-            title: 'Unable to join town',
-            description: 'Please log in',
-            status: 'error',
-          });
-          return;
-        }
         if (!userName || userName.length === 0) {
           toast({
             title: 'Unable to join town',
@@ -146,7 +133,6 @@ export default function TownSelection(): JSX.Element {
           }
         }, 1000);
         setIsJoining(true);
-        // await playerTracker.handleUser(user?.email || '');
         const newController = new TownController({
           userName,
           townID: coveyRoomID,
@@ -264,6 +250,14 @@ export default function TownSelection(): JSX.Element {
         isClosable: true,
         duration: null,
       });
+      if (!user) {
+        toast({
+          title: 'Please sign in through GitHub to persist your currency! You will have insufficient funds for casino games otherwise.',
+          status: 'info',
+          isClosable: true,
+          duration: null
+        });
+      }
       await handleJoin(newTownInfo.townID);
     } catch (err) {
       clearTimeout(connectWatchdog);

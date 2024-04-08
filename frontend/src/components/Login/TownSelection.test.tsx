@@ -2,7 +2,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import '@testing-library/jest-dom';
 import React from 'react';
-import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react';
+import { fireEvent, getByTestId, render, RenderResult, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock, mockClear, MockProxy, mockReset } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
@@ -110,6 +110,22 @@ describe('Town Selection', () => {
     mockedTownController = mockTownController({ providerVideoToken: expectedProviderVideoToken });
 
     coveyTownControllerConstructorSpy = jest.spyOn(TownController, 'default');
+
+    // jest.mock('@supabase/supabase-js', () => ({
+    //   createClient: jest.fn(() => ({
+    //     auth: {
+    //       getSession: jest.fn(() => Promise.resolve({ data: { session: { user: {
+    //         id: '123',
+    //         app_metadata: {},
+    //         user_metadata: {},
+    //         aud: 'example',
+    //         created_at: '2024-04-07T12:00:00Z',
+    //         email: '',
+    //       } } } })),
+    //       onAuthStateChange: jest.fn((_callback: Function) => ({ subscription: { unsubscribe: jest.fn() } })),
+    //     },
+    //   })),
+    // }));
   });
   beforeEach(() => {
     jest.useFakeTimers();
@@ -296,6 +312,7 @@ describe('Town Selection', () => {
     let newTownNameField: HTMLInputElement;
     let newTownIsPublicCheckbox: HTMLInputElement;
     let newTownButton: HTMLElement;
+    // let loginButton: HTMLElement;
 
     beforeEach(async () => {
       jest.useFakeTimers();
@@ -315,10 +332,12 @@ describe('Town Selection', () => {
       newTownIsPublicCheckbox = renderData.getByLabelText('Publicly Listed') as HTMLInputElement;
       newTownNameField = renderData.getByPlaceholderText('New Town Name') as HTMLInputElement;
       newTownButton = renderData.getByTestId('newTownButton');
+      // loginButton = renderData.getByTestId('loginButton');
     });
     describe('Joining existing towns', () => {
       describe('Joining an existing town by ID', () => {
         const joinTownWithOptions = async (params: { coveyTownID: string; userName: string }) => {
+          // userEvent.click(loginButton);
           fireEvent.change(userNameField, { target: { value: params.userName } });
           await waitFor(() => {
             expect(userNameField.value).toBe(params.userName);
@@ -340,6 +359,7 @@ describe('Town Selection', () => {
           // Check for call sequence
           await waitFor(() =>
             expect(coveyTownControllerConstructorSpy).toBeCalledWith({
+              email: '',
               userName,
               townID: coveyTownID,
               loginController: mockLoginController,
@@ -429,6 +449,7 @@ describe('Town Selection', () => {
 
                 await waitFor(() =>
                   expect(coveyTownControllerConstructorSpy).toBeCalledWith({
+                    email: '',
                     userName: username,
                     townID: town.townID,
                     loginController: mockLoginController,
@@ -605,6 +626,34 @@ describe('Town Selection', () => {
               ),
             );
           });
+          it('displays a toast "Please sign in through GitHub to persist your currency! You will have insufficient funds for casino games otherwise." if the user doesnt login', async () => {
+            const townID = nanoid();
+            const roomPassword = nanoid();
+            const townName = nanoid();
+            await createTownWithOptions({
+              townName,
+              userName: nanoid(),
+              townID,
+              roomPassword,
+              togglePublicBox: true,
+            });
+            await waitFor(() =>
+              expect(mockTownsService.createTown).toBeCalledWith({
+                friendlyName: townName,
+                isPubliclyListed: false,
+              }),
+            );
+            await waitFor(() =>
+              expect(mockToast).toBeCalledWith(
+                expect.objectContaining({
+                  title: 'Please sign in through GitHub to persist your currency! You will have insufficient funds for casino games otherwise.',
+                  status: 'info',
+                  isClosable: true,
+                  duration: null,
+                }),
+              ),
+            );
+          });
           it('after success, creates a new TownController and connects with the entered username and newly generated townID', async () => {
             const townID = nanoid();
             const roomPassword = nanoid();
@@ -623,6 +672,7 @@ describe('Town Selection', () => {
             // Check for call sequence
             await waitFor(() =>
               expect(coveyTownControllerConstructorSpy).toBeCalledWith({
+                email: '',
                 userName,
                 townID: townID,
                 loginController: mockLoginController,
