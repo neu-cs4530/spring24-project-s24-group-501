@@ -3,6 +3,7 @@ import { Box, Heading, ListItem, OrderedList } from '@chakra-ui/react';
 import { CasinoRankScore } from '../../../../shared/types/CoveyTownSocket';
 import PlayerRank from './PlayerRank';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
+import styles from './PlayerRanks.module.css';
 
 /**
  * Lists the currency rankings of the top 10 players across towns
@@ -20,20 +21,16 @@ export default function Top10PlayerRanks(): JSX.Element {
   }, [players]);
 
   return (
-    <Box>
-      <Heading as='h2' fontSize='l'>
-        Currency Leaderboard
-      </Heading>
+    <Box className={styles.casinoRank}>
+      <p>Biggest Casino Winners </p>
       {players.length === 0 ? (
         <span>No player data to display.</span>
       ) : (
-        <OrderedList>
-          {players.map(player => (
-            <ListItem key={player.player}>
-              <PlayerRank player={player} />
-            </ListItem>
+        <>
+          {players.map((player, i) => (
+            <PlayerRank key={i} index={i + 1} player={player} />
           ))}
-        </OrderedList>
+        </>
       )}
     </Box>
   );

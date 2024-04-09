@@ -1,0 +1,10 @@
+.casinoRank {
+	font-family: 'ABC Diatype Edu', Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 19px;
+	line-height: 19px;
+	text-transform: uppercase;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}

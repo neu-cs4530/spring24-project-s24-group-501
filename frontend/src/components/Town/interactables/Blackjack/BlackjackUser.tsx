@@ -14,7 +14,7 @@ interface PlayerProps {
   changePhoto: () => void;
 }
 
-function numberComma(number: number) {
+export function numberComma(number: number) {
   let formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   // Check if the number has exactly one decimal place
   const hasOneDecimalPlace = /\.\d$/.test(formattedNumber);

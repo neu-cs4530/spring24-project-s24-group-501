@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { CasinoRankScore } from '../../../../shared/types/CoveyTownSocket';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
+import { numberComma } from '../Town/interactables/Blackjack/BlackjackUser';
 
 type PlayerRankProps = {
   player: CasinoRankScore;
+  index: number;
 };
-export default function PlayerRank({ player }: PlayerRankProps): JSX.Element {
+export default function PlayerRank({ player, index }: PlayerRankProps): JSX.Element {
   const [rank, setRank] = useState<string>('#');
 
   useEffect(() => {
@@ -21,19 +23,9 @@ export default function PlayerRank({ player }: PlayerRankProps): JSX.Element {
   });
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ marginRight: '10px' }}>
-        <span>Rank: </span>
-        <span>{rank}</span>
-      </div>
-      <div style={{ marginRight: '10px' }}>
-        <span>User: </span>
-        <span>{player.username}</span>
-      </div>
-      <div>
-        <span>Units: </span>
-        <span>{player.netCurrency}</span>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <span>{index}.</span>
+      <span>{player.username}</span>-<span>${numberComma(player.netCurrency)}</span>
     </div>
   );
 }

@@ -24,8 +24,9 @@
 	gap: 10px;
 
 }
-.interactHolder > div {
+.interactHolder > div, .interactHolder > button {
 	border: 1px solid #000;
 	border-radius: 15px;
 	padding: 10px;
+	text-transform: uppercase;
 }
