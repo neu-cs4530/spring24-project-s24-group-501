@@ -78,7 +78,6 @@ export default function CasinoAreaWrapper(): JSX.Element {
         <ModalOverlay />
         <ModalContent>
           <div className={styles.casino}>
-            <ModalCloseButton />
             <div className={styles.interactHolder}>
               <button
                 onClick={() => {
