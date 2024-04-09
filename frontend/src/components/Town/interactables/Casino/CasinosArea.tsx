@@ -75,7 +75,6 @@ export default function CasinoAreaWrapper(): JSX.Element {
           <div className={styles.casino}>
             <ModalCloseButton />
             <div className={styles.interactHolder}>
-              <div>:)</div>
               <div>LDR</div>
             </div>
             <CasinoArea interactableID={casinoArea.id} />
