@@ -128,8 +128,8 @@ export default function BlackjackArea({
     <>
       <div className={styles.board}>
         <div>
+          <div style={{ position: 'fixed', top: '20px', left: '190px' }}>{leaveStatusText}</div>
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
-          <div style={{ position: 'fixed', top: '110px' }}>{leaveStatusText}</div>
 
           <div className={styles.dealer}>
             {casinoAreaController.currentPlayer === -1 && (
