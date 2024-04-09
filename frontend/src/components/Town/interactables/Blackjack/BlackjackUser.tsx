@@ -41,7 +41,7 @@ const BlackjackUser: React.FC<PlayerProps> = ({
   return (
     <div className={styles.player + (left ? ' left ' : '')}>
       {hands?.hands[0]?.wager !== 0 && (
-        <div className={styles.wagerHolder}>
+        <div className={styles.wagerHolder} style={{ marginLeft: left ? '-80px' : '0px' }}>
           <p>${hands?.hands[0]?.wager}</p>
           <img src={'/assets/casino/hand.png'} alt='hand' />
         </div>

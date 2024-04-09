@@ -34,6 +34,7 @@ export default function BlackjackArea({
     casinoAreaController.dealerHand,
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
+  const [activePlayer, setActivePlayer] = useState<number>(-1);
 
   useEffect(() => {
     const updateGameState = () => {
@@ -41,6 +42,11 @@ export default function BlackjackArea({
       setHands(casinoAreaController.hands || []);
       setDealerHand(casinoAreaController.dealerHand);
       setPlayers(casinoAreaController.players);
+      setActivePlayer(
+        typeof casinoAreaController.currentPlayer === 'number'
+          ? casinoAreaController.currentPlayer
+          : -1,
+      );
     };
 
     console.log('BlackjackAreaController', casinoAreaController);
@@ -157,7 +163,7 @@ export default function BlackjackArea({
 
         {gameStatus === 'IN_PROGRESS' &&
           casinoAreaController.currentPlayer !== -1 &&
-          hands.find(hand => hand.player === townController.ourPlayer.id)?.active && (
+          players[activePlayer]?.id === townController.ourPlayer.id && (
             <div className={styles.selectors}>
               <button
                 onClick={() => {
@@ -206,23 +212,19 @@ export default function BlackjackArea({
           {players.map((player, i) => (
             <BlackjackUser
               key={i}
-              isCurrentTurn={
-                (gameStatus === 'IN_PROGRESS' &&
-                  hands.find(hand => hand.player === townController.ourPlayer.id)?.active) ||
-                false
-              }
+              isCurrentTurn={(gameStatus === 'IN_PROGRESS' && activePlayer === i) || false}
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}
               hands={
-                hands.find(hand => hand.player === townController.ourPlayer.id) || {
+                hands.find(hand => hand.player === player.id) || {
                   player: nanoid(),
                   hands: [],
                   currentHand: 0,
                   active: false,
                 }
               }
-              photo={hands.find(hand => hand.player === townController.ourPlayer.id)?.photo}
+              photo={hands.find(hand => hand.player === player.id)?.photo}
               changePhoto={() => {
                 try {
                   captureWebcamScreenshot().then(photo => {

@@ -222,6 +222,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     // Extract the current player
     const currPlayerHand = this.state.hands[this.state.currentPlayer];
+
     if (currPlayerHand.player !== move.playerID) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
