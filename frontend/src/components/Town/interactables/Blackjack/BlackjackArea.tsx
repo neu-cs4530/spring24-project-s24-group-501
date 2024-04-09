@@ -74,7 +74,10 @@ export default function BlackjackArea({
 
   if (gameStatus === 'IN_PROGRESS') {
     gameStatusText = <>Game in progress</>;
-  } else if (gameStatus === 'WAITING_TO_START' && hands.find(hand => hand.player === townController.ourPlayer.id)) {
+  } else if (
+    gameStatus === 'WAITING_TO_START' &&
+    hands.find(hand => hand.player === townController.ourPlayer.id)
+  ) {
     gameStatusText = <b>BETTING STAGE.</b>;
   } else if (gameStatus === 'OVER') {
     gameStatusText = <b>Dealer's turn</b>;
@@ -103,8 +106,11 @@ export default function BlackjackArea({
   let leaveStatusText = <></>;
   // if (wantsToLeave.includes(townController.ourPlayer.id)) {
   //   leaveStatusText = <b>Leaving after the hand finishes.</b>;
-  // } else 
-  if (hands.find(hand => hand.player === townController.ourPlayer.id) && gameStatus === 'WAITING_TO_START') {
+  // } else
+  if (
+    hands.find(hand => hand.player === townController.ourPlayer.id) &&
+    gameStatus === 'WAITING_TO_START'
+  ) {
     leaveStatusText = (
       <button
         onClick={() => {
@@ -123,7 +129,7 @@ export default function BlackjackArea({
       <div className={styles.board}>
         <div>
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
-          <div style={{ position: 'fixed', top: '110px'  }}>{leaveStatusText}</div>
+          <div style={{ position: 'fixed', top: '110px' }}>{leaveStatusText}</div>
 
           <div className={styles.dealer}>
             {casinoAreaController.currentPlayer === -1 && (
