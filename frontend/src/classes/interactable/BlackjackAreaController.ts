@@ -1,24 +1,16 @@
 import _ from 'lodash';
 import {
-  BlackjackAction,
   BlackjackMove,
-  Card,
   CasinoScore,
-  GameArea,
   BlackjackCasinoState,
   GameStatus,
   BlackjackPlayer,
   CoveyBucks,
-  PlayerID,
   CasinoArea,
   BlackjackDealer,
 } from '../../../../shared/types/CoveyTownSocket';
 import CasinoAreaController, { CasinoEventTypes } from './CasinoAreaController';
-import GameAreaController, {
-  GameEventTypes,
-  NO_GAME_IN_PROGRESS_ERROR,
-  NO_GAME_STARTABLE,
-} from './GameAreaController';
+import { NO_GAME_IN_PROGRESS_ERROR, NO_GAME_STARTABLE } from './GameAreaController';
 
 export type BlackjackEvents = CasinoEventTypes & {
   playerHandChanged: (hands: BlackjackPlayer[]) => void;
@@ -93,8 +85,8 @@ export default class BlackjackAreaController extends CasinoAreaController<
       return (
         currPlayerHand.hands.length === 1 &&
         currPlayerHand.hands[0].cards.length === 2 &&
-        currPlayerHand.hands[0].cards[0].value === currPlayerHand.hands[0].cards[1].value
-        // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
+        currPlayerHand.hands[0].cards[0].value === currPlayerHand.hands[0].cards[1].value &&
+        this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[0].wager
       );
     }
     return false;
@@ -106,8 +98,11 @@ export default class BlackjackAreaController extends CasinoAreaController<
   get canDoubleDown(): boolean {
     if (this.hands && this.currentPlayer !== undefined) {
       const currPlayerHand = this.hands[this.currentPlayer];
-      return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2;
-      // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[currPlayerHand.currentHand].wager;
+      return (
+        currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2 &&
+        this._townController.ourPlayer.units >=
+          2 * currPlayerHand.hands[currPlayerHand.currentHand].wager
+      );
     }
     return false;
   }
@@ -134,14 +129,25 @@ export default class BlackjackAreaController extends CasinoAreaController<
     return this._model.game?.state.wantsToLeave;
   }
 
+  /**
+   * Returns the current stake of the game
+   */
   get stake(): CoveyBucks {
     return this._model.game?.state.stake || 0;
   }
 
+  /**
+   * Returns if any players are still playing the game
+   */
   public isActive(): boolean {
     return this._model.game?.state.hands.length !== 0;
   }
 
+  /**
+   * Sends a request to the server to place the current player's bet in the game
+   *
+   * @param bet the quantity of the wager
+   */
   public async placeBet(bet: CoveyBucks): Promise<void> {
     const instanceID = this._instanceID;
     if (!instanceID || this._model.game?.state.status !== 'WAITING_TO_START') {
@@ -155,6 +161,12 @@ export default class BlackjackAreaController extends CasinoAreaController<
     });
   }
 
+  /**
+   * Sends a request to the server to apply the current player's Blackjack decision
+   * Does not check if the move is valid.
+   *
+   * @param move either Hit, Stand, Split, or DoubleDown
+   */
   public async applyMove(move: BlackjackMove): Promise<void> {
     const instanceID = this._instanceID;
     if (!instanceID || this._model.game?.state.status !== 'IN_PROGRESS') {
@@ -168,6 +180,11 @@ export default class BlackjackAreaController extends CasinoAreaController<
     });
   }
 
+  /**
+   * Sends a request to the server to set the player's photo
+   *
+   * @param photo base64 string representing for the photo URL of the player
+   */
   public async setPlayerPhoto(photo: string): Promise<void> {
     const instanceID = this._instanceID;
     if (!instanceID) {
@@ -225,31 +242,5 @@ export default class BlackjackAreaController extends CasinoAreaController<
     }
     const newWhoTurn = this.currentPlayer;
     if (whoTurn !== newWhoTurn && newWhoTurn) this.emit('playerChanged', newWhoTurn);
-  }
-
-  /**
-   * Sends a request to the server to apply the current player's Blackjack decision
-   * Does not check if the move is valid.
-   *
-   *
-   * @param bjMove is the string representing the plaers decision to hit/stand/split/double down
-   */
-  public async makeMove(bjMove: BlackjackAction): Promise<void> {
-    const instanceID = this._instanceID;
-    if (!instanceID || this._model.game?.state.status !== 'IN_PROGRESS') {
-      throw new Error(NO_GAME_IN_PROGRESS_ERROR);
-    }
-    if (this.hands && this.currentPlayer) {
-      const move: BlackjackMove = {
-        player: (this.hands[this.currentPlayer] as BlackjackPlayer).player,
-        action: bjMove,
-      };
-      await this._townController.sendInteractableCommand(this.id, {
-        type: 'GameMove',
-        gameID: instanceID,
-        move,
-      });
-    }
-    throw new Error('Current Player Undefined');
   }
 }

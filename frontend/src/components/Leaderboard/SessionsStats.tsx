@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, ListItem, OrderedList } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { CasinoGame } from '../../../../shared/types/CoveyTownSocket';
 import offeredGames from './Games';
 import SessionStats from './SessionStats';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
+import styles from './PlayerRanks.module.css';
 
 type GameSessions = {
   game: CasinoGame;
@@ -19,27 +20,30 @@ export default function CasinoGameFrequency(): JSX.Element {
   const [sessions, setSessions] = useState<GameSessions[]>([]);
 
   useEffect(() => {
-    games.forEach(game => {
-      PlayerTrackerFactory.instance()
-        .getCasinoSessions(game)
-        .then(casinoSessions => {
-          setSessions([...sessions, { game, gamesPlayed: casinoSessions.length }]);
-        });
-    });
-  }, []);
+    const fetchGameSessions = async () => {
+      const updatedSessions: GameSessions[] = [];
+      for (const game of games) {
+        const casinoSessions = await PlayerTrackerFactory.instance().getCasinoSessions(game);
+        updatedSessions.push({ game, gamesPlayed: casinoSessions.length });
+      }
+      setSessions(updatedSessions);
+    };
+
+    fetchGameSessions();
+  }, [games]);
 
   return (
-    <Box>
-      <Heading as='h4' fontSize='l'>
-        Frequency By Game
-      </Heading>
-      <OrderedList>
-        {sessions.map(session => (
-          <ListItem key={session.game}>
-            <SessionStats game={session.game} gamesPlayed={session.gamesPlayed} />
-          </ListItem>
-        ))}
-      </OrderedList>
+    <Box className={styles.casinoRank}>
+      <p>Games Played All-time</p>
+      {sessions.length === 0 ? (
+        <span>No game data to display.</span>
+      ) : (
+        <>
+          {sessions.map((session, i) => (
+            <SessionStats key={i} game={session.game} gamesPlayed={session.gamesPlayed} />
+          ))}
+        </>
+      )}
     </Box>
   );
 }

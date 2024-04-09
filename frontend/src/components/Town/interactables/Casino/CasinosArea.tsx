@@ -1,4 +1,4 @@
-import { Box, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Modal, ModalContent, ModalOverlay, HStack, VStack } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { GenericCasinoAreaController } from '../../../../classes/interactable/CasinoAreaController';
 import PlayerController from '../../../../classes/PlayerController';
@@ -8,8 +8,10 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import CasinoAreaInteractable from './CasinoArea';
 import BlackjackArea from '../Blackjack/BlackjackArea';
 import styles from './casino.module.css';
-import Leaderboard from '../Leaderboard';
 import Top10PlayerRanks from '../../../Leaderboard/PlayerRanks';
+import YourRank from '../../../Leaderboard/YourRank';
+import DailyCasinoSessions from '../../../Leaderboard/DailySessions';
+import CasinoGameFrequency from '../../../Leaderboard/SessionsStats';
 
 export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid casino area type';
 
@@ -54,10 +56,9 @@ function CasinoArea({ interactableID }: { interactableID: InteractableID }): JSX
   );
 }
 /**
- * A wrapper component for the ConnectFourArea and TicTacToeArea components.
+ * A wrapper component for the CasinoArea components.
  * Determines if the player is currently in a casino area on the map, and if so,
  * renders the selected casino area component in a modal.
- *
  */
 export default function CasinoAreaWrapper(): JSX.Element {
   const casinoArea = useInteractable<CasinoAreaInteractable>('casinoArea');
@@ -86,13 +87,21 @@ export default function CasinoAreaWrapper(): JSX.Element {
                 Leaderboard
               </button>
               <Modal
+                size='xl'
                 isOpen={showLeaderboard}
                 onClose={() => {
                   setShowLeaderboard(false);
                 }}>
                 <ModalOverlay />
                 <ModalContent padding={'15px'}>
-                  <Top10PlayerRanks />
+                  <HStack>
+                    <Top10PlayerRanks />
+                    <VStack>
+                      <YourRank />
+                      <DailyCasinoSessions />
+                      <CasinoGameFrequency />
+                    </VStack>
+                  </HStack>
                 </ModalContent>
               </Modal>
             </div>
