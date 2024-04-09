@@ -8,6 +8,8 @@ import { InteractableID } from '../../../../types/CoveyTownSocket';
 import CasinoAreaInteractable from './CasinoArea';
 import BlackjackArea from '../Blackjack/BlackjackArea';
 import styles from './casino.module.css';
+import Leaderboard from '../Leaderboard';
+import Top10PlayerRanks from '../../../Leaderboard/PlayerRanks';
 
 export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid casino area type';
 
@@ -67,6 +69,9 @@ export default function CasinoAreaWrapper(): JSX.Element {
       controller.leaveCasino();
     }
   }, [townController, casinoArea]);
+
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+
   if (casinoArea) {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false} size='full'>
@@ -75,8 +80,22 @@ export default function CasinoAreaWrapper(): JSX.Element {
           <div className={styles.casino}>
             <ModalCloseButton />
             <div className={styles.interactHolder}>
-              <div>:)</div>
-              <div>LDR</div>
+              <button
+                onClick={() => {
+                  setShowLeaderboard(true);
+                }}>
+                Leaderboard
+              </button>
+              <Modal
+                isOpen={showLeaderboard}
+                onClose={() => {
+                  setShowLeaderboard(false);
+                }}>
+                <ModalOverlay />
+                <ModalContent padding={'15px'}>
+                  <Top10PlayerRanks />
+                </ModalContent>
+              </Modal>
             </div>
             <CasinoArea interactableID={casinoArea.id} />
           </div>

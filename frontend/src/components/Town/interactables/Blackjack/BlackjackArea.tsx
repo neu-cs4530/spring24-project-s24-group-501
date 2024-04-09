@@ -7,7 +7,6 @@ import {
   GameStatus,
   BlackjackPlayer,
   InteractableID,
-  Card,
   BlackjackDealer,
 } from '../../../../types/CoveyTownSocket';
 import BlackjackBetSetter from './BlackjackBetSetter';
@@ -15,6 +14,7 @@ import BlackjackUser from './BlackjackUser';
 
 import styles from './blackjack.module.css';
 import BlackjackCard from './BlackjackCard';
+import { nanoid } from 'nanoid';
 
 export default function BlackjackArea({
   interactableID,
@@ -27,9 +27,12 @@ export default function BlackjackArea({
   console.log(townController);
 
   const [joiningGame, setJoiningGame] = useState(false);
+  const [leavingGame, setLeavingGame] = useState(false);
   const [players, setPlayers] = useState<PlayerController[]>([]);
   const [hands, setHands] = useState<BlackjackPlayer[]>([]);
-  const [dealerHand, setDealerHand] = useState<BlackjackDealer[]>([]);
+  const [dealerHand, setDealerHand] = useState<BlackjackDealer | undefined>(
+    casinoAreaController.dealerHand,
+  );
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
 
   useEffect(() => {
@@ -69,10 +72,15 @@ export default function BlackjackArea({
 
   if (gameStatus === 'IN_PROGRESS') {
     gameStatusText = <>Game in progress</>;
-  } else if (gameStatus === 'WAITING_TO_START') {
+  } else if (
+    gameStatus === 'WAITING_TO_START' &&
+    hands.find(hand => hand.player === townController.ourPlayer.id)
+  ) {
     gameStatusText = <b>BETTING STAGE.</b>;
+  } else if (gameStatus === 'OVER') {
+    gameStatusText = <b>Dealer's turn</b>;
   } else {
-    const joinCasinoButton = (
+    gameStatusText = (
       <button
         onClick={async () => {
           setJoiningGame(true);
@@ -91,24 +99,42 @@ export default function BlackjackArea({
         Join casino
       </button>
     );
-    let gameStatusStr;
-    if (gameStatus === 'OVER') gameStatusStr = 'over';
-    else if (gameStatus === 'WAITING_FOR_PLAYERS') gameStatusStr = 'waiting for players to join';
-    gameStatusText = joinCasinoButton;
+  }
+
+  let leaveStatusText = <></>;
+  // if (wantsToLeave.includes(townController.ourPlayer.id)) {
+  //   leaveStatusText = <b>Leaving after the hand finishes.</b>;
+  // } else
+  if (
+    hands.find(hand => hand.player === townController.ourPlayer.id) &&
+    gameStatus === 'WAITING_TO_START'
+  ) {
+    leaveStatusText = (
+      <button
+        onClick={() => {
+          setLeavingGame(true);
+          casinoAreaController.leaveCasino();
+          setLeavingGame(false);
+        }}
+        disabled={leavingGame}>
+        Leave casino
+      </button>
+    );
   }
 
   return (
     <>
       <div className={styles.board}>
         <div>
+          <div style={{ position: 'fixed', top: '20px', left: '190px' }}>{leaveStatusText}</div>
           <div style={{ position: 'fixed' }}>{gameStatusText}</div>
 
           <div className={styles.dealer}>
             {casinoAreaController.currentPlayer === -1 && (
               <div
                 className={styles.dealerCounter}
-                style={{ background: dealerHand.bust ? '#F20C43' : 'white' }}>
-                {dealerHand.text}
+                style={{ background: dealerHand?.bust ? '#F20C43' : 'white' }}>
+                {dealerHand?.text}
               </div>
             )}
             {dealerHand?.cards &&
@@ -188,7 +214,14 @@ export default function BlackjackArea({
               username={player.userName}
               cash={player.units}
               left={players.length > 1 && i === players.length - 1}
-              hands={hands.find(hand => hand.player === townController.ourPlayer.id)}
+              hands={
+                hands.find(hand => hand.player === townController.ourPlayer.id) || {
+                  player: nanoid(),
+                  hands: [],
+                  currentHand: 0,
+                  active: false,
+                }
+              }
               photo={hands.find(hand => hand.player === townController.ourPlayer.id)?.photo}
               changePhoto={() => {
                 try {
