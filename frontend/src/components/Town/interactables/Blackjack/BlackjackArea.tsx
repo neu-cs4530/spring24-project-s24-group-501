@@ -78,7 +78,7 @@ export default function BlackjackArea({
   ) {
     gameStatusText = <b>BETTING STAGE.</b>;
   } else if (gameStatus === 'OVER') {
-    gameStatusText = <b>Dealer's turn</b>;
+    gameStatusText = <b>Dealer&apos;s turn</b>;
   } else {
     gameStatusText = (
       <button
