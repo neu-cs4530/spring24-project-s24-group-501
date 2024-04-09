@@ -61,52 +61,55 @@ const BlackjackUser: React.FC<PlayerProps> = ({
         </div>
       )}
 
-      <div
-        className={styles.cardHolder + ' ' + (left ? styles.leftCardHolder : '')}
-        style={{ transform: `rotate(${left ? -30 : 30}deg)` }}>
-        {hands?.hands.map((hand, handIndex) => {
-          const numcards = hand.cards.length;
+      {hands?.hands.map((hand, handIndex) => {
+        const numcards = hand.cards.length;
 
-          const angles =
-            numcards === 1
-              ? [-20]
-              : Array(numcards)
-                  .fill('')
-                  .map(
-                    (a, i) =>
-                      (totalarc / numcards) * (i + 1) - (totalarc / 2 + totalarc / numcards / 2),
-                  );
-          return (
-            <>
-              {numcards > 0 && (
-                <p
-                  className={styles.countIndicator}
-                  style={{
-                    transform: `rotate(${left ? 30 : -30}deg)`,
-                    background:
-                      hand.outcome === 'Bust' || hand.outcome === 'Loss' ? '#F20C43' : 'white',
-                  }}>
-                  {hand.text}
-                </p>
-              )}
-              {hand.cards.map((card, cardIndex) => (
-                <div
-                  key={cardIndex}
-                  style={{
-                    transform: `rotate(${
-                      angles[cardIndex] + (left && numcards === 1 ? 30 : 0)
-                    }deg)`,
-                    marginLeft: `${cardIndex === 0 ? 0 : Math.max(-numcards * 7 - 30, -70)}px`,
-                    transformOrigin: 'bottom center',
-                    marginTop: `${hands.hands.length > 1 && handIndex === 0 ? -50 : 0}px`,
-                  }}>
-                  <BlackjackCard type={card.type} value={card.value} faceUp={card.faceUp} />
-                </div>
-              ))}
-            </>
-          );
-        })}
-      </div>
+        const angles =
+          numcards === 1
+            ? [-20]
+            : Array(numcards)
+                .fill('')
+                .map(
+                  (a, i) =>
+                    (totalarc / numcards) * (i + 1) - (totalarc / 2 + totalarc / numcards / 2),
+                );
+        return (
+          <div
+            key={handIndex}
+            className={styles.cardHolder + ' ' + (left ? styles.leftCardHolder : '')}
+            style={{
+              transform: `rotate(${left ? -30 : 30}deg)`,
+              marginTop: `${hands.hands.length > 1 && handIndex === 0 ? -50 : 40}px`,
+            }}>
+            {numcards > 0 && (
+              <p
+                className={styles.countIndicator}
+                style={{
+                  transform: `rotate(${left ? 30 : -30}deg)`,
+                  background:
+                    hand.outcome === 'Bust' || hand.outcome === 'Loss'
+                      ? '#F20C43'
+                      : hands?.hands.length > 1 && hands.currentHand === handIndex
+                      ? '#f1f105'
+                      : 'white',
+                }}>
+                {hand.text}
+              </p>
+            )}
+            {hand.cards.map((card, cardIndex) => (
+              <div
+                key={cardIndex}
+                style={{
+                  transform: `rotate(${angles[cardIndex] + (left && numcards === 1 ? 30 : 0)}deg)`,
+                  marginLeft: `${cardIndex === 0 ? 0 : Math.max(-numcards * 7 - 30, -70)}px`,
+                  transformOrigin: 'bottom center',
+                }}>
+                <BlackjackCard type={card.type} value={card.value} faceUp={card.faceUp} />
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 };
