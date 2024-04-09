@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, ListItem, OrderedList } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { CasinoRankScore } from '../../../../shared/types/CoveyTownSocket';
 import PlayerRank from './PlayerRank';
 import PlayerTrackerFactory from '../../authentication/PlayerTrackerFactory';
@@ -28,7 +28,7 @@ export default function Top10PlayerRanks(): JSX.Element {
       ) : (
         <>
           {players.map((player, i) => (
-            <PlayerRank key={i} index={i + 1} player={player} />
+            <PlayerRank key={i} player={player} />
           ))}
         </>
       )}

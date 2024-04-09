@@ -5,9 +5,8 @@ import { numberComma } from '../Town/interactables/Blackjack/BlackjackUser';
 
 type PlayerRankProps = {
   player: CasinoRankScore;
-  index: number;
 };
-export default function PlayerRank({ player, index }: PlayerRankProps): JSX.Element {
+export default function PlayerRank({ player }: PlayerRankProps): JSX.Element {
   const [rank, setRank] = useState<string>('#');
 
   useEffect(() => {
@@ -17,6 +16,7 @@ export default function PlayerRank({ player, index }: PlayerRankProps): JSX.Elem
         for (let i = 0; i < scores.length; i++) {
           if (scores[i].player === player.player) {
             setRank((i + 1).toString());
+            break;
           }
         }
       });
@@ -24,7 +24,7 @@ export default function PlayerRank({ player, index }: PlayerRankProps): JSX.Elem
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span>{index}.</span>
+      <span>{rank}.</span>
       <span>{player.username}</span>-<span>${numberComma(player.netCurrency)}</span>
     </div>
   );
