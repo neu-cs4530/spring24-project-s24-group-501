@@ -593,7 +593,7 @@
                  "width":152.223260782481,
                  "x":3043.12992388837,
                  "y":1061.55695019362
-                },  
+                }, 
                 {
                  "height":182.995,
                  "id":52,
@@ -616,17 +616,51 @@
                  "id":60,
                  "name":"Blackjack 1",
                  "properties":[
-                     {
-                      "name":"type",
-                      "type":"string",
-                      "value":"Blackjack"
-                     }],
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"Blackjack"
+                        }],
                  "rotation":0,
                  "type":"CasinoArea",
                  "visible":true,
                  "width":136,
                  "x":711.166853303471,
                  "y":462.624860022396
+                }, 
+                {
+                 "height":169.833,
+                 "id":65,
+                 "name":"Blackjack 2",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"Blackjack"
+                        }],
+                 "rotation":0,
+                 "type":"CasinoArea",
+                 "visible":true,
+                 "width":111,
+                 "x":887.166853303471,
+                 "y":467.958360022396
+                }, 
+                {
+                 "height":35.333,
+                 "id":66,
+                 "name":"LeaderBoard",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"Blackjack"
+                        }],
+                 "rotation":0,
+                 "type":"CasinoLeaderboard",
+                 "visible":true,
+                 "width":163.5,
+                 "x":772.666853303471,
+                 "y":363.208360022396
                 }],
          "offsetx":-7.16685330347144,
          "offsety":5.37513997760357,
@@ -637,7 +671,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":65,
+ "nextobjectid":67,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
