@@ -215,7 +215,7 @@ export default function BlackjackArea({
               isCurrentTurn={(gameStatus === 'IN_PROGRESS' && activePlayer === i) || false}
               username={player.userName}
               cash={player.units}
-              left={players.length > 1 && i + 1 <= players.length / 2}
+              left={players.length > 1 && i + 1 > players.length / 2}
               hands={
                 hands.find(hand => hand.player === player.id) || {
                   player: nanoid(),
