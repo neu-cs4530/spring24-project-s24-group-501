@@ -1,4 +1,11 @@
-import { Modal, ModalContent, ModalOverlay, HStack, VStack } from '@chakra-ui/react';
+import {
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  HStack,
+  VStack,
+  ModalCloseButton,
+} from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { GenericCasinoAreaController } from '../../../../classes/interactable/CasinoAreaController';
 import PlayerController from '../../../../classes/PlayerController';
