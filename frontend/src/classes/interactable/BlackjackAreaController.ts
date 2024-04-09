@@ -88,7 +88,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
    * Returns if the current player is able to split their hand
    */
   get canSplit(): boolean {
-    if (this.hands && this.currentPlayer) {
+    if (this.hands && this.currentPlayer !== undefined) {
       const currPlayerHand = this.hands[this.currentPlayer];
       return (
         currPlayerHand.hands.length === 1 &&
@@ -104,7 +104,7 @@ export default class BlackjackAreaController extends CasinoAreaController<
    * Returns if the current player is able to double down
    */
   get canDoubleDown(): boolean {
-    if (this.hands && this.currentPlayer) {
+    if (this.hands && this.currentPlayer !== undefined) {
       const currPlayerHand = this.hands[this.currentPlayer];
       return currPlayerHand.hands[currPlayerHand.currentHand].cards.length === 2;
       // this._townController.ourPlayer.units >= 2 * currPlayerHand.hands[currPlayerHand.currentHand].wager;
