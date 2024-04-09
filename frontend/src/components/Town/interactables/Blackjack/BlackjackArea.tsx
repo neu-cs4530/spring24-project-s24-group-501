@@ -34,7 +34,6 @@ export default function BlackjackArea({
     casinoAreaController.dealerHand,
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(casinoAreaController.status);
-  const [wantsToLeave, setWantsToLeave] = useState<string[]>([]);
 
   useEffect(() => {
     const updateGameState = () => {
@@ -42,7 +41,6 @@ export default function BlackjackArea({
       setHands(casinoAreaController.hands || []);
       setDealerHand(casinoAreaController.dealerHand);
       setPlayers(casinoAreaController.players);
-      setWantsToLeave(casinoAreaController.whoWantsToLeave || []);
     };
 
     console.log('BlackjackAreaController', casinoAreaController);
