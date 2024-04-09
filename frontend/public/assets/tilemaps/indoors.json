@@ -644,23 +644,6 @@
                  "width":111,
                  "x":887.166853303471,
                  "y":467.958360022396
-                }, 
-                {
-                 "height":35.333,
-                 "id":66,
-                 "name":"LeaderBoard",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"Blackjack"
-                        }],
-                 "rotation":0,
-                 "type":"CasinoLeaderboard",
-                 "visible":true,
-                 "width":163.5,
-                 "x":772.666853303471,
-                 "y":363.208360022396
                 }],
          "offsetx":-7.16685330347144,
          "offsety":5.37513997760357,
