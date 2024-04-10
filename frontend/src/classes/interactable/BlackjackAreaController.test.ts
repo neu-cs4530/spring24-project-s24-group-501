@@ -28,8 +28,8 @@ describe('BlackjackAreaController', () => {
     1000,
   );
   const otherPlayers = [
-    new PlayerController("2", "2", { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
-    new PlayerController("3", "3", { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
+    new PlayerController('2', '2', { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
+    new PlayerController('3', '3', { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
   ];
 
   const deck = new Shuffler();
@@ -231,7 +231,7 @@ describe('BlackjackAreaController', () => {
 
   describe('Booleans and Game applications', () => {
     let controller: BlackjackAreaController;
-    function player2Turn () {
+    function player2Turn() {
       controller = BlackjackAreaControllerWithProps({
         player: ourPlayer.id,
         currentPlayer: 1,
@@ -277,7 +277,7 @@ describe('BlackjackAreaController', () => {
       controller = BlackjackAreaControllerWithProps({
         player: ourPlayer.id,
         currentPlayer: 0,
-        gameInstanceID: "1",
+        gameInstanceID: '1',
         hands: [
           {
             player: '1',
@@ -338,7 +338,7 @@ describe('BlackjackAreaController', () => {
         controller = BlackjackAreaControllerWithProps({
           player: ourPlayer.id,
           currentPlayer: 0,
-          gameInstanceID: "1",
+          gameInstanceID: '1',
           hands: [
             {
               player: '1',
@@ -365,8 +365,8 @@ describe('BlackjackAreaController', () => {
       it('sends a PlaceBet and SetPhoto command to the server', async () => {
         const instanceID = nanoid();
         const bet = 5;
-        const photo = "photo";
-        const move: BlackjackMove = {player: "1", action: "Hit"};
+        const photo = 'photo';
+        const move: BlackjackMove = {player: '1', action: 'Hit'};
         mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
           return { gameID: instanceID };
         });
@@ -389,21 +389,19 @@ describe('BlackjackAreaController', () => {
       it('Fails to send a PlaceBet command to the server if no instance or not started', async () => {
         await expect(controller.placeBet(5)).rejects.toThrowError();
       });
-  
       it('Fails to send a applyMove command to the server if no instance or not started', async () => {
-        const move: BlackjackMove = {player: "1", action: "Hit"};
+        const move: BlackjackMove = {player: '1', action: 'Hit'};
         await expect(controller.applyMove(move)).rejects.toThrowError();
       });
     });
     describe('With a game in progress', () => {
-      let controller: BlackjackAreaController;
       let instanceID: string;
       beforeEach(async () => {
         instanceID = `GameInstanceID.makeMove.${nanoid()}`;
         controller = BlackjackAreaControllerWithProps({
           player: ourPlayer.id,
           currentPlayer: 0,
-          gameInstanceID: "1",
+          gameInstanceID: '1',
           hands: [
             {
               player: '1',
@@ -430,9 +428,7 @@ describe('BlackjackAreaController', () => {
         await controller.joinCasino();
       });
       describe('ApplyMove', () => {
-        async function makeMoveAndExpectHandPlacement(
-          move : BlackjackMove,
-        ) {
+        async function makeMoveAndExpectHandPlacement(move : BlackjackMove) {
           mockTownController.sendInteractableCommand.mockClear();
           await controller.applyMove(move);
           expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
@@ -444,7 +440,7 @@ describe('BlackjackAreaController', () => {
           updateGameWithMove(controller, move);
         }
         it('Sends applyMove signal to server', async () => {
-          await makeMoveAndExpectHandPlacement({player: "1", action: "Hit"});
+          await makeMoveAndExpectHandPlacement({ player: '1', action: 'Hit' });
         });
       });
     });
