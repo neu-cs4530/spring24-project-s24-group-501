@@ -25,11 +25,11 @@ describe('BlackjackAreaController', () => {
       moving: false,
       rotation: 'front',
     },
-    0,
+    1000,
   );
   const otherPlayers = [
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }, 0),
+    new PlayerController("2", "2", { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
+    new PlayerController("3", "3", { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
   ];
 
   const deck = new Shuffler();
@@ -184,21 +184,17 @@ describe('BlackjackAreaController', () => {
 
     describe('hands', () => {
       it('returns the number of hands from the game state', () => {
-        // const controller = BlackjackAreaControllerWithProps({
-        //   hands: [
-        //     {
-        //       player: '1',
-        //       hand: [
-        //         { type: 'Diamonds', value: 5, faceUp: true },
-        //         { type: 'Diamonds', value: 6, faceUp: true },
-        //       ],
-        //       ante: 1,
-        //       active: true,
-        //     },
-        //   ],
-        // });
-        //expect(controller.hands?.length).toBe(1);
-        expect(1).toBe(1);
+        const controller = BlackjackAreaControllerWithProps({
+          hands: [
+            {
+              player: '1',
+              hands: [],
+              currentHand: 0,
+              active: true,
+            },
+          ],
+        });
+        expect(controller.hands?.length).toBe(1);
       });
     });
   });
@@ -233,20 +229,84 @@ describe('BlackjackAreaController', () => {
     });
   });
 
-  describe('Properties during the game, modified by _updateFrom ', () => {
+  describe('Booleans and Game applications', () => {
     let controller: BlackjackAreaController;
-    beforeEach(() => {
+    function player2Turn () {
       controller = BlackjackAreaControllerWithProps({
         player: ourPlayer.id,
+        currentPlayer: 1,
         hands: [
           {
             player: '1',
-            currentHand: 1,
+            currentHand: 0,
             hands: [
               {
-                cards: [{ type: 'Diamonds', value: 6, faceUp: true }],
+                cards: [
+                  { type: 'Diamonds', value: 6, faceUp: true },
+                  { type: 'Hearts', value: 6, faceUp: true },
+                ],
                 wager: 5,
-                text: '6',
+                text: '12',
+                outcome: undefined,
+              },
+            ],
+            active: true,
+          },
+          {
+            player: '2',
+            currentHand: 0,
+            hands: [
+              {
+                cards: [
+                  { type: 'Spades', value: 6, faceUp: true },
+                  { type: 'Clubs', value: 7, faceUp: true },
+                  { type: 'Clubs', value: 8, faceUp: true },
+                ],
+                wager: 5,
+                text: '21',
+                outcome: undefined,
+              },
+            ],
+            active: true,
+          },
+        ],
+        status: 'IN_PROGRESS',
+      });
+    }
+    beforeEach(() => {
+      controller = BlackjackAreaControllerWithProps({
+        player: ourPlayer.id,
+        currentPlayer: 0,
+        gameInstanceID: "1",
+        hands: [
+          {
+            player: '1',
+            currentHand: 0,
+            hands: [
+              {
+                cards: [
+                  { type: 'Diamonds', value: 6, faceUp: true },
+                  { type: 'Hearts', value: 6, faceUp: true },
+                ],
+                wager: 5,
+                text: '12',
+                outcome: undefined,
+              },
+            ],
+            active: true,
+          },
+          {
+            player: '2',
+            currentHand: 0,
+            hands: [
+              {
+                cards: [
+                  { type: 'Spades', value: 6, faceUp: true },
+                  { type: 'Clubs', value: 7, faceUp: true },
+                  { type: 'Clubs', value: 8, faceUp: true },
+                ],
+                wager: 5,
+                text: '21',
                 outcome: undefined,
               },
             ],
@@ -258,8 +318,135 @@ describe('BlackjackAreaController', () => {
       expect(controller.currentPlayer).toBe(0);
       expect(controller.isPlayer).toBe(true);
     });
-    it('returns status if defined', () => {
-      expect(1).toEqual(1);
+    it('returns true if user can split', () => {
+      expect(controller.canSplit).toBe(true);
+    });
+    it('returns false if user cant split', () => {
+      player2Turn();
+      expect(controller.canSplit).toBe(false);
+    });
+    it('returns true if user can Double Down', () => {
+      expect(controller.canDoubleDown).toBe(true);
+    });
+    it('returns false if user cant Double Down', () => {
+      player2Turn();
+      expect(controller.canDoubleDown).toBe(false);
+    });
+
+    describe('Active Methods', () => {
+      beforeEach(() => {
+        controller = BlackjackAreaControllerWithProps({
+          player: ourPlayer.id,
+          currentPlayer: 0,
+          gameInstanceID: "1",
+          hands: [
+            {
+              player: '1',
+              currentHand: 0,
+              hands: [
+                {
+                  cards: [
+                    { type: 'Diamonds', value: 6, faceUp: true },
+                    { type: 'Hearts', value: 6, faceUp: true },
+                  ],
+                  wager: 5,
+                  text: '12',
+                  outcome: undefined,
+                },
+              ],
+              active: true,
+            },
+          ],
+          status: 'WAITING_TO_START',
+        });
+        expect(controller.currentPlayer).toBe(0);
+        expect(controller.isPlayer).toBe(true);
+      });
+      it('sends a PlaceBet and SetPhoto command to the server', async () => {
+        const instanceID = nanoid();
+        const bet = 5;
+        const photo = "photo";
+        const move: BlackjackMove = {player: "1", action: "Hit"};
+        mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
+          return { gameID: instanceID };
+        });
+        await controller.joinCasino();
+        mockTownController.sendInteractableCommand.mockClear();
+        mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {});
+        await controller.placeBet(bet);
+        expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
+          type: 'PlaceBet',
+          gameID: instanceID,
+          bet,
+        });
+        await controller.setPlayerPhoto(photo);
+        expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
+          type: 'SetPlayerPhoto',
+          gameID: instanceID,
+          photo,
+        });
+      });
+      it('Fails to send a PlaceBet command to the server if no instance or not started', async () => {
+        await expect(controller.placeBet(5)).rejects.toThrowError();
+      });
+  
+      it('Fails to send a applyMove command to the server if no instance or not started', async () => {
+        const move: BlackjackMove = {player: "1", action: "Hit"};
+        await expect(controller.applyMove(move)).rejects.toThrowError();
+      });
+    });
+    describe('With a game in progress', () => {
+      let controller: BlackjackAreaController;
+      let instanceID: string;
+      beforeEach(async () => {
+        instanceID = `GameInstanceID.makeMove.${nanoid()}`;
+        controller = BlackjackAreaControllerWithProps({
+          player: ourPlayer.id,
+          currentPlayer: 0,
+          gameInstanceID: "1",
+          hands: [
+            {
+              player: '1',
+              currentHand: 0,
+              hands: [
+                {
+                  cards: [
+                    { type: 'Diamonds', value: 6, faceUp: true },
+                    { type: 'Hearts', value: 6, faceUp: true },
+                  ],
+                  wager: 5,
+                  text: '12',
+                  outcome: undefined,
+                },
+              ],
+              active: true,
+            },
+          ],
+          status: 'IN_PROGRESS',
+        });
+        mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
+          return { gameID: instanceID };
+        });
+        await controller.joinCasino();
+      });
+      describe('ApplyMove', () => {
+        async function makeMoveAndExpectHandPlacement(
+          move : BlackjackMove,
+        ) {
+          mockTownController.sendInteractableCommand.mockClear();
+          await controller.applyMove(move);
+          expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
+            type: 'GameMove',
+            gameID: instanceID,
+            move,
+          });
+          //Update the controller with the new move
+          updateGameWithMove(controller, move);
+        }
+        it('Sends applyMove signal to server', async () => {
+          await makeMoveAndExpectHandPlacement({player: "1", action: "Hit"});
+        });
+      });
     });
   });
 });

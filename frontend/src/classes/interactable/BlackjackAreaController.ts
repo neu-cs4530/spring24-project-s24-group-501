@@ -214,33 +214,5 @@ export default class BlackjackAreaController extends CasinoAreaController<
     const whoTurn = this.currentPlayer;
     super._updateFrom(newModel);
     const newGame = newModel.game;
-    if (newGame) {
-      // Hand changed emitter
-      const newHands = newGame.state.hands;
-      if (!_.isEqual(newHands, this.hands)) {
-        if (this._model.game) {
-          this._model.game.state.hands = newHands;
-        }
-        this.emit('handsChanged', this.hands);
-      }
-
-      // Wants to Leave emitter
-      const newWTL = newGame.state.wantsToLeave;
-      if (!_.isEqual(newWTL, this.whoWantsToLeave)) {
-        this._wantsToLeave = newWTL;
-        this.emit('wantsToLeaveChanged', this._wantsToLeave);
-      }
-
-      // Dealer changed emitter
-      const newDealerHand: BlackjackDealer = newGame.state.dealerHand;
-      if (!_.isEqual(newDealerHand, this.dealerHand)) {
-        if (this._model.game) {
-          this._model.game.state.dealerHand = newDealerHand;
-        }
-        this.emit('dealerHandChanged', newDealerHand);
-      }
-    }
-    const newWhoTurn = this.currentPlayer;
-    if (whoTurn !== newWhoTurn && newWhoTurn) this.emit('playerChanged', newWhoTurn);
   }
 }
