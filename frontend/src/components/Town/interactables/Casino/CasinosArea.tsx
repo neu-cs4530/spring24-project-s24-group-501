@@ -30,10 +30,8 @@ export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid casino area type';
  * It uses the CasinoAreaController corresponding to the provided interactableID to get the current state of the casino. (@see useInteractableAreaController)
  *
  * It renders the following:
- *  - A leaderboard of the casino results
- *  - A list of observers' usernames (in a list with the aria-label 'list of observers in the casino')
- *  - The casino area component (either ConnectFourArea or TicTacToeArea). If the casino area is NOT a ConnectFourArea or TicTacToeArea, then the message INVALID_GAME_AREA_TYPE_MESSAGE appears within the component
- *  - A chat channel for the casino area (@see ChatChannel.tsx), with the property interactableID set to the interactableID of the casino area
+ *  - A leaderboard of the casino results (NOTE: these were tested manually to avoid flaky reliance on the database service)
+ *  - The casino area component (BlackjackArea)
  *
  */
 function CasinoArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {

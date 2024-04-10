@@ -16,6 +16,34 @@ import styles from './blackjack.module.css';
 import BlackjackCard from './BlackjackCard';
 import { nanoid } from 'nanoid';
 
+/**
+ * The BlackjackArea component renders the Blackjack game area.
+ * It renders the current state of the area, optionally allowing the player to join the game.
+ * 
+ * It uses the BlackjackAreaController to get the current state of the game.
+ * It listens for the 'casinoUpdated' event on the controller, and re-renders accordingly.
+ * It subscribes to these events when the component mounts, and unsubscribes when the component unmounts. It also unsubscribes when the gameAreaController changes.
+ * 
+ * It renders the following:
+ * - A message indicating the current game status:
+ *  - If the game is in progress, the message is 'Game in progress'
+ *  - If the game is in status WAITING_FOR_PLAYERS, the message is 'BETTING STAGE.'
+ *  - If the game is in status OVER, the message is 'Dealer's turn'
+ * - If the game is in status WAITING_TO_START, a button to join the game is displayed, with the text 'Join casino'
+ * - If the game is in status WAITING_TO_START and the player has not placed a bet, a BlackjackBetSetter component is displayed
+ * - If the game is in status IN_PROGRESS and it is the player's turn, a set of buttons to make a move is displayed
+ *   - The buttons are 'Stand', 'Hit', 'Double Down', and 'Split'
+ *   - The buttons call the applyMove method on the CasinoAreaController with the appropriate action
+ *   - The buttons are disabled if the player cannot make that move
+ *   - The buttons are hidden if it is not the player's turn
+ * - If the game is in status WAITING_TO_START and the player has joined, a button to leave the game is displayed, with the text 'Leave casino'
+ * - Animations for different game states
+ * 
+ * For each player in the game, a BlackjackUser component is displayed, showing the player's username, cash, and hands.
+ * 
+ * Components were tested manually to avoid token errors with css modules.
+ *
+ */
 export default function BlackjackArea({
   interactableID,
 }: {
@@ -108,9 +136,6 @@ export default function BlackjackArea({
   }
 
   let leaveStatusText = <></>;
-  // if (wantsToLeave.includes(townController.ourPlayer.id)) {
-  //   leaveStatusText = <b>Leaving after the hand finishes.</b>;
-  // } else
   if (
     hands.find(hand => hand.player === townController.ourPlayer.id) &&
     gameStatus === 'WAITING_TO_START'
