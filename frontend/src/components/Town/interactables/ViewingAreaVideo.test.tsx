@@ -164,6 +164,7 @@
 //     }
 //     return removedListeners[0][1] as unknown as ViewingAreaEvents[Ev];
 //   }
+export {};
 describe('[T4] ReactPlayer rendering', () => {
   it('Sets the videoURL', () => {
     expect(1).toBe(1);
