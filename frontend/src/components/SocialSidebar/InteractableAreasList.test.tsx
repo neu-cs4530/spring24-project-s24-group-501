@@ -143,8 +143,6 @@ describe('[T5.2] InteractableAreasList', () => {
               const playerNames = playerNodes.map(node => node.textContent);
               //Check to make sure that the right number of players are listed
               expect(playerNames.length).toBe(expectedPlayers.length);
-
-              const expectedNames = expectedPlayers.map(player => player.userName);
               // expect(playerNames).toEqual(expectedNames);
               const localExpect = expect; // lint fire :(
               playerNodes.forEach(playerNode => {

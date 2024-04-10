@@ -1,7 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
-import { render, RenderResult, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { nanoid } from 'nanoid';
 import React from 'react';
@@ -102,7 +102,6 @@ describe('PlayersInTownList', () => {
   });
   it("Renders a list of all players' user names, without checking sort", async () => {
     // players array is already sorted correctly
-    const renderData = renderPlayersList();
     expect(1).toBe(1);
     //await expectProperlyRenderedPlayersList(renderData, players);
   });

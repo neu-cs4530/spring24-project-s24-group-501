@@ -2,8 +2,6 @@ import PlayerTracker from './PlayerTracker';
 import {
   CasinoRankScore,
   CasinoSession,
-  CoveyBucks,
-  PlayerID,
 } from '../../../shared/types/CoveyTownSocket';
 import PlayerTrackerFactory from './PlayerTrackerFactory';
 import { nanoid } from 'nanoid';

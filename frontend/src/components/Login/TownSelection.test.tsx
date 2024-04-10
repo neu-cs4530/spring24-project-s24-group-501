@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import {
   fireEvent,
-  getByTestId,
   render,
   RenderResult,
   waitFor,
