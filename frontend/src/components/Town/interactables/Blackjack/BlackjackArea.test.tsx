@@ -1,7 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import React from 'react';
 import TownController, * as TownControllerHooks from '../../../../classes/TownController';
-import * as BlackjackArea from './BlackjackArea';
 import PhaserGameArea from '../GameArea';
 import BlackjackAreaController from '../../../../classes/interactable/BlackjackAreaController';
 import { nanoid } from 'nanoid';
@@ -11,21 +9,17 @@ import {
   BlackjackPlayer,
   CasinoArea,
   CasinoScore,
-  CoveyBucks,
   GameStatus,
 } from '../../../../../../shared/types/CoveyTownSocket';
 import PlayerController from '../../../../classes/PlayerController';
-import { ChakraProvider } from '@chakra-ui/provider';
-import TownControllerContext from '../../../../contexts/TownControllerContext';
-import { render } from '@testing-library/react';
 
 const mockGameArea = mock<PhaserGameArea>();
 mockGameArea.getData.mockReturnValue('Blackjack');
 jest.spyOn(TownControllerHooks, 'useInteractable').mockReturnValue(mockGameArea);
-const useInteractableAreaControllerSpy = jest.spyOn(
-  TownControllerHooks,
-  'useInteractableAreaController',
-);
+// const useInteractableAreaControllerSpy = jest.spyOn(
+//   TownControllerHooks,
+//   'useInteractableAreaController',
+// );
 class MockBlackjackAreaController extends BlackjackAreaController {
   applyMove = jest.fn();
 
@@ -151,18 +145,17 @@ describe('BlackjackArea', () => {
   const townController = mock<TownController>();
   Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
   const casinoAreaController = new MockBlackjackAreaController();
-  let joinGameResolve: () => void;
-  let joinGameReject: (err: Error) => void;
-  let startGameResolve: () => void;
-  let startGameReject: (err: Error) => void;
-
-  function renderBlackjackArea() {
-    return render(
-      <ChakraProvider>
-        <TownControllerContext.Provider value={townController}>
-          <BlackjackArea interactableID={nanoid()} />
-        </TownControllerContext.Provider>
-      </ChakraProvider>,
-    );
-  }
+  // let joinGameResolve: () => void;
+  // let joinGameReject: (err: Error) => void;
+  // let startGameResolve: () => void;
+  // let startGameReject: (err: Error) => void;
+  // function renderBlackjackArea() {
+  //   return render(
+  //     <ChakraProvider>
+  //       <TownControllerContext.Provider value={townController}>
+  //         <BlackjackArea interactableID={nanoid()} />
+  //       </TownControllerContext.Provider>
+  //     </ChakraProvider>,
+  //   );
+  // }
 });
