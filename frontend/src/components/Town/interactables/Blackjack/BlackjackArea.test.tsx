@@ -144,7 +144,7 @@ describe('BlackjackArea', () => {
   let ourPlayer: PlayerController;
   const townController = mock<TownController>();
   Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
-  const casinoAreaController = new MockBlackjackAreaController();
+  // const casinoAreaController = new MockBlackjackAreaController();
   // let joinGameResolve: () => void;
   // let joinGameReject: (err: Error) => void;
   // let startGameResolve: () => void;
