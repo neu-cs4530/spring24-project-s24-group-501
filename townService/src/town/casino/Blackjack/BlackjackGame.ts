@@ -1,3 +1,4 @@
+import { PlayerStreamerContext } from 'twilio/lib/rest/media/v1/playerStreamer';
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_BETTABLE_MESSAGE,
