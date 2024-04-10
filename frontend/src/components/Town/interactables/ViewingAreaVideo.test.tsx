@@ -170,10 +170,10 @@ describe('[T4] ReactPlayer rendering', () => {
     // const props = firstReactPlayerConstructorProps();
     // expect(props.url).toEqual(viewingArea.video);
   });
-  it('Sets the playing property', () => {
-    // const props = firstReactPlayerConstructorProps();
-    // expect(props.playing).toEqual(viewingArea.isPlaying);
-  });
+  // it('Sets the playing property', () => {
+  // const props = firstReactPlayerConstructorProps();
+  // expect(props.playing).toEqual(viewingArea.isPlaying);
+  // });
 });
 //   describe('[T4] Bridging events from the ViewingAreaController to the ReactPlayer', () => {
 //     describe('Registering ViewingAreaController listeners', () => {
