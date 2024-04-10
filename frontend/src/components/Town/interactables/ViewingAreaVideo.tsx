@@ -39,8 +39,6 @@ export function ViewingAreaVideo({
   controller: ViewingAreaController;
 }): JSX.Element {
   const [isPlaying, setPlaying] = useState<boolean>(controller.isPlaying);
-  const townController = useTownController();
-
   const reactPlayerRef = useRef<ReactPlayer>(null);
 
   useEffect(() => {

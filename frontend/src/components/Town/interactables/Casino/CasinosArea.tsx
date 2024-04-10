@@ -41,6 +41,7 @@ function CasinoArea({ interactableID }: { interactableID: InteractableID }): JSX
     useInteractableAreaController<GenericCasinoAreaController>(interactableID);
   const townController = useTownController();
   const [observers, setObservers] = useState<PlayerController[]>(casinoAreaController.observers);
+  console.log(observers);
   useEffect(() => {
     console.log('casinoAreaController', casinoAreaController.toInteractableAreaModel().type);
     const updateCasinoState = () => {

@@ -1,17 +1,16 @@
-import { ChakraProvider } from '@chakra-ui/react';
-import { EventNames } from '@socket.io/component-emitter';
-import { cleanup, render, RenderResult } from '@testing-library/react';
-import { mock, MockProxy } from 'jest-mock-extended';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
-import * as ReactPlayer from 'react-player';
-import TownController from '../../../classes/TownController';
-import ViewingAreaController, {
-  ViewingAreaEvents,
-} from '../../../classes/interactable/ViewingAreaController';
-import TownControllerContext from '../../../contexts/TownControllerContext';
-import { ViewingAreaVideo } from './ViewingAreaVideo';
-
+// import { ChakraProvider } from '@chakra-ui/react';
+// import { EventNames } from '@socket.io/component-emitter';
+// import { cleanup, render, RenderResult } from '@testing-library/react';
+// import { mock, MockProxy } from 'jest-mock-extended';
+// import React from 'react';
+// import { act } from 'react-dom/test-utils';
+// import * as ReactPlayer from 'react-player';
+// import TownController from '../../../classes/TownController';
+// import ViewingAreaController, {
+//   ViewingAreaEvents,
+// } from '../../../classes/interactable/ViewingAreaController';
+// import TownControllerContext from '../../../contexts/TownControllerContext';
+// import { ViewingAreaVideo } from './ViewingAreaVideo';
 // // A sentinel value that we will render in the mock react player component to help find it in the DOM tree
 // const MOCK_REACT_PLAYER_PLACEHOLDER = 'MOCK_REACT_PLAYER_PLACEHOLER';
 // // Mocking a React class-based component appears to be quite challenging; we define our own class

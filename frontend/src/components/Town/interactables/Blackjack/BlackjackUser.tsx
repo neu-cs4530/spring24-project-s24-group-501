@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useRef } from 'react';
+import React from 'react';
 import BlackjackCard from './BlackjackCard';
 import styles from './blackjack.module.css';
-import { BlackjackPlayer, Card } from '../../../../types/CoveyTownSocket';
+import { BlackjackPlayer } from '../../../../types/CoveyTownSocket';
 
 interface PlayerProps {
   username: string;

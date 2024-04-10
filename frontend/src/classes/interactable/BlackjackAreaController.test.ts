@@ -1,10 +1,7 @@
 import {
-  GameResult,
   GameStatus,
   BlackjackMove,
   BlackjackPlayer,
-  CasinoScore,
-  Card,
   BlackjackDealer,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
@@ -32,8 +29,6 @@ describe('BlackjackAreaController', () => {
     new PlayerController('3', '3', { x: 0, y: 0, moving: false, rotation: 'front' }, 1000),
   ];
 
-  const deck = new Shuffler();
-
   const mockTownController = mock<TownController>();
   Object.defineProperty(mockTownController, 'ourPlayer', {
     get: () => ourPlayer,
@@ -41,8 +36,8 @@ describe('BlackjackAreaController', () => {
   Object.defineProperty(mockTownController, 'players', {
     get: () => [ourPlayer, ...otherPlayers],
   });
-  mockTownController.getPlayer.mockImplementation((playerID: any) => {
-    const p = mockTownController.players.find((player: { id: any }) => player.id === playerID);
+  mockTownController.getPlayer.mockImplementation((playerID: string) => {
+    const p = mockTownController.players.find((player: { id: string }) => player.id === playerID);
     assert(p);
     return p;
   });
@@ -366,7 +361,6 @@ describe('BlackjackAreaController', () => {
         const instanceID = nanoid();
         const bet = 5;
         const photo = 'photo';
-        const move: BlackjackMove = { player: '1', action: 'Hit' };
         mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
           return { gameID: instanceID };
         });

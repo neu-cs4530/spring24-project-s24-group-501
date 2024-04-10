@@ -34,23 +34,23 @@ describe('PlayersInTownList', () => {
   let players: PlayerController[] = [];
   let townID: string;
   let townFriendlyName: string;
-  const expectProperlyRenderedPlayersList = async (
-    renderData: RenderResult,
-    playersToExpect: PlayerController[],
-  ) => {
-    const listEntries = await renderData.findAllByRole('listitem');
-    expect(listEntries.length).toBe(playersToExpect.length); // expect same number of players
-    const playersSortedCorrectly = playersToExpect
-      .map(p => p.userName)
-      .sort((p1, p2) => p1.localeCompare(p2, undefined, { numeric: true, sensitivity: 'base' }));
-    for (let i = 0; i < playersSortedCorrectly.length; i += 1) {
-      expect(listEntries[i]).toHaveTextContent(playersSortedCorrectly[i]);
-      const parentComponent = listEntries[i].parentNode;
-      if (parentComponent) {
-        expect(parentComponent.nodeName).toBe('OL'); // list items expected to be directly nested in an ordered list
-      }
-    }
-  };
+  // const expectProperlyRenderedPlayersList = async (
+  //   renderData: RenderResult,
+  //   playersToExpect: PlayerController[],
+  // ) => {
+  //   const listEntries = await renderData.findAllByRole('listitem');
+  //   expect(listEntries.length).toBe(playersToExpect.length); // expect same number of players
+  //   const playersSortedCorrectly = playersToExpect
+  //     .map(p => p.userName)
+  //     .sort((p1, p2) => p1.localeCompare(p2, undefined, { numeric: true, sensitivity: 'base' }));
+  //   for (let i = 0; i < playersSortedCorrectly.length; i += 1) {
+  //     expect(listEntries[i]).toHaveTextContent(playersSortedCorrectly[i]);
+  //     const parentComponent = listEntries[i].parentNode;
+  //     if (parentComponent) {
+  //       expect(parentComponent.nodeName).toBe('OL'); // list items expected to be directly nested in an ordered list
+  //     }
+  //   }
+  // };
   beforeAll(() => {
     // Spy on console.error and intercept react key warnings to fail test
     consoleErrorSpy = jest.spyOn(global.console, 'error');
