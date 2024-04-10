@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   BlackjackMove,
   CasinoScore,
@@ -211,8 +210,6 @@ export default class BlackjackAreaController extends CasinoAreaController<
    * If the turn has not changed, does not emit a turnChanged event.
    */
   protected _updateFrom(newModel: CasinoArea<BlackjackCasinoState>): void {
-    const whoTurn = this.currentPlayer;
     super._updateFrom(newModel);
-    const newGame = newModel.game;
   }
 }

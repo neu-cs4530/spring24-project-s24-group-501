@@ -2,14 +2,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import '@testing-library/jest-dom';
 import React from 'react';
-import {
-  fireEvent,
-  getByTestId,
-  render,
-  RenderResult,
-  waitFor,
-  within,
-} from '@testing-library/react';
+import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mock, mockClear, MockProxy, mockReset } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';

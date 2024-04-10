@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { CasinoArea, GameState, InteractableID } from '../../types/CoveyTownSocket';
+import { CasinoArea, GameResult, GameState, InteractableID } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import InteractableAreaController, {
@@ -30,12 +30,12 @@ export const NO_GAME_STARTABLE = 'No casino startable';
 export default abstract class CasinoAreaController<
   State extends GameState,
   EventTypes extends CasinoEventTypes,
-> extends InteractableAreaController<EventTypes, any> {
-  protected _instanceID?: any;
+> extends InteractableAreaController<EventTypes, CasinoArea<State>> {
+  protected _instanceID?: string;
 
   protected _townController: TownController;
 
-  protected _model: any;
+  protected _model: CasinoArea<State>;
 
   protected _players: PlayerController[] = [];
 
@@ -49,7 +49,7 @@ export default abstract class CasinoAreaController<
       this._players = casino.players.map(playerID => this._townController.getPlayer(playerID));
   }
 
-  get history(): any[] {
+  get history(): GameResult[] {
     return this._model.history;
   }
 
@@ -131,7 +131,7 @@ export default abstract class CasinoAreaController<
     }
   }
 
-  toInteractableAreaModel(): any {
+  toInteractableAreaModel(): CasinoArea<State> {
     return this._model;
   }
 }
