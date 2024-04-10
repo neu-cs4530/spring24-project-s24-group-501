@@ -366,7 +366,7 @@ describe('BlackjackAreaController', () => {
         const instanceID = nanoid();
         const bet = 5;
         const photo = 'photo';
-        const move: BlackjackMove = {player: '1', action: 'Hit'};
+        const move: BlackjackMove = { player: '1', action: 'Hit' };
         mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
           return { gameID: instanceID };
         });
@@ -390,7 +390,7 @@ describe('BlackjackAreaController', () => {
         await expect(controller.placeBet(5)).rejects.toThrowError();
       });
       it('Fails to send a applyMove command to the server if no instance or not started', async () => {
-        const move: BlackjackMove = {player: '1', action: 'Hit'};
+        const move: BlackjackMove = { player: '1', action: 'Hit' };
         await expect(controller.applyMove(move)).rejects.toThrowError();
       });
     });
@@ -428,7 +428,7 @@ describe('BlackjackAreaController', () => {
         await controller.joinCasino();
       });
       describe('ApplyMove', () => {
-        async function makeMoveAndExpectHandPlacement(move : BlackjackMove) {
+        async function makeMoveAndExpectHandPlacement(move: BlackjackMove) {
           mockTownController.sendInteractableCommand.mockClear();
           await controller.applyMove(move);
           expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
