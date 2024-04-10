@@ -1,3 +1,4 @@
+import { PlayerStreamerContext } from 'twilio/lib/rest/media/v1/playerStreamer';
 import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_BETTABLE_MESSAGE,
@@ -222,6 +223,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
 
     // Extract the current player
     const currPlayerHand = this.state.hands[this.state.currentPlayer];
+
     if (currPlayerHand.player !== move.playerID) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
@@ -374,6 +376,17 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
   }
 
   /**
+   * Attempt to join a game.
+   *
+   * @param player The player to join the game.
+   * @throws InvalidParametersError if the player can not join the game
+   */
+  public join(player: Player): void {
+    this._join(player);
+    this._players.unshift(player);
+  }
+
+  /**
    * Adds a player to the game.
    * Updates the game's state to reflect the new player, taking the first seat at the table.
    *
@@ -398,7 +411,7 @@ export default class BlackjackGame extends Game<BlackjackCasinoState, BlackjackM
     if (this.state.status === 'IN_PROGRESS') {
       // a player joining mid-game should not be able to make moves
       active = false;
-      this.state.currentPlayer += 1;
+      this.state.currentPlayer += 1; // todo: remove?
     }
 
     this.state.hands.unshift({
