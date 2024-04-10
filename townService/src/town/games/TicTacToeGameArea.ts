@@ -1,4 +1,3 @@
-import assert from 'assert';
 import InvalidParametersError, {
   GAME_ID_MISSMATCH_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,

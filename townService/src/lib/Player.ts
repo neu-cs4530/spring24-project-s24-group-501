@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid';
-import CasinoTrackerFactory from '../town/casino/CasinoTrackerFactory';
 import {
   Player as PlayerModel,
   PlayerLocation,
