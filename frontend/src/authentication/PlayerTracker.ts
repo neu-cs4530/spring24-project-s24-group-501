@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import {
   CasinoGame,
   CasinoRankScore,
-  CasinoScore,
   CasinoSession,
   CasinoStake,
   CoveyBucks,
