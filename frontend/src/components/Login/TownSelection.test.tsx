@@ -110,22 +110,6 @@ describe('Town Selection', () => {
     mockedTownController = mockTownController({ providerVideoToken: expectedProviderVideoToken });
 
     coveyTownControllerConstructorSpy = jest.spyOn(TownController, 'default');
-
-    // jest.mock('@supabase/supabase-js', () => ({
-    //   createClient: jest.fn(() => ({
-    //     auth: {
-    //       getSession: jest.fn(() => Promise.resolve({ data: { session: { user: {
-    //         id: '123',
-    //         app_metadata: {},
-    //         user_metadata: {},
-    //         aud: 'example',
-    //         created_at: '2024-04-07T12:00:00Z',
-    //         email: '',
-    //       } } } })),
-    //       onAuthStateChange: jest.fn((_callback: Function) => ({ subscription: { unsubscribe: jest.fn() } })),
-    //     },
-    //   })),
-    // }));
   });
   beforeEach(() => {
     jest.useFakeTimers();
@@ -312,7 +296,6 @@ describe('Town Selection', () => {
     let newTownNameField: HTMLInputElement;
     let newTownIsPublicCheckbox: HTMLInputElement;
     let newTownButton: HTMLElement;
-    // let loginButton: HTMLElement;
 
     beforeEach(async () => {
       jest.useFakeTimers();
@@ -332,12 +315,10 @@ describe('Town Selection', () => {
       newTownIsPublicCheckbox = renderData.getByLabelText('Publicly Listed') as HTMLInputElement;
       newTownNameField = renderData.getByPlaceholderText('New Town Name') as HTMLInputElement;
       newTownButton = renderData.getByTestId('newTownButton');
-      // loginButton = renderData.getByTestId('loginButton');
     });
     describe('Joining existing towns', () => {
       describe('Joining an existing town by ID', () => {
         const joinTownWithOptions = async (params: { coveyTownID: string; userName: string }) => {
-          // userEvent.click(loginButton);
           fireEvent.change(userNameField, { target: { value: params.userName } });
           await waitFor(() => {
             expect(userNameField.value).toBe(params.userName);

@@ -111,24 +111,24 @@ describe('PlayerTracker', () => {
       expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
     });
   });
-  // describe('updatePlayerInfo', () => {
-  //   test("updates the player's id and username to be in sync with the townService", async () => {
-  //     getPlayersCurrencySpy.mockResolvedValue(sampleCurrency);
-  //     await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(sampleCurrency);
-  //     await dbConnection.updatePlayerInfo('test@email.com', '5', 'NewName');
-  //     const updatedCurrency: CasinoRankScore[] = [
-  //       { player: '5', netCurrency: 300, username: 'NewName' },
-  //       { player: '2', netCurrency: 200, username: 'Tomas' },
-  //       { player: '3', netCurrency: 100, username: 'Ari' },
-  //     ];
-  //     getPlayersCurrencySpy.mockResolvedValue(updatedCurrency);
-  //     await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(updatedCurrency);
-  //     expect(updatePlayerInfoSpy).toHaveBeenCalled();
-  //     expect(handleUserSpy).not.toHaveBeenCalled();
-  //     expect(getPlayerCurrencySpy).not.toHaveBeenCalled();
-  //     expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
-  //   });
-  // });
+  describe('updatePlayerInfo', () => {
+    test("updates the player's id and username to be in sync with the townService", async () => {
+      getPlayersCurrencySpy.mockResolvedValue(sampleCurrency);
+      await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(sampleCurrency);
+      await dbConnection.updatePlayerInfo('test@email.com', '5', 'NewName');
+      const updatedCurrency: CasinoRankScore[] = [
+        { player: '5', netCurrency: 300, username: 'NewName' },
+        { player: '2', netCurrency: 200, username: 'Tomas' },
+        { player: '3', netCurrency: 100, username: 'Ari' },
+      ];
+      getPlayersCurrencySpy.mockResolvedValue(updatedCurrency);
+      await expect(dbConnection.getPlayersCurrency()).resolves.toEqual(updatedCurrency);
+      expect(updatePlayerInfoSpy).toHaveBeenCalled();
+      expect(handleUserSpy).not.toHaveBeenCalled();
+      expect(getPlayerCurrencySpy).not.toHaveBeenCalled();
+      expect(getCasinoSessionsSpy).not.toHaveBeenCalled();
+    });
+  });
   describe('getCasinoSessions', () => {
     test('throws an error if the request is invalid', async () => {
       getCasinoSessionsSpy.mockRejectedValue(new Error('Invalid request'));
